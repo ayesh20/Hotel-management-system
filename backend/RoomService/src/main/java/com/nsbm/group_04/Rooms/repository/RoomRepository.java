@@ -1,4 +1,13 @@
 package com.nsbm.group_04.Rooms.repository;
 
-public interface RoomRepository {
+import com.nsbm.group_04.Rooms.entity.Room;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
+
+
+@Repository
+public interface RoomRepository extends MongoRepository<Room, String> {
+
+
 }
