@@ -12,6 +12,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository repository;
 
+    //if you want, can add autowired
+
     public CustomerServiceImpl(CustomerRepository repository) {
         this.repository = repository;
     }
