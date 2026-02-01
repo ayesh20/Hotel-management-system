@@ -21,9 +21,9 @@ public class Room {
     @NotBlank(message = "Room number is required")
     private String roomNumber;
 
-    @Field("room_type")
-    @NotBlank(message = "Room type is required")
-    private String roomType;
+    @Field("room_specify")
+    @NotBlank(message = "Room specify is required")
+    private String roomSpecify;
 
     @Field("price")
     @NotNull(message = "Price is required")
@@ -44,12 +44,12 @@ public class Room {
     public Room() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.status = "AVAILABLE"; // Default status
+        this.status = "AVAILABLE";
     }
 
-    public Room(String roomNumber, String roomType, Double price, String status) {
+    public Room(String roomNumber, String roomSpecify, Double price, String status) {
         this.roomNumber = roomNumber;
-        this.roomType = roomType;
+        this.roomSpecify = roomSpecify;
         this.price = price;
         this.status = status;
         this.createdAt = LocalDateTime.now();
@@ -74,12 +74,12 @@ public class Room {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public String getRoomType() {
-        return roomType;
+    public String getRoomSpecify() {
+        return roomSpecify;
     }
 
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
+    public void setRoomSpecify(String roomSpecify) {
+        this.roomSpecify = roomSpecify;
         this.updatedAt = LocalDateTime.now();
     }
 
@@ -122,7 +122,7 @@ public class Room {
         return "Room{" +
                 "id='" + id + '\'' +
                 ", roomNumber='" + roomNumber + '\'' +
-                ", roomType='" + roomType + '\'' +
+                ", roomSpecify='" + roomSpecify + '\'' +
                 ", price=" + price +
                 ", status='" + status + '\'' +
                 ", createdAt=" + createdAt +
