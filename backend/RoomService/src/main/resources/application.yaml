@@ -1,3 +1,27 @@
-7spring:
+spring:
   application:
     name: Rooms
+
+  data:
+    mongodb:
+      uri: mongodb+srv://admin12:room123@room.h6nvi5n.mongodb.net/rooms_db?authSource=admin&retryWrites=true&w=majority&tls=true
+
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    com.nsbm.group_04: DEBUG
+    org.springframework.data.mongodb: DEBUG
+    org.mongodb.driver: DEBUG
