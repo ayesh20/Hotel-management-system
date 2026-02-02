@@ -27,6 +27,11 @@ public class RoomServices {
         return roomRepository.save(room);
     }
 
+    public List<Room> getAllRooms() {
+        return roomRepository.findAll();
+    }
+
+
 
 
 }

@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+
 @RestController
 @RequestMapping(value="/api/rooms")
 @CrossOrigin(origins = {"http://localhost:5173"},
@@ -22,4 +25,12 @@ public class RoomController {
         Room createdRoom = roomService.createRoom(room);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdRoom);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Room>> getAllRooms() {
+        List<Room> rooms = roomService.getAllRooms();
+        return new ResponseEntity<>(rooms, HttpStatus.OK);
+    }
+
+
 }
