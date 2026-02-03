@@ -120,7 +120,7 @@ export default function AddRoom() {
             return;
         }
         
-        navigate('/dashboard');
+        navigate('/allrooms');
     };
 
     return (
