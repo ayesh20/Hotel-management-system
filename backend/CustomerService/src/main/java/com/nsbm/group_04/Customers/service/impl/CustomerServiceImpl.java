@@ -34,6 +34,25 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Customer updateCustomer(String id, Customer customer) {
+
+        Customer existingCustomer = repository.findById(id).orElse(null);
+
+        if (existingCustomer != null) {
+            existingCustomer.setFullName(customer.getFullName());
+            existingCustomer.setEmail(customer.getEmail());
+            existingCustomer.setPhone(customer.getPhone());
+            existingCustomer.setNicOrPassport(customer.getNicOrPassport());
+            existingCustomer.setAddress(customer.getAddress());
+            existingCustomer.setGender(customer.getGender());
+            existingCustomer.setDateOfBirth(customer.getDateOfBirth());
+
+            return repository.save(existingCustomer);
+        }
+        return null;
+    }
+
+    @Override
     public void deleteCustomer(String id) {
         repository.deleteById(id);
     }

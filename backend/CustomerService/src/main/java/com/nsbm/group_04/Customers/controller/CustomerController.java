@@ -33,6 +33,11 @@ public class CustomerController {
         return service.getCustomerById(id);
     }
 
+    @PutMapping("/{id}")
+    public Customer updateCustomer(@PathVariable String id, @RequestBody Customer customer) {
+        return service.updateCustomer(id, customer);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteCustomer(@PathVariable String id) {
         service.deleteCustomer(id);

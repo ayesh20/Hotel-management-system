@@ -7,7 +7,9 @@ import { Toaster } from "react-hot-toast";
 // Pages
 import Login from "./pages/Login/Login.jsx";
 import Dashboard from "./pages/Dashboard/dashboard.jsx";
-import AddRoom from "./pages/addRoom/addRoom.jsx";
+import AddRoom from "./pages/Room/addRoom.jsx";
+import AllRooms from "./pages/Room/AllRooms.jsx";
+import EditRoom from "./pages/Room/editRoom.jsx";
 
 
 
@@ -36,6 +38,8 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard/>}/>
             <Route path="/addroom" element={<AddRoom/>}/>
+            <Route path="/allrooms" element={<AllRooms/>}/>
+            <Route path="/editroom/:id" element={<EditRoom/>}/>
            
           
            

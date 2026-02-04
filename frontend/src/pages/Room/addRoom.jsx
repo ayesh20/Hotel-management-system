@@ -8,6 +8,7 @@ export default function AddRoom() {
     const [formData, setFormData] = useState({
         roomNumber: '',
         roomSpecify: '',
+        roomType: '',
         price: '',
         status: 'AVAILABLE'
     });
@@ -73,6 +74,7 @@ export default function AddRoom() {
             const roomData = {
                 roomNumber: formData.roomNumber,
                 roomSpecify: formData.roomSpecify,
+                    roomType: formData.roomType,
                 price: parseFloat(formData.price),
                 status: formData.status
             };
@@ -106,6 +108,7 @@ export default function AddRoom() {
         setFormData({
             roomNumber: '',
             roomSpecify: '',
+            roomType: '',
             price: '',
             status: 'AVAILABLE'
         });
@@ -120,7 +123,7 @@ export default function AddRoom() {
             return;
         }
         
-        navigate('/dashboard');
+        navigate('/allrooms');
     };
 
     return (
@@ -165,10 +168,10 @@ export default function AddRoom() {
                         )}
                     </div>
 
-                    {/* Room Specification/Type */}
+                    {/* Room Specification */}
                     <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2">
-                            Room Type/Specification <span className="text-red-500">*</span>
+                            Room Specification <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
                             <Home className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -214,7 +217,31 @@ export default function AddRoom() {
                             <p className="mt-1 text-sm text-red-600">{errors.price}</p>
                         )}
                     </div>
-
+ {/* Room Type */}
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                            Room Type <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                            <Home className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                            <select
+                                name="roomType"
+                                value={formData.roomType}
+                                onChange={handleChange}
+                                className={`w-full pl-11 pr-4 py-3 border-2 ${errors.roomType ? 'border-red-300' : 'border-slate-300'} rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-slate-800 bg-white`}
+                                disabled={loading}
+                            >
+                                <option value="">Select room type</option>
+                                <option value="Single">Single</option>
+                                <option value="Double">Double</option>
+                                <option value="Family">Family</option>
+                               
+                            </select>
+                        </div>
+                        {errors.roomType && (
+                            <p className="mt-1 text-sm text-red-600">{errors.roomType}</p>
+                        )}
+                    </div>
                     {/* Status */}
                     <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2">
