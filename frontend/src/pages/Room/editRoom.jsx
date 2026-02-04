@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home, DollarSign, Save, X, ArrowLeft, Hash } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
-export default function AddRoom() {
+export default function EditRoom() {
     const [formData, setFormData] = useState({
         roomNumber: '',
         roomSpecify: '',
@@ -14,10 +14,40 @@ export default function AddRoom() {
     });
     
     const navigate = useNavigate();
+    const { id } = useParams(); 
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [fetchingRoom, setFetchingRoom] = useState(true);
     
-    const API_URL = import.meta.env.VITE_BACKEND_URL ;
+    const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+    
+    useEffect(() => {
+        fetchRoomData();
+    }, [id]);
+
+    const fetchRoomData = async () => {
+        try {
+            setFetchingRoom(true);
+            console.log('Fetching room data for ID:', id);
+            const response = await axios.get(`${API_URL}/rooms/${id}`);
+            console.log('Room data:', response.data);
+            
+            setFormData({
+                roomNumber: response.data.roomNumber,
+                roomSpecify: response.data.roomSpecify,
+                roomType: response.data.roomType || '',
+                price: response.data.price.toString(),
+                status: response.data.status
+            });
+        } catch (error) {
+            console.error('Fetch room error:', error);
+            toast.error('Failed to fetch room data');
+           
+        } finally {
+            setFetchingRoom(false);
+        }
+    };
     
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -45,6 +75,10 @@ export default function AddRoom() {
             newErrors.roomSpecify = 'Room specification is required';
         }
 
+        if (!formData.roomType.trim()) {
+            newErrors.roomType = 'Room type is required';
+        }
+
         if (!formData.price) {
             newErrors.price = 'Price is required';
         } else if (isNaN(formData.price) || parseFloat(formData.price) <= 0) {
@@ -69,32 +103,30 @@ export default function AddRoom() {
 
         setLoading(true);
 
-        try{
-
+        try {
             const roomData = {
                 roomNumber: formData.roomNumber,
                 roomSpecify: formData.roomSpecify,
-                    roomType: formData.roomType,
+                roomType: formData.roomType,
                 price: parseFloat(formData.price),
                 status: formData.status
             };
 
-            const response = await axios.post(
-                `${API_URL}/rooms/add`,
-                roomData,
-                
+            console.log('Updating room:', roomData);
+            const response = await axios.put(
+                `${API_URL}/rooms/update/${id}`,
+                roomData
             );
 
-            if (response.status === 201 || response.status === 200) {
-                toast.success('Room added successfully!');
-                handleReset();
-                
+            if (response.status === 200) {
+                toast.success('Room updated successfully!');
+                navigate('/allrooms');
             }
         } catch (error) {
-            console.error('Add room error:', error);
+            console.error('Update room error:', error);
             
             if (error.response) {
-                const errorMsg = error.response.data.message || 'Failed to add room. Please try again.';
+                const errorMsg = error.response.data.message || 'Failed to update room. Please try again.';
                 toast.error(errorMsg);
             } else if (error.request) {
                 toast.error('Unable to connect to server. Please check your connection.');
@@ -105,26 +137,28 @@ export default function AddRoom() {
     };
 
     const handleReset = () => {
-        setFormData({
-            roomNumber: '',
-            roomSpecify: '',
-            roomType: '',
-            price: '',
-            status: 'AVAILABLE'
-        });
+        fetchRoomData(); // Reset to original data
         setErrors({});
-        toast.info('Form reset');
+        toast.info('Form reset to original values');
     };
 
     const handleBack = () => {
-        const hasData = Object.values(formData).some(value => value !== '' && value !== 'AVAILABLE');
-        
-        if (hasData && !window.confirm('Are you sure you want to go back? Unsaved changes will be lost.')) {
-            return;
-        }
-        
         navigate('/allrooms');
     };
+
+    if (fetchingRoom) {
+        return (
+            <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+                <div className="text-center">
+                    <svg className="animate-spin h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p className="text-slate-600 text-lg">Loading room data...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-100 p-4 md:p-8">
@@ -138,7 +172,7 @@ export default function AddRoom() {
                         <ArrowLeft className="w-6 h-6 text-slate-700" />
                     </button>
                     <h1 className="text-2xl md:text-3xl font-bold text-slate-800">
-                        Add New Room
+                        Edit Room
                     </h1>
                 </div>
             </div>
@@ -182,11 +216,11 @@ export default function AddRoom() {
                                 className={`w-full pl-11 pr-4 py-3 border-2 ${errors.roomSpecify ? 'border-red-300' : 'border-slate-300'} rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-slate-800 bg-white`}
                                 disabled={loading}
                             >
-                                <option value="">Select room type</option>
-                                <option value="AC Room">AC Room</option>
-                                <option value="Non-AC Room">Non-AC Room</option>
-                                <option value="AC with Bar Room">AC with Bar Room</option>
-                                <option value="Standard Room">Standard Room</option>
+                                <option value="">Select room specification</option>
+                                <option value="AC">AC</option>
+                                <option value="Non-AC">Non-AC</option>
+                                <option value="AC with Bar">AC with Bar</option>
+                                <option value="Standard">Standard</option>
                             </select>
                         </div>
                         {errors.roomSpecify && (
@@ -194,7 +228,33 @@ export default function AddRoom() {
                         )}
                     </div>
 
-                    {/* Price */}
+                    {/* Room Type */}
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                            Room Type <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                            <Home className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                            <select
+                                name="roomType"
+                                value={formData.roomType}
+                                onChange={handleChange}
+                                className={`w-full pl-11 pr-4 py-3 border-2 ${errors.roomType ? 'border-red-300' : 'border-slate-300'} rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-slate-800 bg-white`}
+                                disabled={loading}
+                            >
+                                <option value="">Select room type</option>
+                                <option value="Single">Single</option>
+                                <option value="Double">Double</option>
+                                <option value="Triple">Family</option>
+                               
+                            </select>
+                        </div>
+                        {errors.roomType && (
+                            <p className="mt-1 text-sm text-red-600">{errors.roomType}</p>
+                        )}
+                    </div>
+
+                    {/* Price */
                     <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2">
                             Price (LKR) <span className="text-red-500">*</span>
@@ -217,31 +277,7 @@ export default function AddRoom() {
                             <p className="mt-1 text-sm text-red-600">{errors.price}</p>
                         )}
                     </div>
- {/* Room Type */}
-                    <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-2">
-                            Room Type <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                            <Home className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                            <select
-                                name="roomType"
-                                value={formData.roomType}
-                                onChange={handleChange}
-                                className={`w-full pl-11 pr-4 py-3 border-2 ${errors.roomType ? 'border-red-300' : 'border-slate-300'} rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-slate-800 bg-white`}
-                                disabled={loading}
-                            >
-                                <option value="">Select room type</option>
-                                <option value="Single">Single</option>
-                                <option value="Double">Double</option>
-                                <option value="Family">Family</option>
-                               
-                            </select>
-                        </div>
-                        {errors.roomType && (
-                            <p className="mt-1 text-sm text-red-600">{errors.roomType}</p>
-                        )}
-                    </div>
+}
                     {/* Status */}
                     <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -269,7 +305,7 @@ export default function AddRoom() {
                         <button
                             onClick={handleSubmit}
                             disabled={loading}
-                            className="flex-1 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             {loading ? (
                                 <>
@@ -277,12 +313,12 @@ export default function AddRoom() {
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    Saving...
+                                    Updating...
                                 </>
                             ) : (
                                 <>
                                     <Save className="w-5 h-5" />
-                                    Save Room
+                                    Update Room
                                 </>
                             )}
                         </button>

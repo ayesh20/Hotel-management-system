@@ -59,7 +59,7 @@ export default function AllRooms() {
     };
 
     const handleEdit = (roomId) => {
-        navigate(`/rooms/edit/${roomId}`);
+        navigate(`/editroom/${roomId}`);
     };
 
     const handleAddRoom = () => {
@@ -216,7 +216,7 @@ export default function AllRooms() {
                                             className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
                                         >
                                             <td className="py-4 px-4 text-slate-800">{room.roomNumber}</td>
-                                            <td className="py-4 px-4 text-slate-800">{room.roomSpecify}</td>
+                                            <td className="py-4 px-4 text-slate-800">{room.roomType}</td>
                                             <td className="py-4 px-4 text-slate-800">LKR {parseFloat(room.price).toLocaleString()}</td>
                                             <td className="py-4 px-4 text-slate-800">{room.roomSpecify}</td>
                                             <td className="py-4 px-4">
