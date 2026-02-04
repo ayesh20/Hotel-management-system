@@ -1,4 +1,4 @@
 package com.nsbm.group_04.Housekeeping.controller;
 
-public class HouseKeepiongController {
+public class HouseKeepingController {
 }
