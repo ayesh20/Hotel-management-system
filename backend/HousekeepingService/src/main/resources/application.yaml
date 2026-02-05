@@ -1,3 +1,3 @@
-spring:
-  application:
-    name: Housekeeping
+spring.data.mongodb.uri=mongodb+srv://yasindudahanayake_db:yasindu200@cluster0.rhyquvf.mongodb.net/houseKeeping_db?appName=Cluster0
+spring.application.name=Housekeeping
+server.port=8080
