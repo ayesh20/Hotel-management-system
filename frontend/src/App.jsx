@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard/dashboard.jsx";
 import AddRoom from "./pages/Room/addRoom.jsx";
 import AllRooms from "./pages/Room/AllRooms.jsx";
 import EditRoom from "./pages/Room/editRoom.jsx";
+import AllCleaners from "./pages/HouseKeeping/AllCleaners.jsx";
+
 
 
 
@@ -40,6 +42,8 @@ function App() {
             <Route path="/addroom" element={<AddRoom/>}/>
             <Route path="/allrooms" element={<AllRooms/>}/>
             <Route path="/editroom/:id" element={<EditRoom/>}/>
+            <Route path="/allCleaners" element={<AllCleaners/>}/>
+
            
           
            
