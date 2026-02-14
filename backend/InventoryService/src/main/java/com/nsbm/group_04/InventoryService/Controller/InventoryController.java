@@ -4,6 +4,7 @@ import com.nsbm.group_04.InventoryService.Model.InventoryItem;
 import com.nsbm.group_04.InventoryService.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -12,8 +13,7 @@ import java.util.Optional;
 // Base URL for all inventory endpoints
 @RequestMapping("/api/inventory")
 
-public class InventoryController
-{
+public class InventoryController {
     // Injects InventoryService to delegate business logic and database operations
     @Autowired
     private InventoryService service;
@@ -21,24 +21,21 @@ public class InventoryController
     // Add a new inventory item
     //Handles POST requests for creating a new inventory item.
     @PostMapping
-    public InventoryItem addItem(@RequestBody InventoryItem item)
-    {
+    public InventoryItem addItem(@RequestBody InventoryItem item) {
         return service.addItem(item);
     }
 
     // Get all items
     //Handles GET requests for retrieving items.
     @GetMapping
-    public List<InventoryItem> getAllItems()
-    {
+    public List<InventoryItem> getAllItems() {
         return service.getAllItems();
     }
 
     // Get a single item by ID
     //GET request with path variable to retrieve an item by ID.
     @GetMapping("/{id}")
-    public Optional<InventoryItem> getItemById(@PathVariable String id)
-    {
+    public Optional<InventoryItem> getItemById(@PathVariable String id) {
         return service.getItemById(id);
     }
 

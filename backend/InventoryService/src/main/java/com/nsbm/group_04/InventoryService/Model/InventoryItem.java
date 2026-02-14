@@ -1,7 +1,10 @@
 package com.nsbm.group_04.InventoryService.Model;
 
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 
@@ -15,14 +18,17 @@ public class InventoryItem {
 
     //variable declaration
     private String id;
+    @NotNull(message = "Item name cannot be null")
     private String itemName;
     private String category;
+    @Min(value = 0, message = "Quantity cannot be negative")
     private Integer quantity;
     private Double unitPrice;
     private Integer reorderLevel;
     private String storageLocation;
     private String supplier;
     private String status;
+    @LastModifiedDate
     private LocalDate lastUpdated;
 
     // No-argument constructor
