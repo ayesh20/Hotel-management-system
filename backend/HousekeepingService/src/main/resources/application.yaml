@@ -1,3 +1,14 @@
-spring.data.mongodb.uri=mongodb+srv://yasindudahanayake_db:yasindu200@cluster0.rhyquvf.mongodb.net/houseKeeping_db?appName=Cluster0
-spring.application.name=Housekeeping
-server.port=8080
+spring:
+  application:
+    name: Housekeeping
+
+  mongodb:
+    uri: mongodb+srv://yasindudahanayake_db_user:kHAUd7Pbl8QzR3Tp@housekeeping4.7nkilqe.mongodb.net/housekeepingdb?appName=housekeeping4
+
+server:
+  port: 8080
+
+management:
+  health:
+    mongodb:
+      enabled: false
