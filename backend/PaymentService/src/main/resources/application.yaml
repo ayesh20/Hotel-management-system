@@ -4,7 +4,8 @@ spring:
 
   data:
     mongodb:
-      uri:
+      uri: mongodb+srv://tharindapathirana27_db_user:1KGVfsHaD6I7J0b7@cluster0.zkd0ngl.mongodb.net/hotelDB?retryWrites=true&w=majority&appName=Cluster0
+
 
 server:
   port: 8082
