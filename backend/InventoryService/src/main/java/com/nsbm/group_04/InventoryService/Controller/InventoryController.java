@@ -40,12 +40,10 @@ public class InventoryController {
     }
 
     // Update an existing item
-    //Handles PUT requests to update an existing item.
-    @PutMapping
-    public InventoryItem updateItem(@RequestBody InventoryItem item)
-    //@RequestBody Maps JSON from the request body to a Java object.
-    {
-        return service.updateItem(item);
+    @PutMapping("/{id}") // Added /{id} to the path
+    public InventoryItem updateItem(@PathVariable String id, @RequestBody InventoryItem item) {
+        //  passing TWO arguments, matching the Service signature
+        return service.updateItem(id, item);
     }
 
     // Delete an item by ID
