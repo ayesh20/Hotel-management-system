@@ -11,7 +11,7 @@ function AllCleaners() {
     const [currentSlide, setCurrentSlide] = useState(0);
     const navigate = useNavigate();
     
-    const API_URL = import.meta.env.VITE_BACKEND_URL;
+    const API_URL = import.meta.env.VITE_BACKEND_URL_HOUSEKEPING;
     
     const carouselImages = [
         '/image1.jpg',
