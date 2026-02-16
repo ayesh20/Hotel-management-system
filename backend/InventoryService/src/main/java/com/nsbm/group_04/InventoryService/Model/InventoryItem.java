@@ -1,12 +1,16 @@
 package com.nsbm.group_04.InventoryService.Model;
 
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 
 // Marks this class as a MongoDB document and maps it to the "inventory_items" collection where all inventory item records are stored.
-@Document(collection = "inventory_items")
+@Document(collection = "inventoryItems")
 
 
 public class InventoryItem {
@@ -14,16 +18,33 @@ public class InventoryItem {
     @Id // MongoDB document ID - automatically generated when a new inventory item is created
 
     //variable declaration
+
     private String id;
+
+    @NotBlank(message = "Item name is required")
     private String itemName;
+
+    @NotBlank(message = "Category is required")
     private String category;
+
+    @NotNull(message = "Quantity is required")
+    @Positive(message = "Quantity must be greater than zero")
     private Integer quantity;
+
+    @NotNull(message = "Unit price is required")
+    @Positive(message = "Unit price must be greater than zero")
     private Double unitPrice;
+
+    @NotNull(message = "Reorder level is required")
     private Integer reorderLevel;
+
     private String storageLocation;
     private String supplier;
     private String status;
+
+    @LastModifiedDate
     private LocalDate lastUpdated;
+
 
     // No-argument constructor
     public  InventoryItem()
