@@ -45,4 +45,9 @@ public class StaffService {
         }
     }
 
+    // Delete staff
+    public void deleteStaff(String id) {
+        staffRepository.deleteById(id);
+    }
+
 }
