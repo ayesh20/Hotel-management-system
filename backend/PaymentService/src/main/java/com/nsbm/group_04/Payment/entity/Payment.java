@@ -104,4 +104,10 @@ public class Payment {
     public void setPaymentDate(LocalDateTime paymentDate) {
         this.paymentDate = paymentDate;
     }
+
+    public void setCreatedAt(Date date) {
+    }
+
+    public void setUpdatedAt(Date date) {
+    }
 }
