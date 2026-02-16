@@ -19,7 +19,7 @@ export default function EditReservation() {
     const [loading, setLoading] = useState(false);
     const [fetchingData, setFetchingData] = useState(true);
     
-    const API_URL = import.meta.env.VITE_BACKEND_URL;
+    const API_URL = import.meta.env.VITE_BACKEND_URL2;
 
     useEffect(() => {
         fetchReservationData();
