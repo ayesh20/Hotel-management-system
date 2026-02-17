@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST Controller for managing hotel inventory operations.
- * Provides endpoints for CRUD operations and inventory reporting.
- */
+
+
+//Provides endpoints for CRUD operations and inventory reporting.
 @RestController
 @RequestMapping("/api/inventory")
 public class InventoryController {
@@ -21,30 +20,24 @@ public class InventoryController {
     @Autowired
     private InventoryService service;
 
-    /**
-     * Creates a new inventory item.
-     * POST /api/inventory
-     * Status is automatically calculated based on quantity and reorder level.
-     */
+
+     // Creates a new inventory item.
     @PostMapping
     public ResponseEntity<InventoryItem> addItem(@Valid @RequestBody InventoryItem item) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addItem(item));
     }
 
-    /**
-     * Retrieves all inventory items.
-     * GET /api/inventory
-     */
+
+     // Retrieves all inventory items.
     @GetMapping
     public ResponseEntity<List<InventoryItem>> getAllItems() {
         return ResponseEntity.ok(service.getAllItems());
     }
 
-    /**
-     * Retrieves a single inventory item by ID.
-     * GET /api/inventory/{id}
-     * Returns 404 if item not found.
-     */
+
+     // Retrieves a single inventory item by ID.
+     // Returns 404 if item not found.
+
     @GetMapping("/{id}")
     public ResponseEntity<InventoryItem> getItemById(@PathVariable String id) {
         return service.getItemById(id)
@@ -52,11 +45,9 @@ public class InventoryController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Updates an existing inventory item.
-     * PUT /api/inventory/{id}
-     * Status is automatically recalculated based on updated values.
-     */
+
+     // Updates an existing inventory item.
+     // Status is automatically recalculated based on updated values.
     @PutMapping("/{id}")
     public ResponseEntity<InventoryItem> updateItem(
             @PathVariable String id,
@@ -64,51 +55,39 @@ public class InventoryController {
         return ResponseEntity.ok(service.updateItem(id, item));
     }
 
-    /**
-     * Deletes an inventory item by ID.
-     * DELETE /api/inventory/{id}
-     * Returns 204 No Content on success.
-     */
+
+     // Deletes an inventory item by ID.
+     // Returns 204 No Content on success.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable String id) {
         service.deleteItem(id);
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Searches for items by name (case-insensitive).
-     * GET /api/inventory/search?name=towel
-     */
+
+     // Searches for items by name (case-insensitive).
     @GetMapping("/search")
     public ResponseEntity<List<InventoryItem>> searchItems(@RequestParam String name) {
         return ResponseEntity.ok(service.searchItemsByName(name));
     }
 
-    /**
-     * Retrieves items that need reordering (LOW_STOCK or OUT_OF_STOCK).
-     * GET /api/inventory/low-stock
-     * Useful for generating reorder reports.
-     */
+
+     // Retrieves items that need reordering (LOW_STOCK or OUT_OF_STOCK).
     @GetMapping("/low-stock")
     public ResponseEntity<List<InventoryItem>> getLowStockItems() {
         return ResponseEntity.ok(service.getLowStockItems());
     }
 
-    /**
-     * Retrieves items by category.
-     * GET /api/inventory/category/{category}
-     * Example: /api/inventory/category/Linens
-     */
+
+     // Retrieves items by category.
     @GetMapping("/category/{category}")
     public ResponseEntity<List<InventoryItem>> getByCategory(@PathVariable String category) {
         return ResponseEntity.ok(service.getItemsByCategory(category));
     }
 
-    /**
-     * Calculates total inventory value.
-     * GET /api/inventory/total-value
-     * Returns the sum of (quantity × unit price) for all items.
-     */
+
+     // Calculates total inventory value.
+     // Returns the sum of (quantity × unit price) for all items.
     @GetMapping("/total-value")
     public ResponseEntity<Double> getTotalInventoryValue() {
         return ResponseEntity.ok(service.getTotalInventoryValue());
