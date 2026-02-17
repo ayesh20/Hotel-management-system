@@ -3,39 +3,22 @@ package com.nsbm.group_04.Housekeeping.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.validation.constraints.NotBlank;
-
-
 @Document(collection = "housekeeping")
 public class HouseKeeping {
 
     @Id
     private String id;
 
-    @NotBlank(message = "Room number is required")
     private String roomNumber;
-
-    @NotBlank(message = "Staff ID is required")
     private String staffId;
-
-    @NotBlank(message = "Cleaning date is required")
     private String cleaningDate;
+    private String status;
+    private String remarks;
 
-    @NotBlank(message = "Status is required")
-    private String status;   // PENDING, IN_PROGRESS, COMPLETED
-
-    private String remarks;  // optional
-
-    // No-argument constructor
     public HouseKeeping() {
     }
 
-    // Parameterized constructor
-    public HouseKeeping(String roomNumber,
-                        String staffId,
-                        String cleaningDate,
-                        String status,
-                        String remarks) {
+    public HouseKeeping(String roomNumber, String staffId, String cleaningDate, String status, String remarks) {
         this.roomNumber = roomNumber;
         this.staffId = staffId;
         this.cleaningDate = cleaningDate;
@@ -43,13 +26,8 @@ public class HouseKeeping {
         this.remarks = remarks;
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getRoomNumber() {
