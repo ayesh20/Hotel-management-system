@@ -30,7 +30,7 @@ public class PaymentService {
         payment.setUpdatedAt(new Date());
 
         // Calculate final amount
-        double finalAmount = payment.getAmount() + payment.getTaxAmount() - payment.getDiscountAmount();
+        double finalAmount = payment.getAmount() - payment.getDiscountAmount();
         payment.setFinalAmount(finalAmount);
 
         return paymentRepository.save(payment);

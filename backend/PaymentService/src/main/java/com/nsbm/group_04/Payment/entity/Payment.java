@@ -2,43 +2,61 @@ package com.nsbm.group_04.Payment.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Document(collection = "payments")
 public class Payment {
-    @Id
-    private String id; // MongoDB uses String/ObjectId by default
-    private String bookingId;
-    private String guestId;
-    private BigDecimal amount;
-    private String currency;
-    private String paymentMethod; // e.g., CARD, CASH
-    private String status; // e.g., SUCCESS, PENDING, FAILED
-    private String transactionReference;
-    private LocalDateTime paymentDate;
 
-    // Constructors
+    @Id
+    private String paymentId;
+
+    private String bookingId;
+    private String customerId;
+    private String roomId;
+
+    private double amount;
+    private double taxAmount;
+    private double discountAmount;
+    private double finalAmount;
+
+    private String paymentMethod; // CARD, CASH, ONLINE
+    private String paymentStatus; // PAID, PENDING, FAILED
+
+    private String transactionId;
+    private String currency;
+
+    private Date paymentDate;
+    private Date createdAt;
+    private Date updatedAt;
+
+    // Default constructor
     public Payment() {}
 
-    public Payment(String bookingId, String guestId, BigDecimal amount, String currency, String paymentMethod) {
+    public Payment(String paymentId, String bookingId, String customerId, String roomId, double amount, double taxAmount, double discountAmount, double finalAmount, String paymentMethod, String paymentStatus, String transactionId, String currency, Date paymentDate, Date createdAt, Date updatedAt) {
+        this.paymentId = paymentId;
         this.bookingId = bookingId;
-        this.guestId = guestId;
+        this.customerId = customerId;
+        this.roomId = roomId;
         this.amount = amount;
-        this.currency = currency;
+        this.taxAmount = taxAmount;
+        this.discountAmount = discountAmount;
+        this.finalAmount = finalAmount;
         this.paymentMethod = paymentMethod;
-        this.status = "PENDING";
-        this.paymentDate = LocalDateTime.now();
+        this.paymentStatus = paymentStatus;
+        this.transactionId = transactionId;
+        this.currency = currency;
+        this.paymentDate = paymentDate;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     // Getters and Setters
-
-    public String getId() {
-        return id;
+    public String getPaymentId() {
+        return paymentId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
     }
 
     public String getBookingId() {
@@ -49,28 +67,52 @@ public class Payment {
         this.bookingId = bookingId;
     }
 
-    public String getGuestId() {
-        return guestId;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setGuestId(String guestId) {
-        this.guestId = guestId;
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
-    public BigDecimal getAmount() {
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
+    }
+
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public String getCurrency() {
-        return currency;
+    public double getTaxAmount() {
+        return taxAmount;
     }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public void setTaxAmount(double taxAmount) {
+        this.taxAmount = taxAmount;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public double getFinalAmount() {
+        return finalAmount;
+    }
+
+    public void setFinalAmount(double finalAmount) {
+        this.finalAmount = finalAmount;
     }
 
     public String getPaymentMethod() {
@@ -81,28 +123,49 @@ public class Payment {
         this.paymentMethod = paymentMethod;
     }
 
-    public String getStatus() {
-        return status;
+    public String getPaymentStatus() {
+        return paymentStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
-    public String getTransactionReference() {
-        return transactionReference;
+    public String getTransactionId() {
+        return transactionId;
     }
 
-    public void setTransactionReference(String transactionReference) {
-        this.transactionReference = transactionReference;
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
-    public LocalDateTime getPaymentDate() {
-        return paymentDate;
+    public String getCurrency() {
+        return currency;
     }
 
-    public void setPaymentDate(LocalDateTime paymentDate) {
-        this.paymentDate = paymentDate;
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    @Override
+    public String toString() {
+        return "Payment{" +
+                "paymentId='" + paymentId + '\'' +
+                ", bookingId='" + bookingId + '\'' +
+                ", customerId='" + customerId + '\'' +
+                ", roomId='" + roomId + '\'' +
+                ", amount=" + amount +
+                ", taxAmount=" + taxAmount +
+                ", discountAmount=" + discountAmount +
+                ", finalAmount=" + finalAmount +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", paymentStatus='" + paymentStatus + '\'' +
+                ", transactionId='" + transactionId + '\'' +
+                ", currency='" + currency + '\'' +
+                ", paymentDate=" + paymentDate +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 
     public void setCreatedAt(Date date) {
