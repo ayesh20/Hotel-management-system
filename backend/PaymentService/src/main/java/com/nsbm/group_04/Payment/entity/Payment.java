@@ -167,4 +167,10 @@ public class Payment {
                 ", updatedAt=" + updatedAt +
                 '}';
     }
+
+    public void setCreatedAt(Date date) {
+    }
+
+    public void setUpdatedAt(Date date) {
+    }
 }
