@@ -6,10 +6,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Service layer that contains business logic
- * for managing hotel inventory operations.
- */
 @Service
 public class InventoryService {
 
@@ -21,10 +17,8 @@ public class InventoryService {
         this.repository = repository;
     }
 
-    /**
-     * Adds a new inventory item.
-     * Validates reorder level and auto-calculates status.
-     */
+
+     // Adds a new inventory item and Validates reorder level and auto-calculates status.
     public InventoryItem addItem(InventoryItem item) {
 
         // Business rule validation
@@ -55,10 +49,8 @@ public class InventoryService {
         return repository.findById(id);
     }
 
-    /**
-     * Updates an existing inventory item
-     * and recalculates stock status.
-     */
+
+     // Updates an existing inventory item and recalculates stock status.
     public InventoryItem updateItem(String id, InventoryItem itemDetails) {
 
         return repository.findById(id)
@@ -101,9 +93,8 @@ public class InventoryService {
         repository.deleteById(id);
     }
 
-    /**
-     * Searches items by name (case-insensitive).
-     */
+
+     // Searches items by name (case-insensitive).
     public List<InventoryItem> searchItemsByName(String name) {
         return repository.findByItemNameIgnoreCase(name);
     }
@@ -123,7 +114,6 @@ public class InventoryService {
     }
 
     //Calculates total inventory value.
-    //(quantity × unit price)
     public Double getTotalInventoryValue() {
         return repository.findAll().stream()
                 .mapToDouble(item ->

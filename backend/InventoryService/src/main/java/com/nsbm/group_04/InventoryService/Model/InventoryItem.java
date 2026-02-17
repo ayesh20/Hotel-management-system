@@ -10,12 +10,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 
-/**
- * InventoryItem represents a single inventory record in the hotel management system.
- * This class is mapped to a MongoDB collection named "inventoryItems".
- * It stores stock details such as quantity, pricing, supplier information,
- * and automatically tracks creation and update timestamps.
- */
 @Document(collection = "inventoryItems")  // Maps this class to MongoDB collection
 public class InventoryItem {
 
@@ -24,44 +18,33 @@ public class InventoryItem {
     private String id;
 
     @NotBlank(message = "Item name is required")
-    // Name of the inventory item (e.g., Towels, Soap, Bed Sheets)
     private String itemName;
 
     @NotBlank(message = "Category is required")
-    // Category of the item (e.g., Linens, Toiletries, Kitchen Supplies)
     private String category;
 
     @NotNull(message = "Quantity is required")
     @Min(value = 0, message = "Quantity cannot be negative")
-    // Current available stock quantity
     private Integer quantity;
 
     @NotNull(message = "Unit price is required")
     @Positive(message = "Unit price must be greater than zero")
-    // Price per single unit of the item
     private Double unitPrice;
 
     @NotNull(message = "Reorder level is required")
     @Positive(message = "Reorder level must be greater than zero")
-    // Minimum stock level before triggering reorder alert
     private Integer reorderLevel;
 
-    // Physical storage location inside the hotel (e.g., Main Store, Floor 2 Storage)
     private String storageLocation;
 
-    // Supplier or vendor providing the inventory item
     private String supplier;
 
-    // Stock status (IN_STOCK, LOW_STOCK, OUT_OF_STOCK)
-    // This value is automatically calculated in the Service layer
     private String status;
 
     @LastModifiedDate
-    // Date when the item record was last updated
     private LocalDate lastUpdated;
 
     @CreatedDate
-    // Date when the item record was initially created
     private LocalDate createdDate;
 
 
@@ -88,8 +71,6 @@ public class InventoryItem {
     }
 
     // Getter and Setter Method
-    // Standard getter and setter methods allow controlled access
-    // to private fields (Encapsulation principle in OOP)
 
     public String getId() {
         return id;
@@ -180,7 +161,6 @@ public class InventoryItem {
     }
 
     //Returns a string representation of the InventoryItem object.
-    //Useful for debugging and logging.
     @Override
     public String toString() {
         return "InventoryItem{" +

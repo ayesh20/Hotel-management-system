@@ -11,7 +11,6 @@ import java.util.List;
 public interface InventoryRepository extends MongoRepository<InventoryItem, String> {
 
     // Finds items by name (case-insensitive)
-    // Spring automatically generates the query
     List<InventoryItem> findByItemNameIgnoreCase(String itemName);
 
     // Finds items where quantity is greater than a specific number
