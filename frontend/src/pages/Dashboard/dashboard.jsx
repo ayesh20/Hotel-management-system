@@ -9,13 +9,15 @@ export default function Dashboard() {
     const [currentDate, setCurrentDate] = useState('');
     const [greeting, setGreeting] = useState('Good Morning');
     const [loading, setLoading] = useState(false);
-    const [roomNumber, setRoomNumber] = useState('');
-    const [roomSecifiy, setRoomSpecify] = useState('Standerd');
-    const [pricePerNight, setPricePerNight] = useState('');
-    const [error, setError] = useState('');         
-
+    const [error, setError] = useState(''); 
+   
+        
+    const [dashboardData, setDashboardData] = useState({
+            totalRooms: 0,
+            
+        });
     
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    const API_URL = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
             // Set current date and time
@@ -46,13 +48,44 @@ export default function Dashboard() {
             const interval = setInterval(updateDateTime, 1000);
             return () => clearInterval(interval);
         }, []);
+       
+        useEffect(() => {
+                fetchDashboardData();
+            }, []);
+        
+            const fetchDashboardData = async () => {
+                try {
+                    setLoading(true);
+        
+                    // Fetch all required data in parallel
+                    const [Roomrs, ] = await Promise.all([
+                        axios.get(`${API_URL}/rooms/all`, {
+                            
+                        }),
+                        
+                    ]);
+        
+                    // Process students data
+                     const rooms = Roomrs.data || [];
+                    const totalRooms = rooms.length;
+        
+                    setDashboardData(prev => ({
+                        ...prev,
+                        totalRooms
+                    }));
+        
+        
+                } catch (error) {
+                    console.error('Fetch dashboard data error:', error);
+                    if (error.response?.status === 403) {
+                        toast.error('Session expired. Please login again');
+                        setTimeout(() => navigate('/'), 2000);
+                    }
+                } finally {
+                    setLoading(false);
+                }
+            };
     
-    const handleAddRoom = async (e) => {
-        e.preventDefault();
-        setError('');
-        setLoading(true);   
-
-    }
     const handleLogout = () => {
             if (window.confirm('Are you sure you want to log out?')) {
                 localStorage.removeItem('authToken');
@@ -134,8 +167,8 @@ export default function Dashboard() {
                             </div>
                             <div className="text-white">
                                 <h3 className="text-lg font-semibold mb-1 opacity-90">Total Rooms</h3>
-                                <p className="text-4xl font-bold"></p>
-                                <p className="text-sm mt-2 opacity-80">E </p>
+                                <p className="text-4xl font-bold">{dashboardData.totalRooms}</p>
+                                <p className="text-sm mt-2 opacity-80">See all rooms</p>
                             </div>
                         </div>
     
@@ -219,7 +252,7 @@ export default function Dashboard() {
 
                          <button 
                             className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105" 
-                            onClick={() => navigate('/allrooms')}
+                            onClick={() => navigate('/allReservation')}
                         >
                             
                            Booking
@@ -235,7 +268,7 @@ export default function Dashboard() {
 
                         <button 
                             className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105" 
-                            onClick={() => navigate('/allrooms')}
+                            onClick={() => navigate('/allCleaners')}
                         >
                             Housekeeping
                         </button>

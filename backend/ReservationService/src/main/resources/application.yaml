@@ -1,3 +1,8 @@
+server:
+  port: 8082
+
 spring:
   application:
-    name: group_04
+    name: reservation-service
+  mongodb:
+    uri: mongodb+srv://sumindabandarapc:1234@cluster0.msrqh.mongodb.net/reservation_db

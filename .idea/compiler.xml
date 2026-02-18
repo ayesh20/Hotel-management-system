@@ -8,10 +8,21 @@
         <outputRelativeToContentRoot value="true" />
         <module name="group-04" />
       </profile>
+      <profile name="Annotation profile for EventManagement" enabled="true">
+        <sourceOutputDir name="../../EventManagement/target/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../EventManagement/target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="EventManagement" />
+      </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="EvenetManagement" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="EvenetManagement" options="-parameters" />
+      <module name="EventManagement" options="-parameters" />
       <module name="group-04" options="-parameters" />
     </option>
   </component>

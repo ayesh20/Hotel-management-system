@@ -59,7 +59,7 @@ export default function AllRooms() {
     };
 
     const handleEdit = (roomId) => {
-        navigate(`/rooms/edit/${roomId}`);
+        navigate(`/editroom/${roomId}`);
     };
 
     const handleAddRoom = () => {
@@ -184,9 +184,9 @@ export default function AllRooms() {
                             <thead>
                                 <tr className="border-b-2 border-slate-200">
                                     <th className="text-left py-4 px-4 text-slate-700 font-semibold">Room Number</th>
-                                    <th className="text-left py-4 px-4 text-slate-700 font-semibold">Room Specify</th>
-                                    <th className="text-left py-4 px-4 text-slate-700 font-semibold">Price</th>
                                     <th className="text-left py-4 px-4 text-slate-700 font-semibold">Type</th>
+                                    <th className="text-left py-4 px-4 text-slate-700 font-semibold">Price</th>
+                                    <th className="text-left py-4 px-4 text-slate-700 font-semibold">Room Specify</th>
                                     <th className="text-left py-4 px-4 text-slate-700 font-semibold">Status</th>
                                     <th className="text-right py-4 px-4 text-slate-700 font-semibold">Action</th>
                                 </tr>
@@ -216,7 +216,7 @@ export default function AllRooms() {
                                             className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
                                         >
                                             <td className="py-4 px-4 text-slate-800">{room.roomNumber}</td>
-                                            <td className="py-4 px-4 text-slate-800">{room.roomSpecify}</td>
+                                            <td className="py-4 px-4 text-slate-800">{room.roomType}</td>
                                             <td className="py-4 px-4 text-slate-800">LKR {parseFloat(room.price).toLocaleString()}</td>
                                             <td className="py-4 px-4 text-slate-800">{room.roomSpecify}</td>
                                             <td className="py-4 px-4">

@@ -8,5 +8,6 @@ public interface CustomerService {
     Customer saveCustomer(Customer customer);
     List<Customer> getAllCustomers();
     Customer getCustomerById(String id);
+    Customer updateCustomer(String id, Customer customer);
     void deleteCustomer(String id);
 }

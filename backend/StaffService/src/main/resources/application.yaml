@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: StaffService
+
+  data:
+    mongodb:
+      uri: mongodb+srv://yasintha:staff2000@cluster0.jsncqei.mongodb.net/staffdb?authSource=admin&retryWrites=true&w=majority
+
+server:
+  port: 8083
