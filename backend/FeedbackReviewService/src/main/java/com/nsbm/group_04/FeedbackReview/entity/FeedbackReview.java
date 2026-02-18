@@ -11,8 +11,7 @@ public class FeedbackReview {
     @Id
     private String id;
 
-    private String userId;
-    private String hotelId;
+    private String fullName;
     private int rating;          // 1 to 5
     private String comment;
     private LocalDateTime createdAt;
@@ -22,9 +21,9 @@ public class FeedbackReview {
     }
 
     // All-args constructor
-    public FeedbackReview(String userId, String hotelId, int rating, String comment) {
-        this.userId = userId;
-        this.hotelId = hotelId;
+    public FeedbackReview(String id, String fullName, int rating, String comment) {
+        this.id = id;
+        this.fullName = fullName;
         this.rating = rating;
         this.comment = comment;
         this.createdAt = LocalDateTime.now();
@@ -38,28 +37,12 @@ public class FeedbackReview {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getHotelId() {
-        return hotelId;
-    }
-
-    public void setHotelId(String hotelId) {
-        this.hotelId = hotelId;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getComment() {
@@ -70,20 +53,27 @@ public class FeedbackReview {
         this.comment = comment;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public int getRating() {
+        return rating;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     @Override
     public String toString() {
         return "FeedbackReview{" +
                 "id='" + id + '\'' +
-                ", userId='" + userId + '\'' +
-                ", hotelId='" + hotelId + '\'' +
+                ", fullName='" + fullName + '\'' +
                 ", rating=" + rating +
                 ", comment='" + comment + '\'' +
                 ", createdAt=" + createdAt +
