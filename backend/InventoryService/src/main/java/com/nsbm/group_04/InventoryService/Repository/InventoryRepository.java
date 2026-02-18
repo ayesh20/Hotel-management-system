@@ -21,4 +21,7 @@ public interface InventoryRepository extends MongoRepository<InventoryItem, Stri
 
     // Finds items by status
     List<InventoryItem> findByStatus(String status);
+
+    List<InventoryItem> findByStatusIn(List<String> statuses);
 }
+

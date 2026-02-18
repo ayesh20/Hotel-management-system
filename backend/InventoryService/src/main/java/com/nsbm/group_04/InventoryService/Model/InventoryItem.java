@@ -8,7 +8,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.time.LocalDate;
+
+import java.time.Instant;
+
 
 @Document(collection = "inventoryItems")  // Maps this class to MongoDB collection
 public class InventoryItem {
@@ -42,21 +44,21 @@ public class InventoryItem {
     private String status;
 
     @LastModifiedDate
-    private LocalDate lastUpdated;
+    private Instant lastUpdated;
 
     @CreatedDate
-    private LocalDate createdDate;
+    private Instant createdDate;
 
 
-     //Default constructor required by Spring Data and MongoDB.
+    //Default constructor required by Spring Data and MongoDB.
     public InventoryItem() {
     }
 
 
-     //Parameterized constructor to initialize all fields.
+    //Parameterized constructor to initialize all fields.
     public InventoryItem(String id, String itemName, String category, Integer quantity,
                          Double unitPrice, Integer reorderLevel, String storageLocation,
-                         String supplier, String status, LocalDate lastUpdated, LocalDate createdDate) {
+                         String supplier, String status, Instant lastUpdated, Instant createdDate) {
         this.id = id;
         this.itemName = itemName;
         this.category = category;
@@ -144,19 +146,19 @@ public class InventoryItem {
         this.status = status;
     }
 
-    public LocalDate getLastUpdated() {
+    public Instant getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(LocalDate lastUpdated) {
+    public void setLastUpdated(Instant lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
-    public LocalDate getCreatedDate() {
+    public Instant getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDate createdDate) {
+    public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
     }
 
