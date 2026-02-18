@@ -21,22 +21,22 @@ public class InventoryController {
     private InventoryService service;
 
 
-     // Creates a new inventory item.
+    // Creates a new inventory item.
     @PostMapping
     public ResponseEntity<InventoryItem> addItem(@Valid @RequestBody InventoryItem item) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addItem(item));
     }
 
 
-     // Retrieves all inventory items.
+    // Retrieves all inventory items.
     @GetMapping
     public ResponseEntity<List<InventoryItem>> getAllItems() {
         return ResponseEntity.ok(service.getAllItems());
     }
 
 
-     // Retrieves a single inventory item by ID.
-     // Returns 404 if item not found.
+    // Retrieves a single inventory item by ID.
+    // Returns 404 if item not found.
 
     @GetMapping("/{id}")
     public ResponseEntity<InventoryItem> getItemById(@PathVariable String id) {
@@ -46,8 +46,8 @@ public class InventoryController {
     }
 
 
-     // Updates an existing inventory item.
-     // Status is automatically recalculated based on updated values.
+    // Updates an existing inventory item.
+    // Status is automatically recalculated based on updated values.
     @PutMapping("/{id}")
     public ResponseEntity<InventoryItem> updateItem(
             @PathVariable String id,
@@ -56,8 +56,8 @@ public class InventoryController {
     }
 
 
-     // Deletes an inventory item by ID.
-     // Returns 204 No Content on success.
+    // Deletes an inventory item by ID.
+    // Returns 204 No Content on success.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable String id) {
         service.deleteItem(id);
@@ -65,29 +65,29 @@ public class InventoryController {
     }
 
 
-     // Searches for items by name (case-insensitive).
+    // Searches for items by name (case-insensitive).
     @GetMapping("/search")
     public ResponseEntity<List<InventoryItem>> searchItems(@RequestParam String name) {
         return ResponseEntity.ok(service.searchItemsByName(name));
     }
 
 
-     // Retrieves items that need reordering (LOW_STOCK or OUT_OF_STOCK).
+    // Retrieves items that need reordering (LOW_STOCK or OUT_OF_STOCK).
     @GetMapping("/low-stock")
     public ResponseEntity<List<InventoryItem>> getLowStockItems() {
         return ResponseEntity.ok(service.getLowStockItems());
     }
 
 
-     // Retrieves items by category.
+    // Retrieves items by category.
     @GetMapping("/category/{category}")
     public ResponseEntity<List<InventoryItem>> getByCategory(@PathVariable String category) {
         return ResponseEntity.ok(service.getItemsByCategory(category));
     }
 
 
-     // Calculates total inventory value.
-     // Returns the sum of (quantity × unit price) for all items.
+    // Calculates total inventory value.
+    // Returns the sum of (quantity × unit price) for all items.
     @GetMapping("/total-value")
     public ResponseEntity<Double> getTotalInventoryValue() {
         return ResponseEntity.ok(service.getTotalInventoryValue());

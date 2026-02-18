@@ -1,12 +1,11 @@
 spring:
   application:
     name: InventoryService
-
-  mongodb:
-      uri: mongodb+srv://pyjpallegama_db_user:L6RH88hyuwihvrj3@inventory-service-clust.m01s45s.mongodb.net/inventorydb?appName=Inventory-Service-Cluster
-  Jackson:
+  jackson:
     serialization:
-      indent_output: true
+      indent-output: true
+  mongodb:
+    uri: mongodb+srv://pyjpallegama_db_user:L6RH88hyuwihvrj3@inventory-service-clust.m01s45s.mongodb.net/inventorydb?appName=Inventory-Service-Cluster
 
 server:
   port: 8081
