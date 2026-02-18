@@ -26,8 +26,7 @@ public class PaymentService {
         }
 
         payment.setPaymentStatus("PENDING");
-        payment.setCreatedAt(new Date());
-        payment.setUpdatedAt(new Date());
+        payment.setPaymentDate(new Date());
 
         // Calculate final amount
         double finalAmount = payment.getAmount() - payment.getDiscountAmount();
@@ -42,7 +41,7 @@ public class PaymentService {
         if (optionalPayment.isPresent()) {
             Payment payment = optionalPayment.get();
             payment.setPaymentStatus(status);
-            payment.setUpdatedAt(new Date());
+            payment.setPaymentDate(new Date());
             return paymentRepository.save(payment);
         }
         return null;
