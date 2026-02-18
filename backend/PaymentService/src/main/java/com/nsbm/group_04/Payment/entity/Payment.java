@@ -28,7 +28,7 @@ public class Payment {
     // Default constructor
     public Payment() {}
 
-    public Payment(String paymentId, String bookingId, String customerId, String roomId, double amount, double discountAmount, double finalAmount, String paymentMethod, String paymentStatus, String currency, Date paymentDate) {
+
         this.paymentId = paymentId;
         this.bookingId = bookingId;
         this.customerId = customerId;
@@ -83,14 +83,6 @@ public class Payment {
         this.amount = amount;
     }
 
-    public double getTaxAmount() {
-        return taxAmount;
-    }
-
-    public void setTaxAmount(double taxAmount) {
-        this.taxAmount = taxAmount;
-    }
-
     public double getDiscountAmount() {
         return discountAmount;
     }
@@ -139,6 +131,14 @@ public class Payment {
         this.currency = currency;
     }
 
+    public Date getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(Date paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
     @Override
     public String toString() {
         return "Payment{" +
@@ -147,7 +147,6 @@ public class Payment {
                 ", customerId='" + customerId + '\'' +
                 ", roomId='" + roomId + '\'' +
                 ", amount=" + amount +
-                ", taxAmount=" + taxAmount +
                 ", discountAmount=" + discountAmount +
                 ", finalAmount=" + finalAmount +
                 ", paymentMethod='" + paymentMethod + '\'' +
@@ -155,14 +154,7 @@ public class Payment {
                 ", transactionId='" + transactionId + '\'' +
                 ", currency='" + currency + '\'' +
                 ", paymentDate=" + paymentDate +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 '}';
     }
 
-    public void setCreatedAt(Date date) {
-    }
-
-    public void setUpdatedAt(Date date) {
-    }
 }

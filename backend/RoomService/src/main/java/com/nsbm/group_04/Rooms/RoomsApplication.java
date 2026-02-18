@@ -16,7 +16,7 @@ public class RoomsApplication {
 		SpringApplication.run(RoomsApplication.class, args);
 		System.out.println("\n==============================================");
 		System.out.println("✓ Rooms Management System Started Successfully");
-		System.out.println("✓ Server running on: http://localhost:8080");
+		System.out.println("✓ Server running on: http://localhost:");
 		System.out.println("==============================================\n");
 	}
 

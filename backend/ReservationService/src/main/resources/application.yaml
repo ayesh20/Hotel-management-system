@@ -1,11 +1,8 @@
 server:
-  port: 8082  # Reservation Service Port
+  port: 8082
 
 spring:
   application:
     name: reservation-service
-  data:
-    mongodb:
-      # If you have Mongo installed locally:
-      url: mongodb://localhost:27017/reservation_db
-      # If using MongoDB Atlas (Cloud), paste that URL here instead.
+  mongodb:
+    uri: mongodb+srv://sumindabandarapc:1234@cluster0.msrqh.mongodb.net/reservation_db
