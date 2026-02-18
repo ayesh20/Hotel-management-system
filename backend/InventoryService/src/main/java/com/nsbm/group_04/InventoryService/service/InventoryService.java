@@ -77,9 +77,20 @@ public class InventoryService {
 
     //Deletes an item by ID.
     public void deleteItem(String id) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Item does not exist with id: " + id);
+
+        // Fetch the actual item object — not just check if it exists
+        InventoryItem item = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item does not exist with id: " + id));
+
+        // Prevent deleting items that still have stock
+        if (item.getQuantity() > 0) {
+            throw new IllegalArgumentException(
+                    "Cannot delete item with existing stock. " +
+                            "Current quantity: " + item.getQuantity() +
+                            ". Please reduce quantity to 0 before deleting."
+            );
         }
+
         repository.deleteById(id);
     }
 
@@ -89,8 +100,7 @@ public class InventoryService {
         return repository.findByItemNameIgnoreCase(name);
     }
 
-
-
+    //Returns items that need reordering (LOW_STOCK or OUT_OF_STOCK status)
     public List<InventoryItem> getLowStockItems() {
         return repository.findByStatusIn(List.of("LOW_STOCK", "OUT_OF_STOCK"));
     }
@@ -123,5 +133,46 @@ public class InventoryService {
         {
             return "IN_STOCK";
         }
+    }
+
+    // Increases item quantity for restocking
+    public InventoryItem restockItem(String id, int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException(
+                    "Restock amount must be positive. Provided: " + amount
+            );
+        }
+        return repository.findById(id)
+                .map(item -> {
+                    int newQuantity = item.getQuantity() + amount;
+                    item.setQuantity(newQuantity);
+                    item.setStatus(calculateStatus(newQuantity, item.getReorderLevel()));
+                    return repository.save(item);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+    }
+
+    // Decreases item quantity when items are consumed
+    public InventoryItem consumeItem(String id, int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException(
+                    "Consume amount must be positive. Provided: " + amount
+            );
+        }
+        return repository.findById(id)
+                .map(item -> {
+                    if (item.getQuantity() < amount) {
+                        throw new IllegalArgumentException(
+                                "Insufficient stock for '" + item.getItemName() + "'. " +
+                                        "Available: " + item.getQuantity() +
+                                        ", Requested: " + amount
+                        );
+                    }
+                    int newQuantity = item.getQuantity() - amount;
+                    item.setQuantity(newQuantity);
+                    item.setStatus(calculateStatus(newQuantity, item.getReorderLevel()));
+                    return repository.save(item);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
     }
 }

@@ -92,4 +92,20 @@ public class InventoryController {
     public ResponseEntity<Double> getTotalInventoryValue() {
         return ResponseEntity.ok(service.getTotalInventoryValue());
     }
+
+    // Increases item quantity — restocking operation
+    @PatchMapping("/{id}/restock")
+    public ResponseEntity<InventoryItem> restockItem(
+            @PathVariable String id,
+            @RequestParam int amount) {
+        return ResponseEntity.ok(service.restockItem(id, amount));
+    }
+
+    // Decreases item quantity — consumption operation
+    @PatchMapping("/{id}/consume")
+    public ResponseEntity<InventoryItem> consumeItem(
+            @PathVariable String id,
+            @RequestParam int amount) {
+        return ResponseEntity.ok(service.consumeItem(id, amount));
+    }
 }
