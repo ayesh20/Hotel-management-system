@@ -15,39 +15,31 @@ public class Payment {
     private String roomId;
 
     private double amount;
-    private double taxAmount;
     private double discountAmount;
     private double finalAmount;
 
     private String paymentMethod; // CARD, CASH, ONLINE
     private String paymentStatus; // PAID, PENDING, FAILED
 
-    private String transactionId;
     private String currency;
 
     private Date paymentDate;
-    private Date createdAt;
-    private Date updatedAt;
 
     // Default constructor
     public Payment() {}
 
-    public Payment(String paymentId, String bookingId, String customerId, String roomId, double amount, double taxAmount, double discountAmount, double finalAmount, String paymentMethod, String paymentStatus, String transactionId, String currency, Date paymentDate, Date createdAt, Date updatedAt) {
+    public Payment(String paymentId, String bookingId, String customerId, String roomId, double amount, double discountAmount, double finalAmount, String paymentMethod, String paymentStatus, String currency, Date paymentDate) {
         this.paymentId = paymentId;
         this.bookingId = bookingId;
         this.customerId = customerId;
         this.roomId = roomId;
         this.amount = amount;
-        this.taxAmount = taxAmount;
         this.discountAmount = discountAmount;
         this.finalAmount = finalAmount;
         this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
-        this.transactionId = transactionId;
         this.currency = currency;
         this.paymentDate = paymentDate;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     // Getters and Setters
