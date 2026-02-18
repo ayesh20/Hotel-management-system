@@ -15,6 +15,9 @@ public class Reservation {
     private LocalDate checkOutDate;
     private Double totalPrice;
 
+    private String roomId;      // To link to the specific room ID
+    private String roomNumber;  // To show "101" on the receipt
+
     // Constructors
     public Reservation() {}
 
@@ -44,4 +47,10 @@ public class Reservation {
 
     public Double getTotalPrice() { return totalPrice; }
     public void setTotalPrice(Double totalPrice) { this.totalPrice = totalPrice; }
+
+    public String getRoomId() { return roomId; }
+    public void setRoomId(String roomId) { this.roomId = roomId; }
+
+    public String getRoomNumber() { return roomNumber; }
+    public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
 }
