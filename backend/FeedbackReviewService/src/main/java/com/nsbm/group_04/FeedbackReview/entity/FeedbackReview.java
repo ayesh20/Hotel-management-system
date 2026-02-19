@@ -3,6 +3,9 @@ package com.nsbm.group_04.FeedbackReview.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+
 import java.time.LocalDateTime;
 
 @Document(collection = "feedbacks")
@@ -12,7 +15,11 @@ public class FeedbackReview {
     private String id;
 
     private String fullName;
+
+    @Min(1)
+    @Max(5)
     private int rating;          // 1 to 5
+
     private String comment;
     private LocalDateTime createdAt;
 
