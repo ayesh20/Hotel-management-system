@@ -10,7 +10,7 @@ import com.nsbm.group_04.BookingTransportService.service.TransportService;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/api/transports")
+@RequestMapping("/api/transport")
 public class TransportController {
 
     @Autowired
