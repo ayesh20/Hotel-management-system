@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes,Router, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 
@@ -14,9 +14,6 @@ import AllCleaners from "./pages/HouseKeeping/AllCleaners.jsx";
 import AddCleaners from "./pages/HouseKeeping/AddCleaners.jsx";
 import EditCleaners from "./pages/HouseKeeping/EditCleaners.jsx";
 
-import EditReservation from "./pages/Reservations/EditReservation.jsx";
-import AddReservation from "./pages/Reservations/AddReservation.jsx";
-import AllReservations from "./pages/Reservations/AllReservations.jsx";
 
 
 
@@ -50,9 +47,6 @@ function App() {
             <Route path="/allCleaners" element={<AllCleaners/>}/>
             <Route path="/addCleaner" element={<AddCleaners/>}/>
             <Route path="/editCleaner/:id" element={<EditCleaners/>}/>
-            <Route path="/allReservation" element={<AllReservations/>}/>
-            <Route path="/addReservation" element={<AddReservation/>}/>
-            <Route path="/editReservation/:id" element={<EditReservation/>}/>
 
            
           
