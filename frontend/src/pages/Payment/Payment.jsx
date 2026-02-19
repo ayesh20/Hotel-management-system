@@ -6,6 +6,7 @@ export default function Payment() {
 
   const [customerName, setCustomerName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [address, setAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [discount, setDiscount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("CARD");
@@ -66,7 +67,7 @@ export default function Payment() {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/payments", {
+      const response = await fetch("http://localhost:8082/api/payments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,6 +111,14 @@ export default function Payment() {
             placeholder="Phone Number"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
+          />
+
+          <input
+            style={styles.input}
+            type="text"
+            placeholder="Address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
           />
         </div>
 

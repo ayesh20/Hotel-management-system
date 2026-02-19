@@ -3,6 +3,7 @@ package com.nsbm.group_04.Payment.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
+import java.util.UUID;
 
 @Document(collection = "payments")
 public class Payment {
@@ -21,6 +22,7 @@ public class Payment {
     private String paymentMethod; // CARD, CASH, ONLINE
     private String paymentStatus; // PAID, PENDING, FAILED
 
+    private String transactionId;
     private String currency;
 
     private Date paymentDate;
@@ -28,7 +30,7 @@ public class Payment {
     // Default constructor
     public Payment() {}
 
-
+    public Payment(String paymentId, String bookingId, String customerId, String roomId, double amount, double discountAmount, double finalAmount, String paymentMethod, String paymentStatus,String transactionId, String currency, Date paymentDate) {
         this.paymentId = paymentId;
         this.bookingId = bookingId;
         this.customerId = customerId;
@@ -38,11 +40,11 @@ public class Payment {
         this.finalAmount = finalAmount;
         this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
+        this.transactionId = transactionId;
         this.currency = currency;
         this.paymentDate = paymentDate;
     }
 
-    // Getters and Setters
     public String getPaymentId() {
         return paymentId;
     }
@@ -156,5 +158,4 @@ public class Payment {
                 ", paymentDate=" + paymentDate +
                 '}';
     }
-
 }

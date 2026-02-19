@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes,Router, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 
@@ -13,6 +13,8 @@ import EditRoom from "./pages/Room/editRoom.jsx";
 import AllCleaners from "./pages/HouseKeeping/AllCleaners.jsx";
 import AddCleaners from "./pages/HouseKeeping/AddCleaners.jsx";
 import EditCleaners from "./pages/HouseKeeping/EditCleaners.jsx";
+import Payment from "./pages/Payment/Payment.jsx";
+import PaymentComplete from "./pages/Payment/paymentcomplete.jsx";
 
 
 
@@ -47,6 +49,9 @@ function App() {
             <Route path="/allCleaners" element={<AllCleaners/>}/>
             <Route path="/addCleaner" element={<AddCleaners/>}/>
             <Route path="/editCleaner/:id" element={<EditCleaners/>}/>
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/paymentcomplete" element={<PaymentComplete />} />
+     
 
            
           
