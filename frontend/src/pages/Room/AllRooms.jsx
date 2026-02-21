@@ -9,9 +9,10 @@ export default function AllRooms() {
     const [loading, setLoading] = useState(true);
     const [currentSlide, setCurrentSlide] = useState(0);
     const navigate = useNavigate();
-    
+
+
     const API_URL = import.meta.env.VITE_BACKEND_URL;
-    
+
     const carouselImages = [
         '/image1.jpg',
         '/image2.jpg',
@@ -26,13 +27,14 @@ export default function AllRooms() {
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
         }, 5000);
-        
         return () => clearInterval(timer);
     }, []);
 
     const fetchRooms = async () => {
         try {
             setLoading(true);
+            // /rooms/all now returns rooms with RESERVED status already applied
+            // by RoomServiceImpl cross-matching with Reservation microservice (8082)
             const response = await axios.get(`${API_URL}/rooms/all`);
             setRooms(response.data);
         } catch (error) {
@@ -44,72 +46,55 @@ export default function AllRooms() {
     };
 
     const handleDelete = async (roomId) => {
-        if (!window.confirm('Are you sure you want to delete this room?')) {
-            return;
-        }
-
+        if (!window.confirm('Are you sure you want to delete this room?')) return;
         try {
             await axios.delete(`${API_URL}/rooms/${roomId}`);
             toast.success('Room deleted successfully');
-            fetchRooms();
+            fetchRooms(); // re-fetch so status updates immediately
         } catch (error) {
             console.error('Delete room error:', error);
             toast.error('Failed to delete room');
         }
     };
 
-    const handleEdit = (roomId) => {
-        navigate(`/editroom/${roomId}`);
-    };
+    const handleEdit = (roomId) => navigate(`/editroom/${roomId}`);
+    const handleAddRoom = () => navigate('/addroom');
+    const handleBack = () => navigate('/dashboard');
 
-    const handleAddRoom = () => {
-        navigate('/addroom');
-    };
+    const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+    const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+    const goToSlide = (index) => setCurrentSlide(index);
 
-    const handleBack = () => {
-        navigate('/dashboard');
-    };
-
-    const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
-    };
-
-    const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
-    };
-
-    const goToSlide = (index) => {
-        setCurrentSlide(index);
-    };
-
+    // Status badge color mapping
     const getStatusColor = (status) => {
         const colors = {
-            'AVAILABLE': 'bg-green-100 text-green-800',
-            'OCCUPIED': 'bg-red-100 text-red-800',
+            'AVAILABLE':   'bg-green-100 text-green-800',
+            'OCCUPIED':    'bg-red-100 text-red-800',
             'MAINTENANCE': 'bg-yellow-100 text-yellow-800',
-            'RESERVED': 'bg-blue-100 text-blue-800'
+            'RESERVED':    'bg-blue-100 text-blue-800',
         };
         return colors[status] || 'bg-gray-100 text-gray-800';
     };
 
     return (
         <div className="min-h-screen bg-slate-100 p-4 md:p-8">
+
             {/* Header */}
             <div className="flex items-center gap-4 mb-6">
-                <button 
+                <button
                     onClick={handleBack}
                     className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
                 >
                     <ArrowLeft className="w-6 h-6 text-slate-900" />
                 </button>
-                <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
-                    rooms
-                </h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Rooms</h1>
             </div>
 
             {/* Main Content Card */}
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden max-w-7xl mx-auto">
+
                 <div className="grid md:grid-cols-2 gap-0">
+
                     {/* Left Side - Image Carousel */}
                     <div className="relative bg-slate-200 h-80 md:h-auto">
                         <div className="relative w-full h-full overflow-hidden">
@@ -128,7 +113,6 @@ export default function AllRooms() {
                                 </div>
                             ))}
 
-                            {/* Navigation Arrows */}
                             <button
                                 onClick={prevSlide}
                                 className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-colors"
@@ -142,15 +126,14 @@ export default function AllRooms() {
                                 <ChevronRight className="w-6 h-6 text-slate-800" />
                             </button>
 
-                            {/* Dots Indicator */}
                             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                                 {carouselImages.map((_, index) => (
                                     <button
                                         key={index}
                                         onClick={() => goToSlide(index)}
                                         className={`w-2 h-2 rounded-full transition-all ${
-                                            index === currentSlide 
-                                                ? 'bg-blue-500 w-6' 
+                                            index === currentSlide
+                                                ? 'bg-blue-500 w-6'
                                                 : 'bg-white/60 hover:bg-white'
                                         }`}
                                     />
@@ -159,14 +142,14 @@ export default function AllRooms() {
                         </div>
                     </div>
 
-                    {/* Right Side - Text and Button */}
+                    {/* Right Side */}
                     <div className="p-8 md:p-12 flex flex-col justify-center">
                         <h2 className="text-3xl font-bold text-slate-900 mb-4">Manage Your Rooms</h2>
-                        <br></br><br></br><br></br>
+                        <br /><br /><br />
                         <p className="text-slate-700 mb-6">
                             View, edit, and manage all rooms in your hotel. Keep track of room status and details with ease.
                         </p>
-<br></br>
+                        <br />
                         <button
                             onClick={handleAddRoom}
                             className="bg-green-400 hover:bg-green-500 text-white py-4 px-8 rounded-2xl font-semibold text-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 w-full md:w-auto"
@@ -211,8 +194,8 @@ export default function AllRooms() {
                                     </tr>
                                 ) : (
                                     rooms.map((room) => (
-                                        <tr 
-                                            key={room.id} 
+                                        <tr
+                                            key={room.id}
                                             className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
                                         >
                                             <td className="py-4 px-4 text-slate-800">{room.roomNumber}</td>
@@ -220,6 +203,7 @@ export default function AllRooms() {
                                             <td className="py-4 px-4 text-slate-800">LKR {parseFloat(room.price).toLocaleString()}</td>
                                             <td className="py-4 px-4 text-slate-800">{room.roomSpecify}</td>
                                             <td className="py-4 px-4">
+                                                {/* Status comes from backend — already RESERVED if booked, otherwise DB status */}
                                                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(room.status)}`}>
                                                     {room.status}
                                                 </span>
