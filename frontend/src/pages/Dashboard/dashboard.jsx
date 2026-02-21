@@ -14,10 +14,12 @@ export default function Dashboard() {
         
     const [dashboardData, setDashboardData] = useState({
             totalRooms: 0,
+            totalBookings: 0,
             
         });
     
     const API_URL = import.meta.env.VITE_BACKEND_URL;
+   const API_URL2 = import.meta.env.VITE_BACKEND_URL2;
 
     useEffect(() => {
             // Set current date and time
@@ -54,37 +56,39 @@ export default function Dashboard() {
             }, []);
         
             const fetchDashboardData = async () => {
-                try {
-                    setLoading(true);
-        
-                    // Fetch all required data in parallel
-                    const [Roomrs, ] = await Promise.all([
-                        axios.get(`${API_URL}/rooms/all`, {
-                            
-                        }),
-                        
-                    ]);
-        
-                    // Process students data
-                     const rooms = Roomrs.data || [];
-                    const totalRooms = rooms.length;
-        
-                    setDashboardData(prev => ({
-                        ...prev,
-                        totalRooms
-                    }));
-        
-        
-                } catch (error) {
-                    console.error('Fetch dashboard data error:', error);
-                    if (error.response?.status === 403) {
-                        toast.error('Session expired. Please login again');
-                        setTimeout(() => navigate('/'), 2000);
-                    }
-                } finally {
-                    setLoading(false);
-                }
-            };
+    try {
+        setLoading(true);
+
+        // Fetch all required data in parallel
+        const [Roomrs, Reservations] = await Promise.all([
+            axios.get(`${API_URL}/rooms/all`),
+            axios.get(`${API_URL2}/reservations`),
+        ]);
+
+        // Process rooms data
+        const rooms = Roomrs.data || [];
+        const totalRooms = rooms.length;
+
+        // Process reservations data
+        const reservations = Reservations.data || [];
+        const totalBookings = reservations.length;
+
+        setDashboardData(prev => ({
+            ...prev,
+            totalRooms,
+            totalBookings
+        }));
+
+    } catch (error) {
+        console.error('Fetch dashboard data error:', error);
+        if (error.response?.status === 403) {
+            toast.error('Session expired. Please login again');
+            setTimeout(() => navigate('/'), 2000);
+        }
+    } finally {
+        setLoading(false);
+    }
+};
     
     const handleLogout = () => {
             if (window.confirm('Are you sure you want to log out?')) {
@@ -203,8 +207,8 @@ export default function Dashboard() {
                                 <Calendar className="w-12 h-12 text-white opacity-80" />
                             </div>
                             <div className="text-white">
-                                <h3 className="text-lg font-semibold mb-1 opacity-90">Today's</h3>
-                                <p className="text-4xl font-bold"> ab</p>
+                                <h3 className="text-lg font-semibold mb-1 opacity-90">Total Bookings</h3>
+                                <p className="text-4xl font-bold">{dashboardData.totalBookings}</p>
                                 
                             </div>
                         </div>
