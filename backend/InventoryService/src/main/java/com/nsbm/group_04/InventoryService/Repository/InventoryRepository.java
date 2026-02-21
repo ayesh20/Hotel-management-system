@@ -8,13 +8,20 @@ import java.util.List;
 
 // Repository interface for performing CRUD operations on InventoryItem collection
 @Repository
-public interface InventoryRepository extends MongoRepository<InventoryItem, String>
-{
-    // Finds items by name (Spring automatically generates the query)
-    List<InventoryItem> findByItemName(String itemName);
+public interface InventoryRepository extends MongoRepository<InventoryItem, String> {
 
+    // Finds items by name (case-insensitive)
+    List<InventoryItem> findByItemNameIgnoreCase(String itemName);
 
     // Finds items where quantity is greater than a specific number
     List<InventoryItem> findByQuantityGreaterThan(int quantity);
 
+    // Finds items by category (case-insensitive)
+    List<InventoryItem> findByCategoryIgnoreCase(String category);
+
+    // Finds items by status
+    List<InventoryItem> findByStatus(String status);
+
+    List<InventoryItem> findByStatusIn(List<String> statuses);
 }
+

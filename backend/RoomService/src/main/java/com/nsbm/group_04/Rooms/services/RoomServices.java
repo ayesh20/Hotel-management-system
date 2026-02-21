@@ -42,7 +42,6 @@ public class RoomServices {
         if (optionalRoom.isPresent()) {
             Room existingRoom = optionalRoom.get();
 
-            // Update fields
             existingRoom.setRoomNumber(roomDetails.getRoomNumber());
             existingRoom.setRoomSpecify(roomDetails.getRoomSpecify());
             existingRoom.setPrice(roomDetails.getPrice());

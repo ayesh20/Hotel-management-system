@@ -10,17 +10,18 @@ public class Transport {
     private String id;
 
     private String vehicleType;      // Car, Van
-    private int vehicleNumber;
+    private String vehicleNumber;
     private String driverName;
     private String driverContact;
     private double pricePerDay;
     private String status;            // AVAILABLE, BOOKED
 
+
     // Constructors
     public Transport() {
     }
 
-    public Transport(String vehicleType, int vehicleNumber, String driverName,
+    public Transport(String vehicleType, String vehicleNumber, String driverName,
                      String driverContact, double pricePerDay, String status) {
         this.vehicleType = vehicleType;
         this.vehicleNumber = vehicleNumber;
@@ -47,11 +48,11 @@ public class Transport {
         this.vehicleType = vehicleType;
     }
 
-    public int getVehicleNumber() {
+    public String getVehicleNumber() {
         return vehicleNumber;
     }
 
-    public void setVehicleNumber(int vehicleNumber) {
+    public void setVehicleNumber(String vehicleNumber) {
         this.vehicleNumber = vehicleNumber;
     }
 

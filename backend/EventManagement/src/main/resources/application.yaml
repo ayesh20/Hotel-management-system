@@ -1,0 +1,7 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://tharuka2002:Tharuka2002%40@eventshandle.rw2hbmi.mongodb.net/EventsHandle?retryWrites=true&w=majority
+
+server:
+  port: 8081

@@ -1,5 +1,6 @@
 package com.nsbm.group_04.controller;
 
+import com.nsbm.group_04.dto.RoomDTO;
 import com.nsbm.group_04.entity.Reservation;
 import com.nsbm.group_04.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +55,10 @@ public class ReservationController {
     public ResponseEntity<Void> deleteReservation(@PathVariable String id) {
         reservationService.deleteReservation(id);
         return ResponseEntity.noContent().build(); // Return 204 No Content (Successful deletion)
+    }
+
+    @GetMapping("/check-rooms")
+    public List<RoomDTO> checkExternalRooms() {
+        return reservationService.getAvailableRoomsFromAPI();
     }
 }
