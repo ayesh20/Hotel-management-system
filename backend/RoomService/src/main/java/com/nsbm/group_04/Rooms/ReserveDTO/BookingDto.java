@@ -3,7 +3,7 @@ package com.nsbm.group_04.Rooms.ReserveDTO;
 public class BookingDto {
 
     private String roomNumber;
-    private String status; // "RESERVED" or "AVAILABLE"
+    private String status;
 
     public String getRoomNumber() { return roomNumber; }
     public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
