@@ -1,34 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function PaymentComplete() {
-  const { id } = useParams(); // Get paymentId from URL
+  const location = useLocation();
   const navigate = useNavigate();
-  const [payment, setPayment] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Fetch payment details from backend
-    axios
-      .get(`http://localhost:8082/api/payments/${id}`)
-      .then((res) => {
-        setPayment(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.card}>Loading payment details...</div>
-      </div>
-    );
-  }
+  const payment = location.state?.payment;
 
   if (!payment) {
     return (
@@ -52,48 +28,42 @@ export default function PaymentComplete() {
 
         <div style={styles.statusBox}>
           <p style={styles.statusText}>Payment Status:</p>
-          <h1 style={styles.paidText}>{payment.paymentStatus}</h1>
+          <h1 style={styles.paidText}>
+            {payment.paymentStatus || "PAID"}
+          </h1>
         </div>
 
+        {/* Customer Details */}
         <div style={styles.sectionBox}>
           <h3 style={styles.sectionTitle}>Customer Details</h3>
-          <p>
-            <b>Customer Name:</b> {payment.customerName}
-          </p>
-          <p>
-            <b>Phone Number:</b> {payment.phoneNumber}
-          </p>
-          <p>
-            <b>Booking ID:</b> {payment.bookingId}
-          </p>
+          <p><b>Customer Name:</b> {payment.customerName}</p>
+          <p><b>Phone Number:</b> {payment.phoneNumber}</p>
+          {payment.address && <p><b>Address:</b> {payment.address}</p>}
         </div>
 
+        {/* Transaction Details */}
         <div style={styles.sectionBox}>
           <h3 style={styles.sectionTitle}>Transaction Details</h3>
-          <p>
-            <b>Transaction ID:</b> {payment.transactionId}
-          </p>
-          <p>
-            <b>Payment Date:</b> {payment.paymentDate}
-          </p>
-          <p>
-            <b>Payment Method:</b> {payment.paymentMethod}
-          </p>
+          {payment.transactionId && (
+            <p><b>Transaction ID:</b> {payment.transactionId}</p>
+          )}
+          {payment.paymentDate && (
+            <p><b>Payment Date:</b> {payment.paymentDate}</p>
+          )}
+          <p><b>Payment Method:</b> {payment.paymentMethod}</p>
         </div>
 
+        {/* Payment Summary */}
         <div style={styles.sectionBox}>
           <h3 style={styles.sectionTitle}>Payment Summary</h3>
-
           <div style={styles.row}>
             <span>Amount</span>
             <span>LKR {payment.amount}</span>
           </div>
-
           <div style={styles.row}>
             <span>Discount</span>
-            <span>LKR {payment.discountAmount}</span>
+            <span>LKR {payment.discountAmount || 0}</span>
           </div>
-
           <div style={{ ...styles.row, ...styles.totalRow }}>
             <span>Total Paid</span>
             <span>LKR {payment.totalAmount}</span>

@@ -67,13 +67,16 @@ export default function Payment() {
     };
 
     try {
-      const response = await fetch("http://localhost:8082/api/payments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(paymentData),
-      });
+      const response = await fetch(
+  `${import.meta.env.VITE_API_URL_PAYMENT}/api/payments`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(paymentData),
+  }
+);
 
       if (!response.ok) {
         throw new Error("Payment Failed!");
