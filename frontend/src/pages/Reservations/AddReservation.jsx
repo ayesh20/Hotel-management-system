@@ -122,7 +122,7 @@ export default function AddReservation() {
             // But usually, the Backend Service handles that.
             
             toast.success('Reservation successful!');
-            navigate('/allreservations');
+            navigate('/payment');
         } catch (error) {
             toast.error('Failed to save reservation');
         } finally {
@@ -264,6 +264,8 @@ export default function AddReservation() {
                         </div>
                     </div>
 
+                   
+
                     <button
                         onClick={handleSubmit}
                         disabled={loading}
@@ -271,6 +273,8 @@ export default function AddReservation() {
                     >
                         {loading ? 'Saving...' : <><Save className="w-5 h-5" /> Confirm Reservation</>}
                     </button>
+
+                    
 
                 </div>
             </div>
