@@ -18,6 +18,8 @@ import EditReservation from "./pages/Reservations/EditReservation.jsx";
 import AddReservation from "./pages/Reservations/AddReservation.jsx";
 import AllReservations from "./pages/Reservations/AllReservations.jsx";
 
+import Payment from "./pages/Payment/Payment.jsx";
+
 
 
 function App() {
@@ -53,6 +55,7 @@ function App() {
             <Route path="/allReservation" element={<AllReservations/>}/>
             <Route path="/addReservation" element={<AddReservation/>}/>
             <Route path="/editReservation/:id" element={<EditReservation/>}/>
+            <Route path="/payment" element={<Payment/>}/>
 
            
           
