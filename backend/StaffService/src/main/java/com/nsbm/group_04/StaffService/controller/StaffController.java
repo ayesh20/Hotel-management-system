@@ -18,7 +18,7 @@ public class StaffController {
     private StaffService staffService;
 
     // CREATE staff
-    @PostMapping
+    @PostMapping("/add")
     public Staff createStaff(@RequestBody Staff staff) {
         return staffService.createStaff(staff);
     }

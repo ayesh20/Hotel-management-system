@@ -10,44 +10,73 @@ import java.util.Optional;
 
 @Service
 public class StaffService {
+
     @Autowired
     private StaffRepository staffRepository;
 
-    // Create staff
+    // CREATE STAFF with auto-generated ID (stf001, stf002...)
     public Staff createStaff(Staff staff) {
+
+        // Check if email already exists
+        Optional<Staff> existing = staffRepository.findByEmail(staff.getEmail());
+
+        if (existing.isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        // Generate ID
+        if (staff.getId() == null || staff.getId().isEmpty()) {
+
+            Optional<Staff> lastStaff = staffRepository.findTopByOrderByIdDesc();
+
+            String newId;
+
+            if (lastStaff.isPresent()) {
+
+                String lastId = lastStaff.get().getId();
+
+                int number = Integer.parseInt(lastId.replace("stf", ""));
+
+                newId = String.format("stf%03d", number + 1);
+
+            } else {
+                newId = "stf001";
+            }
+
+            staff.setId(newId);
+        }
+
         return staffRepository.save(staff);
     }
 
-    // Get all staff
-    public List<Staff> getAllStaff(){
+    // GET ALL STAFF
+    public List<Staff> getAllStaff() {
         return staffRepository.findAll();
     }
 
-    // Get staff by ID
+    // GET STAFF BY ID
     public Optional<Staff> getStaffById(String id) {
         return staffRepository.findById(id);
     }
 
-    // update staff
-    public Staff updateStaff(String id,Staff staff) {
-        Optional<Staff> existingStaff = staffRepository.findById(id);
+    // UPDATE STAFF
+    public Staff updateStaff(String id, Staff updatedStaff) {
 
-        if (existingStaff.isPresent()) {
-            Staff s = existingStaff.get();
-            s.setName(staff.getName());
-            s.setRole(staff.getRole());
-            s.setPhone(staff.getPhone());
-            s.setEmail(staff.getEmail());
-            s.setSalary(staff.getSalary());
-            return staffRepository.save(s);
-        } else {
-            return null;
-        }
+        Staff staff = staffRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Staff not found"));
+
+        staff.setName(updatedStaff.getName());
+        staff.setRole(updatedStaff.getRole());
+        staff.setPhone(updatedStaff.getPhone());
+        staff.setEmail(updatedStaff.getEmail());
+        staff.setPassword(updatedStaff.getPassword());
+        staff.setSalary(updatedStaff.getSalary());
+
+        return staffRepository.save(staff);
     }
 
-    // Delete staff
+    // DELETE STAFF
     public void deleteStaff(String id) {
         staffRepository.deleteById(id);
     }
-
 }
