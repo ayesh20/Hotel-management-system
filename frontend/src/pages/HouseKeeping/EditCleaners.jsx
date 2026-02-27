@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 
 function EditCleaners() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     roomNumber: "",
@@ -13,17 +13,21 @@ function EditCleaners() {
     status: "PENDING",
     remarks: "",
   });
-  const [rooms, setRooms] = useState([]); 
+  const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cleaners, setCleaners] = useState([]);
 
   const API_HOUSEKEEPING = import.meta.env.VITE_BACKEND_URL_HOUSEKEPING;
   const API_ROOMS = import.meta.env.VITE_BACKEND_URL;
+  const API_STAFF = import.meta.env.VITE_BACKEND_URL_STAFF;
 
   // Fetch cleaner data
   useEffect(() => {
     const fetchCleaner = async () => {
       try {
-        const response = await axios.get(`${API_HOUSEKEEPING}/housekeeping/${id}`);
+        const response = await axios.get(
+          `${API_HOUSEKEEPING}/housekeeping/${id}`,
+        );
         setFormData(response.data);
       } catch (error) {
         toast.error("Failed to fetch cleaner data");
@@ -33,6 +37,30 @@ function EditCleaners() {
     };
     fetchCleaner();
   }, [id]);
+
+ useEffect(() => {
+  const fetchCleaners = async () => {
+    try {
+      const response = await axios.get(API_STAFF);
+
+      const staffList = response.data ?? [];
+
+      // Filter only cleaners
+      const onlyCleaners = staffList.filter(
+        (staff) =>
+          staff.role &&
+          staff.role.toLowerCase().includes("clean")
+      );
+
+      setCleaners(onlyCleaners);
+
+    } catch (error) {
+      toast.error("Failed to fetch cleaners");
+    }
+  };
+
+  fetchCleaners();
+}, []);
 
   // Fetch available rooms for dropdown
   useEffect(() => {
@@ -74,7 +102,6 @@ function EditCleaners() {
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
         <h1 className="text-2xl font-bold mb-6">Edit Cleaner</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
-
           {/* Room Dropdown */}
           <div>
             <label className="block mb-1 font-semibold">Room Number</label>
@@ -85,7 +112,9 @@ function EditCleaners() {
               className="w-full border p-2 rounded-lg"
               required
             >
-              <option value="" disabled>Select a room</option>
+              <option value="" disabled>
+                Select a room
+              </option>
               {rooms.map((room) => (
                 <option key={room.roomNumber} value={room.roomNumber}>
                   {room.roomNumber}
@@ -96,17 +125,22 @@ function EditCleaners() {
 
           {/* Cleaner ID */}
           <div>
-            <label className="block mb-1 font-semibold">Cleaner ID</label>
-            <input
-              type="text"
+            <label className="block mb-1 font-semibold">Cleaner</label>
+            <select
               name="staffId"
               value={formData.staffId}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg"
               required
-            />
+            >
+              
+              {cleaners.map((cleaner) => (
+                <option key={cleaner.id} value={cleaner.id}>
+                  {cleaner.id} - {cleaner.name}
+                </option>
+              ))}
+            </select>
           </div>
-
           {/* Cleaning Date */}
           <div>
             <label className="block mb-1 font-semibold">Cleaning Date</label>

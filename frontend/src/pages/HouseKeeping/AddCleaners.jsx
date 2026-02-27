@@ -24,14 +24,17 @@ function AddHouseKeeping() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [rooms, setRooms] = useState([]);
+  const [cleaners, setCleaners] = useState([]);
 
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_BACKEND_URL_HOUSEKEPING;
+  const STAFF_API_URL = import.meta.env.VITE_BACKEND_URL_STAFF;
   const ROOMS_API_URL = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     fetchRooms();
+    fetchCleaners();
   }, []);
 
   const fetchRooms = async () => {
@@ -44,6 +47,29 @@ function AddHouseKeeping() {
     }
   };
 
+  const fetchCleaners = async () => {
+    try {
+      const response = await axios.get(`${STAFF_API_URL}`);
+
+      console.log("FULL STAFF LIST:", response.data);
+
+      if (!response.data || !Array.isArray(response.data)) {
+        setCleaners([]);
+        return;
+      }
+
+      const onlyCleaners = response.data.filter((staff) =>
+        staff.role?.toLowerCase().includes("clean"),
+      );
+
+      console.log("ONLY CLEANERS:", onlyCleaners);
+
+      setCleaners(onlyCleaners);
+    } catch (error) {
+      console.error("Fetch staff error:", error);
+      toast.error("Failed to load cleaners");
+    }
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -178,6 +204,7 @@ function AddHouseKeeping() {
                 } rounded-lg focus:outline-none focus:border-blue-500 bg-white`}
                 disabled={loading}
               >
+                <option value="">Select Room</option>
                 {rooms.map((room) => (
                   <option key={room.id} value={room.roomNumber}>
                     {room.roomNumber}
@@ -197,17 +224,23 @@ function AddHouseKeeping() {
             </label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <input
-                type="text"
+              <select
                 name="staffId"
                 value={formData.staffId}
                 onChange={handleChange}
                 className={`w-full pl-11 pr-4 py-3 border-2 ${
                   errors.staffId ? "border-red-300" : "border-slate-300"
-                } rounded-lg focus:outline-none focus:border-blue-500`}
-                placeholder="STF001"
+                } rounded-lg focus:outline-none focus:border-blue-500 bg-white`}
                 disabled={loading}
-              />
+              >
+                <option value="">Select Cleaner</option>
+
+                {cleaners.map((cleaner) => (
+                  <option key={cleaner.id} value={cleaner.id}>
+                    {cleaner.id} - {cleaner.name}
+                  </option>
+                ))}
+              </select>
             </div>
             {errors.staffId && (
               <p className="mt-1 text-sm text-red-600">{errors.staffId}</p>
