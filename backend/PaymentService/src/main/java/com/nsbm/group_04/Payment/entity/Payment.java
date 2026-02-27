@@ -26,9 +26,11 @@ public class Payment {
     private Date paymentDate;
 
     // Default constructor
-    public Payment() {}
+    public Payment() {
 
+    }
 
+    public Payment(String paymentId, String bookingId, String customerId, String roomId, double amount, double discountAmount, double finalAmount, String paymentMethod, String paymentStatus, String currency, Date paymentDate) {
         this.paymentId = paymentId;
         this.bookingId = bookingId;
         this.customerId = customerId;
@@ -114,15 +116,6 @@ public class Payment {
     public void setPaymentStatus(String paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
     public String getCurrency() {
         return currency;
     }
@@ -151,7 +144,6 @@ public class Payment {
                 ", finalAmount=" + finalAmount +
                 ", paymentMethod='" + paymentMethod + '\'' +
                 ", paymentStatus='" + paymentStatus + '\'' +
-                ", transactionId='" + transactionId + '\'' +
                 ", currency='" + currency + '\'' +
                 ", paymentDate=" + paymentDate +
                 '}';
