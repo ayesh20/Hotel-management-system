@@ -31,7 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-
-backend/PaymentService/src/main/resources/application.properties
-backend/PaymentService/src/main/resources/application.yaml
