@@ -74,9 +74,22 @@ public class StaffService {
 
         return staffRepository.save(staff);
     }
-
     // DELETE STAFF
     public void deleteStaff(String id) {
         staffRepository.deleteById(id);
+    }
+
+    // LOGIN
+    public Staff login(String email, String password) {
+
+        Staff staff = staffRepository.findByEmailAndPassword(email, password)
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        // Check role is admin
+        if (!staff.getRole().equalsIgnoreCase("admin")) {
+            throw new RuntimeException("Access denied. Only admin can login.");
+        }
+
+        return staff;
     }
 }

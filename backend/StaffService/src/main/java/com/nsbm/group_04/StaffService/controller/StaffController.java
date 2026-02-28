@@ -47,4 +47,13 @@ public class StaffController {
         staffService.deleteStaff(id);
     }
 
+    @PostMapping("/login")
+    public Staff login(@RequestBody Staff loginRequest) {
+
+        return staffService.login(
+                loginRequest.getEmail(),
+                loginRequest.getPassword()
+        );
+    }
+
 }
