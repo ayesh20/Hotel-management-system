@@ -4,6 +4,8 @@ import com.nsbm.group_04.StaffService.entity.Staff;
 import com.nsbm.group_04.StaffService.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,14 +21,32 @@ public class StaffController {
 
     // CREATE staff
     @PostMapping("/add")
-    public Staff createStaff(@RequestBody Staff staff) {
-        return staffService.createStaff(staff);
+    public ResponseEntity<?> createStaff(@RequestBody Staff staff) {
+
+        Staff savedStaff = staffService.createStaff(staff);
+
+        return ResponseEntity.status(201).body(
+                Map.of(
+                        "success", true,
+                        "message", "Staff created successfully",
+                        "data", savedStaff
+                )
+        );
     }
 
     // READ all staff
     @GetMapping
-    public List<Staff> getAllStaff() {
-        return staffService.getAllStaff();
+    public ResponseEntity<?> getAllStaff() {
+
+        List<Staff> staffList = staffService.getAllStaff();
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "success", true,
+                        "count", staffList.size(),
+                        "data", staffList
+                )
+        );
     }
 
     //READ staff by ID
@@ -37,22 +57,30 @@ public class StaffController {
 
     // UPDATE staff
     @PutMapping("/{id}")
-    public Staff updateStaff(@PathVariable String id, @RequestBody Staff staff) {
-        return staffService.updateStaff(id,staff);
+    public ResponseEntity<?> updateStaff(@PathVariable String id, @RequestBody Staff staff) {
+
+        Staff updatedStaff = staffService.updateStaff(id, staff);
+
+        return ResponseEntity.status(200).body(
+                Map.of(
+                        "success", true,
+                        "message", "Staff updated successfully",
+                        "data", updatedStaff
+                )
+        );
     }
 
     // DELETE staff
     @DeleteMapping("/{id}")
-    public void deleteStaff(@PathVariable String id) {
+    public ResponseEntity<?> deleteStaff(@PathVariable String id) {
+
         staffService.deleteStaff(id);
-    }
 
-    @PostMapping("/login")
-    public Staff login(@RequestBody Staff loginRequest) {
-
-        return staffService.login(
-                loginRequest.getEmail(),
-                loginRequest.getPassword()
+        return ResponseEntity.status(200).body(
+                Map.of(
+                        "success", true,
+                        "message", "Staff deleted successfully"
+                )
         );
     }
 
