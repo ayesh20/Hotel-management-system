@@ -11,66 +11,76 @@ export default function AdminLogin() {
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
- 
+
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+        e.preventDefault();
 
-    if (!email || !password) {
-        setError('Please fill in all fields');
-        toast.error('Please fill in all fields');
-        setLoading(false);
-        return;
-    }
+        setError('');
+        setLoading(true);
 
-    try {
-
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL_STAFF + '/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        });
-
-        if (!response.ok) {
-
-            if (response.status === 500) {
-                throw new Error('Invalid email or password');
-            }
-
-            throw new Error('Login failed');
+        if (!email || !password) {
+            setError('Please fill in all fields');
+            toast.error('Please fill in all fields');
+            setLoading(false);
+            return;
         }
 
-        const data = await response.json();
+        try {
 
-        // Save admin data
-        localStorage.setItem('adminData', JSON.stringify(data));
+            const response = await fetch(
+                import.meta.env.VITE_BACKEND_URL_AUTH + '/login',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                }
+            );
 
-        // optional token (for future JWT)
-        localStorage.setItem('authToken', data.id);
+            let data = null;
 
-        toast.success('Login successful!');
+            try {
+                data = await response.json();
+            } catch {
+                data = null;
+            }
 
-        navigate('/dashboard');
+            if (!response.ok) {
+                throw new Error(
+                    data?.message || 'Invalid email or password'
+                );
+            }
 
-    } catch (err) {
+            // Save JWT token
+            localStorage.setItem('token', data.token);
 
-        console.error(err);
+            // Save admin info
+            localStorage.setItem('admin', JSON.stringify({
+                email: data.email,
+                role: data.role
+            }));
 
-        setError(err.message);
+            toast.success('Login successful');
 
-        toast.error(err.message);
+            navigate('/dashboard');
 
-    } finally {
-        setLoading(false);
-    }
-};
+        } catch (err) {
+
+            console.error(err);
+
+            setError(err.message);
+
+            toast.error(err.message);
+
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
@@ -98,8 +108,8 @@ export default function AdminLogin() {
                     <div className="space-y-5">
                         {/* Email Input */}
                         <div>
-                            <label 
-                                htmlFor="email" 
+                            <label
+                                htmlFor="email"
                                 className="block text-sm font-semibold text-slate-700 mb-2"
                             >
                                 Email address
@@ -119,8 +129,8 @@ export default function AdminLogin() {
                         {/* Password Input */}
                         <div>
                             <div className="flex items-center justify-between mb-2">
-                                <label 
-                                    htmlFor="password" 
+                                <label
+                                    htmlFor="password"
                                     className="block text-sm font-semibold text-slate-700"
                                 >
                                     Password
@@ -163,7 +173,7 @@ export default function AdminLogin() {
                         <button
                             onClick={handleSubmit}
                             disabled={loading}
-                            className="w-full bg-linear-to-r from-slate-400 to-slate-500 hover:from-slate-500 hover:to-slate-600 text-white py-3.5 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-linear-to-r from-slate-400 to-slate-500 hover:from-slate-500 hover:to-slate-600 text-white py-3.5 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                         >
                             {loading ? (
                                 <span className="flex items-center justify-center gap-2">
@@ -179,7 +189,7 @@ export default function AdminLogin() {
                         </button>
                     </div>
 
-                   
+
                 </div>
             </div>
         </div>
