@@ -14,58 +14,63 @@ export default function AdminLogin() {
  
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setLoading(true);
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
-        if (!email || !password) {
-            setError('Please fill in all fields');
-            toast.error('Please fill in all fields');
-            setLoading(false);
-            return;
-        }
+    if (!email || !password) {
+        setError('Please fill in all fields');
+        toast.error('Please fill in all fields');
+        setLoading(false);
+        return;
+    }
 
-        try {
-           
-            await new Promise(resolve => setTimeout(resolve, 800));
+    try {
 
-            if (email === 'admin@gmail.com' && password === 'admin123') {
-                // Create mock admin data
-                const adminData = {
-                    email: 'admin@gmail.com',
-                    name: 'Admin',
-                    role: 'admin'
-                };
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL_STAFF + '/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
 
-                const mockToken = 'mock-jwt-token-' + Date.now();
+        if (!response.ok) {
 
-                localStorage.setItem('authToken', mockToken);
-                localStorage.setItem('adminData', JSON.stringify(adminData));
-
-                toast.success('Login successful!');
-                
-                setTimeout(() => {
-                    navigate('/dashboard');
-                }, 1000);
-            } else {
-                
-                if (email !== 'admin@gmail.com') {
-                    setError('User not found');
-                    toast.error('User not found');
-                } else {
-                    setError('Incorrect password');
-                    toast.error('Incorrect password');
-                }
+            if (response.status === 500) {
+                throw new Error('Invalid email or password');
             }
-        } catch (err) {
-            console.error('Login error:', err);
-            const errorMsg = 'An unexpected error occurred. Please try again.';
-            setError(errorMsg);
-            toast.error(errorMsg);
-        } finally {
-            setLoading(false);
+
+            throw new Error('Login failed');
         }
-    };
+
+        const data = await response.json();
+
+        // Save admin data
+        localStorage.setItem('adminData', JSON.stringify(data));
+
+        // optional token (for future JWT)
+        localStorage.setItem('authToken', data.id);
+
+        toast.success('Login successful!');
+
+        navigate('/dashboard');
+
+    } catch (err) {
+
+        console.error(err);
+
+        setError(err.message);
+
+        toast.error(err.message);
+
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
