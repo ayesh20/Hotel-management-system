@@ -20,4 +20,8 @@ public class TransportService {
         return transportRepository.save(transport);
     }
 
+    public List<Transport> getAllTransports() {
+        return transportRepository.findAll();
+    }
+
 }
