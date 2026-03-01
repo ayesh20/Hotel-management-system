@@ -15,7 +15,6 @@ public class CreatePaymentRequest {
     @NotNull
     private Long amount; // in cents e.g., 5000 = R50/R50.00
 
-    @NotNull
     private String currency; // LKR
 
     private Long discountAmount;

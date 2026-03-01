@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -19,6 +20,27 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService; // Single service handles both Stripe + DB
+
+    @PostMapping
+public ResponseEntity<Payment> createCashPayment(@RequestBody Map<String, Object> request) {
+    try {
+        Payment payment = new Payment();
+        payment.setCustomerId((String) request.get("customerId"));
+        payment.setBookingId((String) request.get("BookingId"));
+        payment.setAmount(((Number) request.get("amount")).doubleValue());
+        payment.setDiscountAmount(((Number) request.get("discountAmount")).doubleValue());
+        payment.setAmount(((Number) request.get("totalAmount")).doubleValue());
+        payment.setPaymentMethod("CASH");
+        payment.setPaymentStatus("PENDING");
+        payment.setPaymentDate(new Date());
+
+        Payment savedPayment = paymentService.createPayment(payment);
+        return ResponseEntity.ok(savedPayment);
+
+    } catch (Exception e) {
+        return ResponseEntity.status(500).build();
+    }
+}
 
     //Create Stripe PaymentIntent & save in DB
     @PostMapping("/create")
@@ -35,8 +57,7 @@ public class PaymentController {
             payment.setDiscountAmount(request.getDiscountAmount());
             payment.calculateFinalAmount();            // finalAmount = amount - discount
             payment.setPaymentMethod("CARD");
-            payment.setPaymentStatus("PENDING");
-            payment.setCurrency(request.getCurrency());
+            payment.setPaymentStatus("PAYMENT SUCCESS");
             payment.setStripePaymentIntentId(intent.getId());
             payment.setPaymentDate(new Date());
 
