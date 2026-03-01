@@ -34,5 +34,13 @@ public class TransportController {
         return transportService.getTransportById(id);
     }
 
+    @PutMapping("/{id}")
+    public Transport updateTransport(
+            @PathVariable String id,
+            @RequestBody Transport transport) {
+
+        return transportService.updateTransport(id, transport);
+    }
+
 
 }

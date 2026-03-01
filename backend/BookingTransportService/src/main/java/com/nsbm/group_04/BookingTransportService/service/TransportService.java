@@ -28,5 +28,18 @@ public class TransportService {
         return transportRepository.findById(id).orElse(null);
     }
 
+    public Transport updateTransport(String id, Transport updatedTransport) {
+        Transport existing = transportRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+
+        existing.setVehicleType(updatedTransport.getVehicleType());
+        existing.setVehicleNumber(updatedTransport.getVehicleNumber());
+        existing.setDriverName(updatedTransport.getDriverName());
+        existing.setDriverContact(updatedTransport.getDriverContact());
+        existing.setPricePerDay(updatedTransport.getPricePerDay());
+        existing.setStatus(updatedTransport.getStatus());
+
+        return transportRepository.save(existing);
+    }
 
 }
