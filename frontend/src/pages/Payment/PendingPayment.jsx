@@ -56,7 +56,7 @@ export default function Payment() {
         if (!response.ok) throw new Error("Payment Failed");
 
         const result = await response.json();
-        navigate("/pendingpayment", { state: { payment: result } });
+        navigate("/checkoutform", { state: { payment: result } });
       } catch (error) {
         alert(error.message);
       }
