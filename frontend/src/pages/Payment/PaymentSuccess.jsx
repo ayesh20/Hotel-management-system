@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-export default function PendingPayment() {
+export default function PaymentSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
   const data = location.state || {};
@@ -16,15 +16,15 @@ export default function PendingPayment() {
       <div style={styles.card}>
         {/* Header */}
         <div style={styles.header}>
-          <div style={styles.iconCircle}>⏳</div>
-          <h2 style={styles.title}>Payment Pending</h2>
-          <p style={styles.subtitle}>Please pay at the front desk counter</p>
+          <div style={styles.iconCircle}>✅</div>
+          <h2 style={styles.title}>Payment Successful!</h2>
+          <p style={styles.subtitle}>Your booking has been confirmed</p>
         </div>
 
-        {/* Warning Banner */}
-        <div style={styles.warningBanner}>
-          <span style={{ fontSize: "18px" }}>🏨</span>
-          <span>Please complete your payment at the hotel reception counter to confirm your booking.</span>
+        {/* Success Banner */}
+        <div style={styles.successBanner}>
+          <span style={{ fontSize: "18px" }}>🎉</span>
+          <span>Thank you for your payment, <strong>{data.customerName || "Guest"}</strong>! Your hotel booking is now confirmed.</span>
         </div>
 
         {/* Receipt */}
@@ -54,8 +54,8 @@ export default function PendingPayment() {
           </div>
 
           <div style={styles.totalRow}>
-            <span style={{ fontWeight: "700", fontSize: "16px" }}>Total Due</span>
-            <span style={{ fontWeight: "700", fontSize: "18px", color: "#f59e0b" }}>
+            <span style={{ fontWeight: "700", fontSize: "16px" }}>Total Paid</span>
+            <span style={{ fontWeight: "700", fontSize: "18px", color: "#16a34a" }}>
               LKR {data.totalAmount?.toFixed?.(2) || "0.00"}
             </span>
           </div>
@@ -64,7 +64,7 @@ export default function PendingPayment() {
 
           <div style={styles.receiptRow}>
             <span style={styles.receiptLabel}>Payment Method</span>
-            <span style={{ ...styles.receiptValue, color: "#f59e0b", fontWeight: "600" }}>Cash (Pending)</span>
+            <span style={{ ...styles.receiptValue, color: "#2563eb", fontWeight: "600" }}>💳 Card (Stripe)</span>
           </div>
 
           {data.paymentId && (
@@ -76,6 +76,15 @@ export default function PendingPayment() {
             </div>
           )}
 
+          {data.stripePaymentIntentId && (
+            <div style={styles.receiptRow}>
+              <span style={styles.receiptLabel}>Stripe Ref</span>
+              <span style={{ ...styles.receiptValue, fontSize: "11px", color: "#94a3b8" }}>
+                {data.stripePaymentIntentId}
+              </span>
+            </div>
+          )}
+
           <div style={styles.receiptRow}>
             <span style={styles.receiptLabel}>Date</span>
             <span style={styles.receiptValue}>{formatDate(data.paymentDate)}</span>
@@ -83,7 +92,7 @@ export default function PendingPayment() {
 
           <div style={styles.receiptRow}>
             <span style={styles.receiptLabel}>Status</span>
-            <span style={styles.pendingBadge}>⏳ PENDING</span>
+            <span style={styles.successBadge}>✅ PAID</span>
           </div>
         </div>
 
@@ -102,7 +111,7 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fff7ed 100%)",
+    background: "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #f0fdf4 100%)",
     padding: "20px",
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   },
@@ -121,35 +130,35 @@ const styles = {
     width: "70px",
     height: "70px",
     borderRadius: "50%",
-    backgroundColor: "#fef3c7",
+    backgroundColor: "#dcfce7",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     fontSize: "34px",
     margin: "0 auto 12px auto",
-    border: "3px solid #fbbf24",
+    border: "3px solid #4ade80",
   },
   title: {
     fontSize: "24px",
     fontWeight: "bold",
-    color: "#92400e",
+    color: "#166534",
     margin: "0 0 6px 0",
   },
   subtitle: {
     fontSize: "14px",
-    color: "#b45309",
+    color: "#15803d",
     margin: 0,
   },
-  warningBanner: {
+  successBanner: {
     display: "flex",
     alignItems: "center",
     gap: "10px",
     padding: "14px 16px",
-    backgroundColor: "#fffbeb",
-    border: "1px solid #fde68a",
+    backgroundColor: "#f0fdf4",
+    border: "1px solid #bbf7d0",
     borderRadius: "12px",
     fontSize: "13px",
-    color: "#92400e",
+    color: "#166534",
     marginBottom: "18px",
     lineHeight: "1.5",
   },
@@ -187,9 +196,9 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "12px 16px",
-    backgroundColor: "#fffbeb",
+    backgroundColor: "#f0fdf4",
     borderRadius: "10px",
-    border: "1px solid #fde68a",
+    border: "1px solid #bbf7d0",
     marginTop: "8px",
   },
   divider: {
@@ -197,11 +206,11 @@ const styles = {
     backgroundColor: "#e5e7eb",
     margin: "10px 0",
   },
-  pendingBadge: {
+  successBadge: {
     display: "inline-block",
     padding: "4px 12px",
-    backgroundColor: "#fef3c7",
-    color: "#92400e",
+    backgroundColor: "#dcfce7",
+    color: "#166534",
     borderRadius: "20px",
     fontSize: "12px",
     fontWeight: "700",

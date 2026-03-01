@@ -18,9 +18,10 @@ import EditReservation from "./pages/Reservations/EditReservation.jsx";
 import AddReservation from "./pages/Reservations/AddReservation.jsx";
 import AllReservations from "./pages/Reservations/AllReservations.jsx";
 
-import Payment from "./pages/Payment/payment.jsx";
+import Payment from "./pages/Payment/Payment.jsx";
 import CheckoutForm from "./pages/Payment/CheckoutForm.jsx";
-import PendingPayment from"./pages/Payment/PendingPayment.jsx";
+import PendingPayment from "./pages/Payment/PendingPayment.jsx";
+import PaymentSuccess from "./pages/Payment/PaymentSuccess.jsx";
 
 
 
@@ -60,6 +61,7 @@ function App() {
             <Route path="/payment" element={<Payment/>}/>
             <Route path="/checkoutform" element={<CheckoutForm/>}/>
             <Route path="/pendingpayment" element={<PendingPayment/>}/>
+            <Route path="/payment-success" element={<PaymentSuccess/>}/>
 
            
           
