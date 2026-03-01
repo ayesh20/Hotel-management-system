@@ -295,6 +295,7 @@ export default function AddStaff() {
                                 <option value="manager">Manager</option>
                                 <option value="cleaner">Cleaner</option>
                                 <option value="waiter">Waiter</option>
+                                <option value="receptionist">Receptionist</option>
                                 <option value="driver">Driver</option>
 
                             </select>
