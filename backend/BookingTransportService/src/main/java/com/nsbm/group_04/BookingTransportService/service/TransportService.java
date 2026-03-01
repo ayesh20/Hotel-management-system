@@ -37,6 +37,7 @@ public class TransportService {
         existing.setDriverName(updatedTransport.getDriverName());
         existing.setDriverContact(updatedTransport.getDriverContact());
         existing.setPricePerDay(updatedTransport.getPricePerDay());
+        existing.setStatus(updatedTransport.getStatus());
 
 
         return transportRepository.save(existing);
