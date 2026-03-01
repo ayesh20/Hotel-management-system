@@ -1,11 +1,15 @@
 package com.nsbm.group_04.InventoryService.service;
 import com.nsbm.group_04.InventoryService.Model.InventoryItem;
 import com.nsbm.group_04.InventoryService.Repository.InventoryRepository;
+import com.nsbm.group_04.InventoryService.dto.InventoryItemMapper;
+import com.nsbm.group_04.InventoryService.dto.InventoryItemRequestDTO;
+import com.nsbm.group_04.InventoryService.dto.InventoryItemResponseDTO;
 import com.nsbm.group_04.InventoryService.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class InventoryService {
@@ -19,70 +23,48 @@ public class InventoryService {
     }
 
 
-    // Adds a new inventory item and Validates reorder level and auto-calculates status.
-    public InventoryItem addItem(InventoryItem item) {
-
-
-
-        // Automatically determine stock status
-        item.setStatus(calculateStatus(
-                item.getQuantity(),
-                item.getReorderLevel()
-        ));
-
-        return repository.save(item);
+    // Adds a new inventory item and auto-calculates status.
+    public InventoryItemResponseDTO addItem(InventoryItemRequestDTO dto) {
+        InventoryItem item = InventoryItemMapper.toEntity(dto);
+        item.setStatus(calculateStatus(item.getQuantity(), item.getReorderLevel()));
+        return InventoryItemMapper.toResponseDTO(repository.save(item));
     }
 
 
     // Returns all inventory items.
-    public List<InventoryItem> getAllItems() {
-        return repository.findAll();
+    public List<InventoryItemResponseDTO> getAllItems() {
+        return repository.findAll()
+                .stream()
+                .map(InventoryItemMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
 
     // Returns an inventory item by ID.
-    public Optional<InventoryItem> getItemById(String id) {
-        return repository.findById(id);
+    public InventoryItemResponseDTO getItemById(String id) {
+        InventoryItem item = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+        return InventoryItemMapper.toResponseDTO(item);
     }
 
 
     // Updates an existing inventory item and recalculates stock status.
-    public InventoryItem updateItem(String id, InventoryItem itemDetails) {
+    public InventoryItemResponseDTO updateItem(String id, InventoryItemRequestDTO dto) {
+        InventoryItem existingItem = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
 
-        return repository.findById(id)
-                .map(existingItem -> {
+        InventoryItemMapper.updateEntityFromDTO(dto, existingItem);
+        existingItem.setStatus(calculateStatus(existingItem.getQuantity(), existingItem.getReorderLevel()));
 
-
-                    // Update fields
-                    existingItem.setItemName(itemDetails.getItemName());
-                    existingItem.setCategory(itemDetails.getCategory());
-                    existingItem.setQuantity(itemDetails.getQuantity());
-                    existingItem.setUnitPrice(itemDetails.getUnitPrice());
-                    existingItem.setReorderLevel(itemDetails.getReorderLevel());
-                    existingItem.setStorageLocation(itemDetails.getStorageLocation());
-                    existingItem.setSupplier(itemDetails.getSupplier());
-
-                    // Recalculate status
-                    existingItem.setStatus(calculateStatus(
-                            existingItem.getQuantity(),
-                            existingItem.getReorderLevel()
-                    ));
-
-                    return repository.save(existingItem);
-                })
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Item not found with id: " + id));
+        return InventoryItemMapper.toResponseDTO(repository.save(existingItem));
     }
 
 
-    //Deletes an item by ID.
+    // Deletes an item by ID. Prevents deletion if stock exists.
     public void deleteItem(String id) {
-
-        // Fetch the actual item object — not just check if it exists
         InventoryItem item = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item does not exist with id: " + id));
 
-        // Prevent deleting items that still have stock
         if (item.getQuantity() > 0) {
             throw new IllegalArgumentException(
                     "Cannot delete item with existing stock. " +
@@ -95,27 +77,37 @@ public class InventoryService {
     }
 
 
+
     // Searches items by name (case-insensitive).
-    public List<InventoryItem> searchItemsByName(String name) {
-        return repository.findByItemNameIgnoreCase(name);
+    public List<InventoryItemResponseDTO> searchItemsByName(String name) {
+        return repository.findByItemNameIgnoreCase(name)
+                .stream()
+                .map(InventoryItemMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    //Returns items that need reordering (LOW_STOCK or OUT_OF_STOCK status)
-    public List<InventoryItem> getLowStockItems() {
-        return repository.findByStatusIn(List.of("LOW_STOCK", "OUT_OF_STOCK"));
+    // Returns items that need reordering (LOW_STOCK or OUT_OF_STOCK status).
+    public List<InventoryItemResponseDTO> getLowStockItems() {
+        return repository.findByStatusIn(List.of("LOW_STOCK", "OUT_OF_STOCK"))
+                .stream()
+                .map(InventoryItemMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
 
     // Returns items by category.
-    public List<InventoryItem> getItemsByCategory(String category) {
-        return repository.findByCategoryIgnoreCase(category);
+    public List<InventoryItemResponseDTO> getItemsByCategory(String category) {
+        return repository.findByCategoryIgnoreCase(category)
+                .stream()
+                .map(InventoryItemMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    //Calculates total inventory value.
+    // Calculates total inventory value (sum of quantity × unitPrice for all items).
     public Double getTotalInventoryValue() {
-        return repository.findAll().stream()
-                .mapToDouble(item ->
-                        item.getQuantity() * item.getUnitPrice())
+        return repository.findAll()
+                .stream()
+                .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
                 .sum();
     }
 
@@ -135,44 +127,41 @@ public class InventoryService {
         }
     }
 
-    // Increases item quantity for restocking
-    public InventoryItem restockItem(String id, int amount) {
+    // Increases item quantity — restocking operation.
+    public InventoryItemResponseDTO restockItem(String id, int amount) {
         if (amount <= 0) {
-            throw new IllegalArgumentException(
-                    "Restock amount must be positive. Provided: " + amount
-            );
+            throw new IllegalArgumentException("Restock amount must be positive. Provided: " + amount);
         }
-        return repository.findById(id)
-                .map(item -> {
-                    int newQuantity = item.getQuantity() + amount;
-                    item.setQuantity(newQuantity);
-                    item.setStatus(calculateStatus(newQuantity, item.getReorderLevel()));
-                    return repository.save(item);
-                })
+        InventoryItem item = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+
+        int newQuantity = item.getQuantity() + amount;
+        item.setQuantity(newQuantity);
+        item.setStatus(calculateStatus(newQuantity, item.getReorderLevel()));
+
+        return InventoryItemMapper.toResponseDTO(repository.save(item));
     }
 
-    // Decreases item quantity when items are consumed
-    public InventoryItem consumeItem(String id, int amount) {
+    // Decreases item quantity — consumption operation.
+    public InventoryItemResponseDTO consumeItem(String id, int amount) {
         if (amount <= 0) {
+            throw new IllegalArgumentException("Consume amount must be positive. Provided: " + amount);
+        }
+        InventoryItem item = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+
+        if (item.getQuantity() < amount) {
             throw new IllegalArgumentException(
-                    "Consume amount must be positive. Provided: " + amount
+                    "Insufficient stock for '" + item.getItemName() + "'. " +
+                            "Available: " + item.getQuantity() +
+                            ", Requested: " + amount
             );
         }
-        return repository.findById(id)
-                .map(item -> {
-                    if (item.getQuantity() < amount) {
-                        throw new IllegalArgumentException(
-                                "Insufficient stock for '" + item.getItemName() + "'. " +
-                                        "Available: " + item.getQuantity() +
-                                        ", Requested: " + amount
-                        );
-                    }
-                    int newQuantity = item.getQuantity() - amount;
-                    item.setQuantity(newQuantity);
-                    item.setStatus(calculateStatus(newQuantity, item.getReorderLevel()));
-                    return repository.save(item);
-                })
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+
+        int newQuantity = item.getQuantity() - amount;
+        item.setQuantity(newQuantity);
+        item.setStatus(calculateStatus(newQuantity, item.getReorderLevel()));
+
+        return InventoryItemMapper.toResponseDTO(repository.save(item));
     }
 }
