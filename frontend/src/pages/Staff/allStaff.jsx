@@ -200,6 +200,7 @@ export default function AllStaff() {
                                     <th className="text-left py-4 px-4 text-slate-700 font-semibold">Email</th>
                                     <th className="text-left py-4 px-4 text-slate-700 font-semibold">Phone</th>
                                     <th className="text-left py-4 px-4 text-slate-700 font-semibold">Role</th>
+                                    <th className="text-left py-4 px-4 text-slate-700 font-semibold">Salary</th>
                                     <th className="text-right py-4 px-4 text-slate-700 font-semibold">Action</th>
                                 </tr>
                             </thead>
@@ -232,6 +233,7 @@ export default function AllStaff() {
                                             <td className="py-4 px-4 text-slate-800">{staff.email}</td>
                                             <td className="py-4 px-4 text-slate-800">{staff.phone}</td>
                                             <td className="py-4 px-4 text-slate-800">{staff.role}</td>
+                                            <td className="py-4 px-4 text-slate-800">{staff.salary}</td>
                                             <td className="py-4 px-4">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button

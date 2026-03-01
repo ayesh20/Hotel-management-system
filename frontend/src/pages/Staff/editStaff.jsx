@@ -7,7 +7,8 @@ import {
     Lock,
     Save,
     X,
-    ArrowLeft
+    ArrowLeft,
+    DollarSign
 } from 'lucide-react';
 
 import { toast } from 'react-hot-toast';
@@ -26,8 +27,8 @@ export default function EditStaff() {
         email: '',
         phone: '',
         role: '',
+        salary: '',
         password: '',
-        status: 'ACTIVE'
     });
 
     const [errors, setErrors] = useState({});
@@ -58,7 +59,7 @@ export default function EditStaff() {
                     phone: response.data.phone || '',
                     role: response.data.role || '',
                     password: '',
-                    status: response.data.status || 'ACTIVE'
+                    salary: response.data.salary || '',
                 });
 
             } catch (error) {
@@ -113,6 +114,9 @@ export default function EditStaff() {
 
         if (!formData.role.trim())
             newErrors.role = "Role is required";
+
+        if (!formData.salary.toString().trim())
+            newErrors.salary = "Salary is required";
 
         setErrors(newErrors);
 
@@ -252,20 +256,16 @@ export default function EditStaff() {
                         </select>
                     </div>
 
-                    {/* Status */}
-                    <div>
-                        <label className="font-semibold">Status</label>
-
-                        <select
-                            name="status"
-                            value={formData.status}
-                            onChange={handleChange}
-                            className="w-full py-3 border-2 border-gray-300 rounded-lg mt-2"
-                        >
-                            <option value="ACTIVE">Active</option>
-                            <option value="INACTIVE">Inactive</option>
-                        </select>
-                    </div>
+                    {/* Salary */}
+                    <InputField
+                        icon={DollarSign}
+                        name="salary"
+                        value={formData.salary}
+                        onChange={handleChange}
+                        placeholder="Enter salary"
+                        error={errors.salary}
+                        label="Salary *"
+                    />
 
                     {/* Button */}
                     <button
@@ -301,7 +301,7 @@ function InputField({ icon: Icon, label, name, value, onChange, placeholder, err
 
             <div className="relative mt-2">
 
-                <Icon className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+                <Icon className="absolute left-3 top-4 w-5 h-5 text-slate-400" />
 
                 <input
                     name={name}

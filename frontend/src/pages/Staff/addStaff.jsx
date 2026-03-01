@@ -7,7 +7,8 @@ import {
     Lock,
     Save,
     X,
-    ArrowLeft
+    ArrowLeft,
+    DollarSign
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +26,6 @@ export default function AddStaff() {
         phone: '',
         role: '',
         password: '',
-        status: 'ACTIVE'
     });
 
     const [errors, setErrors] = useState({});
@@ -68,6 +68,15 @@ export default function AddStaff() {
 
         if (!formData.role.trim()) {
             newErrors.role = 'Role is required';
+        }
+
+        if (!formData.salary.toString().trim()) {
+            newErrors.salary = 'Salary is required';
+        }
+
+        // Password required only for admin
+        if (formData.role === "admin" && !formData.password.trim()) {
+            newErrors.password = 'Password is required for admin';
         }
 
         setErrors(newErrors);
@@ -142,7 +151,6 @@ export default function AddStaff() {
             phone: '',
             role: '',
             password: '',
-            status: 'ACTIVE'
         });
 
         setErrors({});
@@ -193,7 +201,7 @@ export default function AddStaff() {
                         </label>
 
                         <div className="relative">
-                            <User className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+                            <User className="absolute left-3 top-4 w-5 h-5 text-slate-400" />
 
                             <input
                                 type="text"
@@ -221,7 +229,7 @@ export default function AddStaff() {
 
                         <div className="relative">
 
-                            <Mail className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+                            <Mail className="absolute left-3 top-4 w-5 h-5 text-slate-400" />
 
                             <input
                                 type="email"
@@ -251,7 +259,7 @@ export default function AddStaff() {
 
                         <div className="relative">
 
-                            <Phone className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+                            <Phone className="absolute left-3 top-4 w-5 h-5 text-slate-400" />
 
                             <input
                                 type="text"
@@ -304,52 +312,55 @@ export default function AddStaff() {
 
                     </div>
 
-
-                    {/* Password */}
+                    {/*Salary*/}
                     <div>
-
                         <label className="block font-semibold mb-2">
-                            Password
+                            Salary *
                         </label>
 
                         <div className="relative">
 
-                            <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+                            <DollarSign className="absolute left-3 top-4 w-5 h-5 text-slate-400" />
 
                             <input
-                                type="password"
-                                name="password"
-                                value={formData.password}
+                                type="number"
+                                name="salary"
+                                value={formData.salary}
                                 onChange={handleChange}
                                 className="w-full pl-10 py-3 border-2 border-gray-300 rounded-lg"
-                                placeholder="Enter password"
+                                placeholder="Enter salary"
                             />
-
                         </div>
-
                     </div>
 
 
-                    {/* Status */}
-                    <div>
+                    {/* Password */}
+                    {/* Password - show only when role is admin */}
+                    {formData.role === "admin" && (
+                        <div>
+                            <label className="block font-semibold mb-2">
+                                Password *
+                            </label>
 
-                        <label className="block font-semibold mb-2">
-                            Status
-                        </label>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
 
-                        <select
-                            name="status"
-                            value={formData.status}
-                            onChange={handleChange}
-                            className="w-full py-3 px-2 border-2 border-gray-300 rounded-lg"
-                        >
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    className="w-full pl-10 py-3 border-2 border-gray-300 rounded-lg"
+                                    placeholder="Enter admin password"
+                                />
+                            </div>
 
-                            <option value="ACTIVE">Active</option>
-                            <option value="INACTIVE">Inactive</option>
-
-                        </select>
-
-                    </div>
+                            {errors.password &&
+                                <p className="text-red-500 text-sm">
+                                    {errors.password}
+                                </p>}
+                        </div>
+                    )}
 
 
                     {/* Buttons */}
