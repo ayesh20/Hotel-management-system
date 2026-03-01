@@ -7,10 +7,18 @@ import lombok.Data;
 public class CreatePaymentRequest {
 
     @NotNull
+    private String bookingId;
+
+    @NotNull
+    private String customerId;
+
+    @NotNull
     private Long amount; // in cents e.g., 5000 = R50/R50.00
 
     @NotNull
-    private String currency; // usd, zar
+    private String currency; // LKR
+
+    private Long discountAmount;
 
     @NotNull
     private String description;

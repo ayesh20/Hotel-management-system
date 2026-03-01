@@ -19,7 +19,7 @@ public class StripeConfig {
      */
     @Bean
     public WebMvcConfigurer corsConfigurer(
-            @Value("${app.frontend.url:http://localhost:3000}") String frontendUrl
+            @Value("${app.frontend.url:http://localhost:5173}") String frontendUrl
     ) {
         return new WebMvcConfigurer() {
             @Override

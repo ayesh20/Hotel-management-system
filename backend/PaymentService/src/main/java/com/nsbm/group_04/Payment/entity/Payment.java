@@ -41,7 +41,7 @@ public class Payment {
         this.customerId = customerId;
         this.amount = amount;
         this.discountAmount = discountAmount;
-        this.finalAmount = amount - discountAmount; // ✅ Auto calculate
+        this.finalAmount = amount - discountAmount; //Auto calculate
         this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
         this.currency = currency;

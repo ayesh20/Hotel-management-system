@@ -1,7 +1,11 @@
-package com.nsbm.group_04.Payment.services;
+package com.nsbm.group_04.Payment.service;
 
 import com.nsbm.group_04.Payment.entity.Payment;
 import com.nsbm.group_04.Payment.repository.PaymentRepository;
+import com.nsbm.group_04.Payment.dto.CreatePaymentRequest;
+import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCreateParams;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,21 +20,21 @@ public class PaymentService {
     @Autowired
     private PaymentRepository paymentRepository;
 
-    // Create new payment (auto generates paymentId and transactionId)
+    // -------------------------
+    // MongoDB Payment Methods
+    // -------------------------
+
+    // Create new payment in DB
     public Payment createPayment(Payment payment) {
         if (payment.getPaymentId() == null) {
             payment.setPaymentId(UUID.randomUUID().toString());
-        }
-        if (payment.getTransactionId() == null) {
-            payment.setTransactionId(UUID.randomUUID().toString());
         }
 
         payment.setPaymentStatus("PENDING");
         payment.setPaymentDate(new Date());
 
         // Calculate final amount
-        double finalAmount = payment.getAmount() - payment.getDiscountAmount();
-        payment.setFinalAmount(finalAmount);
+        payment.setFinalAmount(payment.getAmount() - payment.getDiscountAmount());
 
         return paymentRepository.save(payment);
     }
@@ -61,5 +65,25 @@ public class PaymentService {
 
     public void deletePayment(String paymentId) {
         paymentRepository.deleteById(paymentId);
+    }
+
+    // -------------------------
+    // Stripe Payment Methods
+    // -------------------------
+
+    public PaymentIntent createStripePayment(CreatePaymentRequest request) throws Exception {
+
+        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
+                .setAmount(request.getAmount())
+                .setCurrency(request.getCurrency())
+                .setDescription(request.getDescription())
+                .setAutomaticPaymentMethods(
+                        PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
+                                .setEnabled(true)
+                                .build()
+                )
+                .build();
+
+        return PaymentIntent.create(params);
     }
 }

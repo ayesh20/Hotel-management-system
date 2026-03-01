@@ -1,9 +1,9 @@
 package com.nsbm.group_04.Payment.Controller;
 
 import com.nsbm.group_04.Payment.entity.Payment;
-import com.nsbm.group_04.Payment.services.PaymentService;
 import com.nsbm.group_04.Payment.dto.CreatePaymentRequest;
-import com.nsbm.group_04.Payment.services.StripePaymentService;
+import com.nsbm.group_04.Payment.dto.PaymentIntentResponse;
+import com.nsbm.group_04.Payment.service.PaymentService;
 import com.stripe.model.PaymentIntent;
 
 import org.springframework.web.bind.annotation.*;
@@ -18,34 +18,29 @@ import java.util.List;
 public class PaymentController {
 
     @Autowired
-    private PaymentService paymentService;       // Your MongoDB service
+    private PaymentService paymentService; // Single service handles both Stripe + DB
 
-    @Autowired
-    private StripePaymentService stripeService;   // Stripe service
-
-    //Create Stripe PaymentIntent and save in DB
-    @PostMapping("/pay")
+    //Create Stripe PaymentIntent & save in DB
+    @PostMapping("/create")
     public ResponseEntity<Payment> createPayment(@RequestBody CreatePaymentRequest request) {
         try {
-            //Create Stripe PaymentIntent
-            PaymentIntent intent = stripeService.createPayment(request);
+            // Stripe PaymentIntent
+            PaymentIntent intent = paymentService.createStripePayment(request);
 
-            //Create Payment object to save in DB
+            // Save Payment in DB
             Payment payment = new Payment();
             payment.setBookingId(request.getBookingId());
             payment.setCustomerId(request.getCustomerId());
             payment.setAmount(request.getAmount());
             payment.setDiscountAmount(request.getDiscountAmount());
-            payment.calculateFinalAmount();                   // optional
+            payment.calculateFinalAmount();            // finalAmount = amount - discount
             payment.setPaymentMethod("CARD");
-            payment.setPaymentStatus("PENDING");             // initially
+            payment.setPaymentStatus("PENDING");
             payment.setCurrency(request.getCurrency());
-            payment.setStripePaymentIntentId(intent.getId()); // Stripe reference
+            payment.setStripePaymentIntentId(intent.getId());
             payment.setPaymentDate(new Date());
 
-            //Save to MongoDB
             Payment savedPayment = paymentService.createPayment(payment);
-
             return ResponseEntity.ok(savedPayment);
 
         } catch (Exception e) {
@@ -67,7 +62,7 @@ public class PaymentController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    //Update payment status (after Stripe confirms)
+    //Update payment status
     @PutMapping("/{id}/status")
     public ResponseEntity<Payment> updatePaymentStatus(@PathVariable String id, @RequestParam String status) {
         Payment updated = paymentService.updatePaymentStatus(id, status);
@@ -75,7 +70,7 @@ public class PaymentController {
         return ResponseEntity.notFound().build();
     }
 
-    // Delete payment
+    //Delete payment
     @DeleteMapping("/{id}")
     public void deletePayment(@PathVariable String id) {
         paymentService.deletePayment(id);
