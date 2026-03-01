@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const EditStaff = () => {
+export default function EditStaff() {
     return (
         <div>editStaff</div>
     )
