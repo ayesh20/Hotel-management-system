@@ -1,6 +1,8 @@
 package com.nsbm.group_04.InventoryService.Controller;
 
 import com.nsbm.group_04.InventoryService.Model.InventoryItem;
+import com.nsbm.group_04.InventoryService.dto.InventoryItemRequestDTO;
+import com.nsbm.group_04.InventoryService.dto.InventoryItemResponseDTO;
 import com.nsbm.group_04.InventoryService.service.InventoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +25,14 @@ public class InventoryController {
 
     // Creates a new inventory item.
     @PostMapping
-    public ResponseEntity<InventoryItem> addItem(@Valid @RequestBody InventoryItem item) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.addItem(item));
+    public ResponseEntity<InventoryItemResponseDTO> addItem(@Valid @RequestBody InventoryItemRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addItem(dto));
     }
 
 
     // Retrieves all inventory items.
     @GetMapping
-    public ResponseEntity<List<InventoryItem>> getAllItems() {
+    public ResponseEntity<List<InventoryItemResponseDTO>> getAllItems() {
         return ResponseEntity.ok(service.getAllItems());
     }
 
@@ -39,20 +41,20 @@ public class InventoryController {
     // Returns 404 if item not found.
 
     @GetMapping("/{id}")
-    public ResponseEntity<InventoryItem> getItemById(@PathVariable String id) {
-        return service.getItemById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<InventoryItemResponseDTO> getItemById(@PathVariable String id) {
+        return ResponseEntity.ok(service.getItemById(id));
+
+
     }
 
 
     // Updates an existing inventory item.
     // Status is automatically recalculated based on updated values.
     @PutMapping("/{id}")
-    public ResponseEntity<InventoryItem> updateItem(
+    public ResponseEntity<InventoryItemResponseDTO> updateItem(
             @PathVariable String id,
-            @Valid @RequestBody InventoryItem item) {
-        return ResponseEntity.ok(service.updateItem(id, item));
+            @Valid @RequestBody InventoryItemRequestDTO dto) {
+        return ResponseEntity.ok(service.updateItem(id, dto));
     }
 
 
@@ -67,21 +69,21 @@ public class InventoryController {
 
     // Searches for items by name (case-insensitive).
     @GetMapping("/search")
-    public ResponseEntity<List<InventoryItem>> searchItems(@RequestParam String name) {
+    public ResponseEntity<List<InventoryItemResponseDTO>> searchItems(@RequestParam String name) {
         return ResponseEntity.ok(service.searchItemsByName(name));
     }
 
 
     // Retrieves items that need reordering (LOW_STOCK or OUT_OF_STOCK).
     @GetMapping("/low-stock")
-    public ResponseEntity<List<InventoryItem>> getLowStockItems() {
+    public ResponseEntity<List<InventoryItemResponseDTO>> getLowStockItems() {
         return ResponseEntity.ok(service.getLowStockItems());
     }
 
 
     // Retrieves items by category.
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<InventoryItem>> getByCategory(@PathVariable String category) {
+    public ResponseEntity<List<InventoryItemResponseDTO>> getByCategory(@PathVariable String category) {
         return ResponseEntity.ok(service.getItemsByCategory(category));
     }
 
@@ -95,7 +97,7 @@ public class InventoryController {
 
     // Increases item quantity — restocking operation
     @PatchMapping("/{id}/restock")
-    public ResponseEntity<InventoryItem> restockItem(
+    public ResponseEntity<InventoryItemResponseDTO> restockItem(
             @PathVariable String id,
             @RequestParam int amount) {
         return ResponseEntity.ok(service.restockItem(id, amount));
@@ -103,7 +105,7 @@ public class InventoryController {
 
     // Decreases item quantity — consumption operation
     @PatchMapping("/{id}/consume")
-    public ResponseEntity<InventoryItem> consumeItem(
+    public ResponseEntity<InventoryItemResponseDTO> consumeItem(
             @PathVariable String id,
             @RequestParam int amount) {
         return ResponseEntity.ok(service.consumeItem(id, amount));
