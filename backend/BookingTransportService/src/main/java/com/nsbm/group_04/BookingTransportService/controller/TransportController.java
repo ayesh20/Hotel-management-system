@@ -29,4 +29,10 @@ public class TransportController {
     }
 
 
+    @GetMapping("/{id}")
+    public Transport getTransportById(@PathVariable String id) {
+        return transportService.getTransportById(id);
+    }
+
+
 }

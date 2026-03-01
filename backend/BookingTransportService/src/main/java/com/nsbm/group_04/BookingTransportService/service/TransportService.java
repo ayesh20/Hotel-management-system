@@ -24,4 +24,9 @@ public class TransportService {
         return transportRepository.findAll();
     }
 
+    public Transport getTransportById(String id) {
+        return transportRepository.findById(id).orElse(null);
+    }
+
+
 }
