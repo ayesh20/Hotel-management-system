@@ -114,7 +114,7 @@ export default function AllStaff() {
             <div className="flex items-center gap-4 mb-6">
                 <button
                     onClick={handleBack}
-                    className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
+                    className="p-2 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
                 >
                     <ArrowLeft className="w-6 h-6 text-slate-900" />
                 </button>
@@ -145,13 +145,13 @@ export default function AllStaff() {
 
                             <button
                                 onClick={prevSlide}
-                                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-colors"
+                                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-colors cursor-pointer"
                             >
                                 <ChevronLeft className="w-6 h-6 text-slate-800" />
                             </button>
                             <button
                                 onClick={nextSlide}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-colors"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-colors cursor-pointer"
                             >
                                 <ChevronRight className="w-6 h-6 text-slate-800" />
                             </button>
@@ -161,7 +161,7 @@ export default function AllStaff() {
                                     <button
                                         key={index}
                                         onClick={() => goToSlide(index)}
-                                        className={`w-2 h-2 rounded-full transition-all ${index === currentSlide
+                                        className={`w-2 h-2 rounded-full transition-all cursor-pointer ${index === currentSlide
                                             ? 'bg-blue-500 w-6'
                                             : 'bg-white/60 hover:bg-white'
                                             }`}
