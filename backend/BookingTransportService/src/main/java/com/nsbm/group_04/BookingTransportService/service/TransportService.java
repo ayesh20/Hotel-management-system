@@ -42,4 +42,9 @@ public class TransportService {
         return transportRepository.save(existing);
     }
 
+
+    public void deleteTransport(String id) {
+        transportRepository.deleteById(id);
+    }
+
 }

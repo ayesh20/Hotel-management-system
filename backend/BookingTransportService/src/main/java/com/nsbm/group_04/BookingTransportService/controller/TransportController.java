@@ -42,5 +42,10 @@ public class TransportController {
         return transportService.updateTransport(id, transport);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteTransport(@PathVariable String id) {
+        transportService.deleteTransport(id);
+    }
+
 
 }
