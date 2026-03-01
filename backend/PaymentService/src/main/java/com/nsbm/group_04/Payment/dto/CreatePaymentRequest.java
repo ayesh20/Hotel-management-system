@@ -21,4 +21,7 @@ public class CreatePaymentRequest {
 
     @NotNull
     private String description;
+
+    private String customerName;
+    private String phoneNumber;
 }

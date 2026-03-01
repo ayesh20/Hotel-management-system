@@ -12,16 +12,18 @@ public class Payment {
 
     private String bookingId;
     private String customerId;
+    private String customerName;
+    private String phoneNumber;
 
     private double amount;
     private double discountAmount;
     private double finalAmount;
 
-    private String paymentMethod;   // CARD, CASH
-    private String paymentStatus;   // PAID, PENDING
+    private String paymentMethod; // CARD, CASH
+    private String paymentStatus; // PAID, PENDING
     private String currency;
 
-    private String stripePaymentIntentId;   // ADDED (Stripe reference)
+    private String stripePaymentIntentId; // ADDED (Stripe reference)
 
     private Date paymentDate;
 
@@ -31,6 +33,7 @@ public class Payment {
 
     // Updated Constructor
     public Payment(String paymentId, String bookingId, String customerId,
+                   String customerName, String phoneNumber,
                    double amount, double discountAmount,
                    String paymentMethod, String paymentStatus,
                    String currency, String stripePaymentIntentId,
@@ -39,9 +42,11 @@ public class Payment {
         this.paymentId = paymentId;
         this.bookingId = bookingId;
         this.customerId = customerId;
+        this.customerName = customerName;
+        this.phoneNumber = phoneNumber;
         this.amount = amount;
         this.discountAmount = discountAmount;
-        this.finalAmount = amount - discountAmount; //Auto calculate
+        this.finalAmount = amount - discountAmount; // Auto calculate
         this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
         this.currency = currency;
@@ -56,40 +61,109 @@ public class Payment {
 
     // Getters and Setters
 
-    public String getPaymentId() { return paymentId; }
-    public void setPaymentId(String paymentId) { this.paymentId = paymentId; }
+    public String getPaymentId() {
+        return paymentId;
+    }
 
-    public String getBookingId() { return bookingId; }
-    public void setBookingId(String bookingId) { this.bookingId = bookingId; }
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
 
-    public String getCustomerId() { return customerId; }
-    public void setCustomerId(String customerId) { this.customerId = customerId; }
+    public String getBookingId() {
+        return bookingId;
+    }
 
-    public double getAmount() { return amount; }
-    public void setAmount(double amount) { this.amount = amount; }
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
+    }
 
-    public double getDiscountAmount() { return discountAmount; }
-    public void setDiscountAmount(double discountAmount) { this.discountAmount = discountAmount; }
+    public String getCustomerId() {
+        return customerId;
+    }
 
-    public double getFinalAmount() { return finalAmount; }
-    public void setFinalAmount(double finalAmount) { this.finalAmount = finalAmount; }
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
 
-    public String getPaymentMethod() { return paymentMethod; }
-    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+    public String getCustomerName() {
+        return customerName;
+    }
 
-    public String getPaymentStatus() { return paymentStatus; }
-    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-    public String getStripePaymentIntentId() { return stripePaymentIntentId; }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public double getFinalAmount() {
+        return finalAmount;
+    }
+
+    public void setFinalAmount(double finalAmount) {
+        this.finalAmount = finalAmount;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getStripePaymentIntentId() {
+        return stripePaymentIntentId;
+    }
+
     public void setStripePaymentIntentId(String stripePaymentIntentId) {
         this.stripePaymentIntentId = stripePaymentIntentId;
     }
 
-    public Date getPaymentDate() { return paymentDate; }
-    public void setPaymentDate(Date paymentDate) { this.paymentDate = paymentDate; }
+    public Date getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(Date paymentDate) {
+        this.paymentDate = paymentDate;
+    }
 
     @Override
     public String toString() {
@@ -97,6 +171,8 @@ public class Payment {
                 "paymentId='" + paymentId + '\'' +
                 ", bookingId='" + bookingId + '\'' +
                 ", customerId='" + customerId + '\'' +
+                ", customerName='" + customerName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", amount=" + amount +
                 ", discountAmount=" + discountAmount +
                 ", finalAmount=" + finalAmount +

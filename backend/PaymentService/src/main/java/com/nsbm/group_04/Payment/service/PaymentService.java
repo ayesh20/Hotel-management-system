@@ -3,6 +3,7 @@ package com.nsbm.group_04.Payment.service;
 import com.nsbm.group_04.Payment.entity.Payment;
 import com.nsbm.group_04.Payment.repository.PaymentRepository;
 import com.nsbm.group_04.Payment.dto.CreatePaymentRequest;
+import com.nsbm.group_04.Payment.dto.CreateIntentRequest;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 
@@ -30,11 +31,12 @@ public class PaymentService {
             payment.setPaymentId(UUID.randomUUID().toString());
         }
 
-        payment.setPaymentStatus("PENDING");
         payment.setPaymentDate(new Date());
 
-        // Calculate final amount
-        payment.setFinalAmount(payment.getAmount() - payment.getDiscountAmount());
+        // Calculate final amount if not already set
+        if (payment.getFinalAmount() == 0) {
+            payment.setFinalAmount(payment.getAmount() - payment.getDiscountAmount());
+        }
 
         return paymentRepository.save(payment);
     }
@@ -71,6 +73,22 @@ public class PaymentService {
     // Stripe Payment Methods
     // -------------------------
 
+    // Create a PaymentIntent (returns clientSecret to frontend)
+    public PaymentIntent createStripeIntent(CreateIntentRequest request) throws Exception {
+        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
+                .setAmount(request.getAmount())
+                .setCurrency(request.getCurrency() != null ? request.getCurrency() : "usd")
+                .setDescription(request.getDescription() != null ? request.getDescription() : "Hotel Booking Payment")
+                .setAutomaticPaymentMethods(
+                        PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
+                                .setEnabled(true)
+                                .build())
+                .build();
+
+        return PaymentIntent.create(params);
+    }
+
+    // Legacy method (kept for backward compatibility)
     public PaymentIntent createStripePayment(CreatePaymentRequest request) throws Exception {
 
         PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
@@ -80,8 +98,7 @@ public class PaymentService {
                 .setAutomaticPaymentMethods(
                         PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
                                 .setEnabled(true)
-                                .build()
-                )
+                                .build())
                 .build();
 
         return PaymentIntent.create(params);
