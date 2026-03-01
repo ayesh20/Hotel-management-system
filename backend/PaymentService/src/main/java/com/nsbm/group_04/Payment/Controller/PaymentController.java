@@ -2,61 +2,82 @@ package com.nsbm.group_04.Payment.Controller;
 
 import com.nsbm.group_04.Payment.entity.Payment;
 import com.nsbm.group_04.Payment.services.PaymentService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.nsbm.group_04.Payment.dto.CreatePaymentRequest;
+import com.nsbm.group_04.Payment.services.StripePaymentService;
+import com.stripe.model.PaymentIntent;
 
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
 
     @Autowired
-    private PaymentService paymentService;
+    private PaymentService paymentService;       // Your MongoDB service
 
-    // Create new payment
-    @PostMapping
-    public ResponseEntity<Payment> createPayment(@RequestBody Payment payment) {
-        Payment createdPayment = paymentService.createPayment(payment);
-        return ResponseEntity.ok(createdPayment);
-    }
+    @Autowired
+    private StripePaymentService stripeService;   // Stripe service
 
-    // Get all payments
-    @GetMapping
-    public ResponseEntity<List<Payment>> getAllPayments() {
-        return ResponseEntity.ok(paymentService.getAllPayments());
-    }
+    //Create Stripe PaymentIntent and save in DB
+    @PostMapping("/pay")
+    public ResponseEntity<Payment> createPayment(@RequestBody CreatePaymentRequest request) {
+        try {
+            //Create Stripe PaymentIntent
+            PaymentIntent intent = stripeService.createPayment(request);
 
-    // Get payment by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Payment> getPaymentById(@PathVariable("id") String id) {
-        Optional<Payment> payment = paymentService.getPaymentById(id);
-        return payment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
+            //Create Payment object to save in DB
+            Payment payment = new Payment();
+            payment.setBookingId(request.getBookingId());
+            payment.setCustomerId(request.getCustomerId());
+            payment.setAmount(request.getAmount());
+            payment.setDiscountAmount(request.getDiscountAmount());
+            payment.calculateFinalAmount();                   // optional
+            payment.setPaymentMethod("CARD");
+            payment.setPaymentStatus("PENDING");             // initially
+            payment.setCurrency(request.getCurrency());
+            payment.setStripePaymentIntentId(intent.getId()); // Stripe reference
+            payment.setPaymentDate(new Date());
 
-    // Get payments by customer
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<Payment>> getPaymentsByCustomer(@PathVariable String customerId) {
-        return ResponseEntity.ok(paymentService.getPaymentsByCustomer(customerId));
-    }
+            //Save to MongoDB
+            Payment savedPayment = paymentService.createPayment(payment);
 
-    // Update payment status
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Payment> updatePaymentStatus(@PathVariable("id") String id, @RequestParam String status) {
-        Payment updatedPayment = paymentService.updatePaymentStatus(id, status);
-        if (updatedPayment != null) {
-            return ResponseEntity.ok(updatedPayment);
-        } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(savedPayment);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
+    }
+
+    //Get all payments
+    @GetMapping
+    public List<Payment> getAllPayments() {
+        return paymentService.getAllPayments();
+    }
+
+    //Get payment by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Payment> getPaymentById(@PathVariable String id) {
+        return paymentService.getPaymentById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    //Update payment status (after Stripe confirms)
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Payment> updatePaymentStatus(@PathVariable String id, @RequestParam String status) {
+        Payment updated = paymentService.updatePaymentStatus(id, status);
+        if (updated != null) return ResponseEntity.ok(updated);
+        return ResponseEntity.notFound().build();
     }
 
     // Delete payment
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePayment(@PathVariable("id") String id) {
+    public void deletePayment(@PathVariable String id) {
         paymentService.deletePayment(id);
-        return ResponseEntity.noContent().build();
     }
 }
