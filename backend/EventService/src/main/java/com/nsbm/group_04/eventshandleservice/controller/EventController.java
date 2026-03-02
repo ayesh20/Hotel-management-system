@@ -2,39 +2,50 @@ package com.nsbm.group_04.eventshandleservice.controller;
 
 import com.nsbm.group_04.eventshandleservice.model.Event;
 import com.nsbm.group_04.eventshandleservice.service.EventService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
-    @PostMapping("/add")
-    public String addEvent(@RequestBody Event event) {
-        return eventService.saveEvent(event);
+    public EventController(EventService eventService) {
+        this.eventService = eventService;
     }
 
-    @GetMapping("/all")
-    public List<Event> getAll() {
-        return eventService.getAllEvents();
+    @PostMapping
+    public Event createEvent(@RequestBody Event event) {
+        return eventService.createEvent(event);
     }
 
-    @GetMapping("/{id}")
-    public Event getById(@PathVariable String id) {
-        return eventService.getEventById(id);
-    }
-
-    @PutMapping("/update/{id}")
-    public String update(@PathVariable String id, @RequestBody Event event) {
+    @PutMapping("/{id}")
+    public Event updateEvent(@PathVariable String id,
+                             @RequestBody Event event) {
         return eventService.updateEvent(id, event);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable String id) {
+    @DeleteMapping("/{id}")
+    public String deleteEvent(@PathVariable String id) {
         eventService.deleteEvent(id);
+        return "Event cancelled successfully";
+    }
+
+    @GetMapping("/{id}")
+    public Event getEventById(@PathVariable String id) {
+        return eventService.getEventById(id);
+    }
+
+    @GetMapping
+    public List<Event> getAllEvents() {
+        return eventService.getAllEvents();
+    }
+
+    @GetMapping("/monitor/{date}")
+    public List<Event> monitorEvents(@PathVariable String date) {
+        return eventService.monitorEventsByDate(LocalDate.parse(date));
     }
 }

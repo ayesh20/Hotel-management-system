@@ -2,18 +2,19 @@ package com.nsbm.group_04.eventshandleservice.repository;
 
 import com.nsbm.group_04.eventshandleservice.model.Event;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface EventRepository extends MongoRepository<Event, String> {
 
-    // Logic: Find events in the same hall on the same day with overlapping times
-    @Query("{ 'hallName': ?0, 'bookingDate': ?1, " +
-            "  $or: [ " +
-            "    { 'startTime': { $lt: ?3 }, 'endTime': { $gt: ?2 } } " +
-            "  ] " +
-            "}")
-    List<Event> findOverlappingEvents(String hallName, LocalDate date, LocalTime start, LocalTime end);
+    Optional<Event> findByHallNumberAndEventDateAndEventTime(
+            String hallNumber,
+            LocalDate eventDate,
+            LocalTime eventTime
+    );
+
+    List<Event> findByEventDate(LocalDate eventDate);
 }
