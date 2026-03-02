@@ -48,28 +48,47 @@ function AddHouseKeeping() {
   };
 
   const fetchCleaners = async () => {
-    try {
-      const response = await axios.get(`${STAFF_API_URL}`);
+  try {
+    setLoading(true);
 
-      console.log("FULL STAFF LIST:", response.data);
+    const token = localStorage.getItem("token");
 
-      if (!response.data || !Array.isArray(response.data)) {
-        setCleaners([]);
-        return;
-      }
+    if (!token) {
+      toast.error("Please login first");
+      navigate("/");
+      return;
+    }
 
-      const onlyCleaners = response.data.filter((staff) =>
-        staff.role?.toLowerCase().includes("clean"),
-      );
+    const response = await axios.get(`${API_URL}/housekeeping/cleaners`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      console.log("ONLY CLEANERS:", onlyCleaners);
+    console.log("FULL STAFF LIST:", response.data);
 
-      setCleaners(onlyCleaners);
-    } catch (error) {
-      console.error("Fetch staff error:", error);
+    const staffArray = Array.isArray(response.data) ? response.data : [];
+
+    const onlyCleaners = staffArray.filter((staff) =>
+      staff.role?.toLowerCase().includes("clean")
+    );
+
+    setCleaners(onlyCleaners);
+  } catch (error) {
+    console.error("Fetch staff error:", error);
+
+    if (error.response?.status === 403) {
+      toast.error("Unauthorized. Please login again.");
+      navigate("/");
+    } else {
       toast.error("Failed to load cleaners");
     }
-  };
+
+    setCleaners([]);
+  } finally {
+    setLoading(false);
+  }
+};
   const handleChange = (e) => {
     const { name, value } = e.target;
 

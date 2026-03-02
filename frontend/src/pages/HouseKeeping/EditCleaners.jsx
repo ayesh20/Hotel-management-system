@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -18,16 +18,24 @@ function EditCleaners() {
   const [cleaners, setCleaners] = useState([]);
 
   const API_HOUSEKEEPING = import.meta.env.VITE_BACKEND_URL_HOUSEKEPING;
-  const API_ROOMS = import.meta.env.VITE_BACKEND_URL;
+  // const API_ROOMS = import.meta.env.VITE_BACKEND_URL;
   const API_STAFF = import.meta.env.VITE_BACKEND_URL_STAFF;
 
   // Fetch cleaner data
   useEffect(() => {
     const fetchCleaner = async () => {
       try {
+        const token = localStorage.getItem("token");
+
         const response = await axios.get(
           `${API_HOUSEKEEPING}/housekeeping/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
+
         setFormData(response.data);
       } catch (error) {
         toast.error("Failed to fetch cleaner data");
@@ -35,38 +43,60 @@ function EditCleaners() {
         setLoading(false);
       }
     };
+
     fetchCleaner();
   }, [id]);
+  useEffect(() => {
+    const fetchCleaners = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
- useEffect(() => {
-  const fetchCleaners = async () => {
-    try {
-      const response = await axios.get(API_STAFF);
+        if (!token) {
+          toast.error("Please login first");
+          navigate("/");
+          return;
+        }
 
-      const staffList = response.data ?? [];
+        const response = await axios.get(API_STAFF, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      // Filter only cleaners
-      const onlyCleaners = staffList.filter(
-        (staff) =>
-          staff.role &&
-          staff.role.toLowerCase().includes("clean")
-      );
+        console.log("STAFF RESPONSE:", response.data);
 
-      setCleaners(onlyCleaners);
+        // If your API returns { data: [...] }
+        const staffList = Array.isArray(response.data.data)
+          ? response.data.data
+          : [];
 
-    } catch (error) {
-      toast.error("Failed to fetch cleaners");
-    }
-  };
+        const onlyCleaners = staffList.filter(
+          (staff) => staff.role && staff.role.toLowerCase().includes("clean"),
+        );
 
-  fetchCleaners();
-}, []);
+        setCleaners(onlyCleaners);
+      } catch (error) {
+        console.error("Fetch staff error:", error);
+
+        if (error.response?.status === 403) {
+          toast.error("Unauthorized. Please login again.");
+          navigate("/");
+        } else {
+          toast.error("Failed to fetch cleaners");
+        }
+      }
+    };
+
+    fetchCleaners();
+  }, []);
 
   // Fetch available rooms for dropdown
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get(`${API_ROOMS}/rooms/all`); // adjust endpoint if needed
+        const response = await axios.get(
+          `${API_HOUSEKEEPING}/housekeeping/roomNumbers`,
+        ); // adjust endpoint if needed
         setRooms(response.data); // assume response.data is array of rooms [{roomNumber: "101"}, ...]
       } catch (error) {
         toast.error("Failed to fetch room numbers");
@@ -133,7 +163,6 @@ function EditCleaners() {
               className="w-full border p-2 rounded-lg"
               required
             >
-              
               {cleaners.map((cleaner) => (
                 <option key={cleaner.id} value={cleaner.id}>
                   {cleaner.id} - {cleaner.name}

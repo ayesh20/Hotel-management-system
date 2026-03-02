@@ -1,6 +1,7 @@
 package com.nsbm.group_04.Housekeeping.controller;
 
 import com.nsbm.group_04.Housekeeping.DTO.RoomDTO;
+import com.nsbm.group_04.Housekeeping.DTO.StaffDTO;
 import com.nsbm.group_04.Housekeeping.entity.HouseKeeping;
 import com.nsbm.group_04.Housekeeping.services.HouseKeepingService;
 import com.nsbm.group_04.Housekeeping.services.impl.HouseKeepingImpl;
@@ -26,6 +27,13 @@ public class HouseKeepingController {
     @GetMapping("/roomNumbers")
     public List<RoomDTO> getRoomNumbers() {
         return houseKeepingImpl.getRoomNumbers();
+    }
+
+    @GetMapping("/cleaners")
+    public List<StaffDTO> getCleaners(
+            @RequestHeader("Authorization") String token) {
+
+        return houseKeepingImpl.getCleaners(token);
     }
 
     @PostMapping
