@@ -22,6 +22,9 @@ import Payment from "./pages/Payment/Payment.jsx";
 import AllStaff from "./pages/Staff/allstaff.jsx";
 import AddStaff from "./pages/Staff/addStaff.jsx";
 import EditStaff from "./pages/Staff/editStaff.jsx";
+import CheckoutForm from "./pages/Payment/CheckoutForm.jsx";
+import PendingPayment from "./pages/Payment/PendingPayment.jsx";
+import PaymentSuccess from "./pages/Payment/PaymentSuccess.jsx";
 
 
 
@@ -58,7 +61,10 @@ function App() {
           <Route path="/allReservation" element={<AllReservations />} />
           <Route path="/addReservation" element={<AddReservation />} />
           <Route path="/editReservation/:id" element={<EditReservation />} />
-          <Route path="/payment" element={<Payment />} />
+           <Route path="/payment" element={<Payment/>}/>
+            <Route path="/checkoutform" element={<CheckoutForm/>}/>
+            <Route path="/pendingpayment" element={<PendingPayment/>}/>
+            <Route path="/payment-success" element={<PaymentSuccess/>}/>
 
 
           <Route path="/allstaff" element={<AllStaff />} />

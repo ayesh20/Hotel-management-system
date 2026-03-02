@@ -1,34 +1,33 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import CheckoutForm from "./CheckoutForm.jsx";
+import { createStripeIntent, createCashPayment } from "../../api/paymentApi.js";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 
 export default function Payment() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [customerName, setCustomerName] = useState("");
+  // Pre-fill from AddReservation navigation state
+  const reservationData = location.state || {};
+
+  const [customerName, setCustomerName] = useState(reservationData.customerName || "");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [amount, setAmount] = useState("");
-  const [discount, setDiscount] = useState("");
+  const [amount, setAmount] = useState(reservationData.totalPrice ? String(reservationData.totalPrice) : "");
+  const [discount, setDiscount] = useState("0");
   const [paymentMethod, setPaymentMethod] = useState("CARD");
 
-  // Card Details (Only if CARD)
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [cvv, setCvv] = useState("");
-  const [nameOnCard, setNameOnCard] = useState("");
+  const [clientSecret, setClientSecret] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const totalAmount =
-    (parseFloat(amount || 0) - parseFloat(discount || 0)).toFixed(2);
+  const totalAmount = (parseFloat(amount || 0) - parseFloat(discount || 0)).toFixed(2);
 
-  // Clear Card Inputs if not CARD
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
-
-    if (method !== "CARD") {
-      setCardNumber("");
-      setExpiryDate("");
-      setCvv("");
-      setNameOnCard("");
-    }
+    setClientSecret("");
   };
 
   const handlePayNow = async () => {
@@ -37,77 +36,83 @@ export default function Payment() {
       return;
     }
 
-    // Validation only for Card
-    if (paymentMethod === "CARD") {
-      if (!cardNumber || !expiryDate || !cvv || !nameOnCard) {
-        alert("Please fill all Card Details!");
-        return;
+    const finalAmountCents = Math.round(parseFloat(totalAmount) * 100);
+
+    // ─── CASH PAYMENT ──────────────────────────────────────────────
+    if (paymentMethod === "CASH") {
+      setLoading(true);
+      try {
+        const response = await createCashPayment({
+          customerName,
+          phoneNumber,
+          amount: parseFloat(amount),
+          discountAmount: parseFloat(discount || 0),
+          totalAmount: parseFloat(totalAmount),
+          paymentMethod: "CASH",
+        });
+
+        navigate("/pendingpayment", {
+          state: {
+            customerName,
+            phoneNumber,
+            amount: parseFloat(amount),
+            discount: parseFloat(discount || 0),
+            totalAmount: parseFloat(totalAmount),
+            paymentId: response.data.paymentId,
+            paymentDate: response.data.paymentDate,
+          },
+        });
+      } catch (error) {
+        alert("Failed to create payment. Please try again.");
+      } finally {
+        setLoading(false);
       }
+      return;
     }
 
-    const paymentData = {
-      customerName: customerName,
-      phoneNumber: phoneNumber,
-      amount: parseFloat(amount),
-      discountAmount: parseFloat(discount || 0),
-      totalAmount: parseFloat(totalAmount),
-      paymentMethod: paymentMethod,
+    // ─── CARD PAYMENT (STRIPE) ─────────────────────────────────────
+    if (paymentMethod === "CARD") {
+      setLoading(true);
+      try {
+        const response = await createStripeIntent({
+          amount: finalAmountCents,
+          currency: "usd",
+          description: "Hotel Booking Payment",
+        });
 
-      // Card data only if card
-      cardDetails:
-        paymentMethod === "CARD"
-          ? {
-              cardNumber: cardNumber,
-              expiryDate: expiryDate,
-              cvv: cvv,
-              nameOnCard: nameOnCard,
-            }
-          : null,
-    };
-
-    try {
-      const response = await fetch("http://localhost:8080/api/payments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(paymentData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Payment Failed!");
+        setClientSecret(response.data.clientSecret);
+      } catch (error) {
+        alert("Stripe initialization failed. Please try again.");
+      } finally {
+        setLoading(false);
       }
-
-      const result = await response.json();
-
-      // Navigate to PaymentComplete page
-      navigate("/paymentcomplete", { state: { payment: result } });
-    } catch (error) {
-      alert("Error: " + error.message);
     }
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h2 style={styles.title}>Payment</h2>
+        <h2 style={styles.title}>💳 Payment</h2>
 
         {/* Customer Details */}
         <div style={styles.sectionBox}>
           <h3 style={styles.sectionTitle}>Customer Details</h3>
 
+          <label style={styles.label}>Customer Name</label>
           <input
             style={styles.input}
             type="text"
-            placeholder="Customer Name"
+            placeholder="Enter customer name"
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
+            readOnly={!!reservationData.customerName}
           />
 
+          <label style={styles.label}>Phone Number</label>
           <input
             style={styles.input}
             type="text"
-            placeholder="Phone Number"
+            placeholder="Enter phone number"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
@@ -117,14 +122,17 @@ export default function Payment() {
         <div style={styles.sectionBox}>
           <h3 style={styles.sectionTitle}>Payment Details</h3>
 
+          <label style={styles.label}>Amount (LKR)</label>
           <input
             style={styles.input}
             type="number"
             placeholder="Amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            readOnly={!!reservationData.totalPrice}
           />
 
+          <label style={styles.label}>Discount (LKR)</label>
           <input
             style={styles.input}
             type="number"
@@ -133,9 +141,11 @@ export default function Payment() {
             onChange={(e) => setDiscount(e.target.value)}
           />
 
-          <div style={styles.row}>
-            <span><b>Total Amount:</b></span>
-            <span><b>LKR {totalAmount}</b></span>
+          <div style={styles.totalRow}>
+            <span style={{ fontSize: "16px", fontWeight: "600" }}>Total Amount:</span>
+            <span style={{ fontSize: "18px", fontWeight: "bold", color: "#1fbf6b" }}>
+              LKR {totalAmount}
+            </span>
           </div>
         </div>
 
@@ -144,94 +154,73 @@ export default function Payment() {
           <h3 style={styles.sectionTitle}>Payment Method</h3>
 
           <div style={styles.methodBox}>
-            <label style={styles.methodLabel}>
+            <label
+              style={{
+                ...styles.methodCard,
+                border: paymentMethod === "CARD" ? "2px solid #1fbf6b" : "2px solid #e2e8f0",
+                backgroundColor: paymentMethod === "CARD" ? "#f0fdf4" : "#fff",
+              }}
+            >
               <input
                 type="radio"
                 value="CARD"
                 checked={paymentMethod === "CARD"}
                 onChange={() => handlePaymentMethodChange("CARD")}
+                style={{ display: "none" }}
               />
-              Card
+              <span style={{ fontSize: "22px" }}>💳</span>
+              <span style={{ fontWeight: "600", fontSize: "14px" }}>Card</span>
             </label>
 
-            <label style={styles.methodLabel}>
+            <label
+              style={{
+                ...styles.methodCard,
+                border: paymentMethod === "CASH" ? "2px solid #1fbf6b" : "2px solid #e2e8f0",
+                backgroundColor: paymentMethod === "CASH" ? "#f0fdf4" : "#fff",
+              }}
+            >
               <input
                 type="radio"
                 value="CASH"
                 checked={paymentMethod === "CASH"}
                 onChange={() => handlePaymentMethodChange("CASH")}
+                style={{ display: "none" }}
               />
-              Cash
-            </label>
-
-            <label style={styles.methodLabel}>
-              <input
-                type="radio"
-                value="ONLINE"
-                checked={paymentMethod === "ONLINE"}
-                onChange={() => handlePaymentMethodChange("ONLINE")}
-              />
-              Online
+              <span style={{ fontSize: "22px" }}>💵</span>
+              <span style={{ fontWeight: "600", fontSize: "14px" }}>Cash</span>
             </label>
           </div>
-
-          {/* Card Inputs Show only if CARD */}
-          {paymentMethod === "CARD" && (
-            <div style={styles.cardForm}>
-              <input
-                style={styles.input}
-                type="text"
-                placeholder="Card Number"
-                value={cardNumber}
-                onChange={(e) => setCardNumber(e.target.value)}
-              />
-
-              <div style={styles.twoInput}>
-                <input
-                  style={styles.input}
-                  type="text"
-                  placeholder="Expiry Date (MM/YY)"
-                  value={expiryDate}
-                  onChange={(e) => setExpiryDate(e.target.value)}
-                />
-
-                <input
-                  style={styles.input}
-                  type="password"
-                  placeholder="CVV"
-                  value={cvv}
-                  onChange={(e) => setCvv(e.target.value)}
-                />
-              </div>
-
-              <input
-                style={styles.input}
-                type="text"
-                placeholder="Name on Card"
-                value={nameOnCard}
-                onChange={(e) => setNameOnCard(e.target.value)}
-              />
-            </div>
-          )}
-
-          {/* Cash Note */}
-          {paymentMethod === "CASH" && (
-            <p style={styles.noteText}>
-              Cash payment selected. Please pay at the counter.
-            </p>
-          )}
-
-          {/* Online Note */}
-          {paymentMethod === "ONLINE" && (
-            <p style={styles.noteText}>
-              Online payment selected. You will be redirected to payment gateway.
-            </p>
-          )}
         </div>
 
-        <button style={styles.payBtn} onClick={handlePayNow}>
-          Pay LKR {totalAmount} Now
-        </button>
+        {/* Pay Button */}
+        {!clientSecret && (
+          <button
+            style={{
+              ...styles.payBtn,
+              opacity: loading ? 0.7 : 1,
+            }}
+            onClick={handlePayNow}
+            disabled={loading}
+          >
+            {loading ? "Processing..." : `Pay LKR ${totalAmount} Now`}
+          </button>
+        )}
+
+        {/* Stripe Card Form */}
+        {clientSecret && (
+          <div style={{ marginTop: "20px" }}>
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <CheckoutForm
+                clientSecret={clientSecret}
+                customerName={customerName}
+                phoneNumber={phoneNumber}
+                amount={parseFloat(amount)}
+                discount={parseFloat(discount || 0)}
+                totalAmount={parseFloat(totalAmount)}
+              />
+            </Elements>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -243,86 +232,86 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(to right, #e9f6ff, #f5fbff)",
-    fontFamily: "Arial, sans-serif",
+    background: "linear-gradient(135deg, #e9f6ff 0%, #f5fbff 50%, #eef9f1 100%)",
     padding: "20px",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   },
-
   card: {
-    width: "440px",
+    width: "460px",
     backgroundColor: "#fff",
-    borderRadius: "18px",
-    padding: "25px",
-    boxShadow: "0px 8px 25px rgba(0,0,0,0.1)",
+    borderRadius: "20px",
+    padding: "30px",
+    boxShadow: "0px 10px 40px rgba(0,0,0,0.08)",
   },
-
   title: {
-    fontSize: "22px",
+    fontSize: "24px",
     fontWeight: "bold",
-    marginBottom: "18px",
+    marginBottom: "20px",
+    color: "#1e293b",
   },
-
   sectionBox: {
-    backgroundColor: "#f7fbff",
-    padding: "15px",
-    borderRadius: "12px",
-    marginTop: "12px",
+    backgroundColor: "#f8fafc",
+    padding: "18px",
+    borderRadius: "14px",
+    marginTop: "14px",
+    border: "1px solid #e2e8f0",
   },
-
   sectionTitle: {
-    fontSize: "16px",
-    fontWeight: "bold",
+    fontSize: "15px",
+    fontWeight: "700",
     marginBottom: "12px",
+    color: "#475569",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
-
+  label: {
+    display: "block",
+    fontSize: "13px",
+    fontWeight: "600",
+    color: "#64748b",
+    marginBottom: "4px",
+    marginTop: "8px",
+  },
   input: {
     width: "100%",
-    padding: "10px",
+    padding: "11px 14px",
     borderRadius: "10px",
-    border: "1px solid #ccc",
-    marginBottom: "10px",
+    border: "1.5px solid #d1d5db",
+    marginBottom: "6px",
     fontSize: "14px",
     outline: "none",
+    boxSizing: "border-box",
+    transition: "border-color 0.2s",
   },
-
-  row: {
+  totalRow: {
     display: "flex",
     justifyContent: "space-between",
-    marginTop: "10px",
-    fontSize: "15px",
-    color: "#333",
+    alignItems: "center",
+    marginTop: "14px",
+    padding: "10px 14px",
+    backgroundColor: "#f0fdf4",
+    borderRadius: "10px",
+    border: "1px solid #bbf7d0",
   },
-
   methodBox: {
     display: "flex",
-    justifyContent: "space-between",
-    marginBottom: "10px",
+    gap: "12px",
   },
-
-  methodLabel: {
-    fontSize: "14px",
-    cursor: "pointer",
-  },
-
-  cardForm: {
-    marginTop: "10px",
-  },
-
-  twoInput: {
+  methodCard: {
+    flex: 1,
     display: "flex",
-    gap: "10px",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "6px",
+    padding: "16px 10px",
+    borderRadius: "12px",
+    cursor: "pointer",
+    transition: "all 0.2s",
   },
-
-  noteText: {
-    fontSize: "13px",
-    color: "#555",
-    marginTop: "10px",
-  },
-
   payBtn: {
     width: "100%",
-    marginTop: "18px",
-    padding: "14px",
+    marginTop: "20px",
+    padding: "15px",
     borderRadius: "14px",
     border: "none",
     backgroundColor: "#1fbf6b",
@@ -330,5 +319,7 @@ const styles = {
     fontSize: "16px",
     fontWeight: "bold",
     cursor: "pointer",
+    transition: "background-color 0.2s",
+    boxShadow: "0 4px 14px rgba(31, 191, 107, 0.3)",
   },
 };

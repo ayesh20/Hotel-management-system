@@ -122,7 +122,12 @@ export default function AddReservation() {
             // But usually, the Backend Service handles that.
             
             toast.success('Reservation successful!');
-            navigate('/payment');
+            navigate('/payment', {
+              state: {
+                customerName: formData.customerName,
+                totalPrice: formData.totalPrice
+              }
+            });
         } catch (error) {
             toast.error('Failed to save reservation');
         } finally {
