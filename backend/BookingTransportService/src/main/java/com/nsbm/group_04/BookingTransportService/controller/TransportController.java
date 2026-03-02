@@ -10,7 +10,7 @@ import com.nsbm.group_04.BookingTransportService.service.TransportService;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/api/transport")
+@RequestMapping("/api/transports")
 public class TransportController {
 
     @Autowired
@@ -21,4 +21,31 @@ public class TransportController {
     public Transport addTransport(@RequestBody Transport transport) {
         return transportService.addTransport(transport);
     }
+
+    // Read all vehicles
+    @GetMapping
+    public List<Transport> getAllTransports() {
+        return transportService.getAllTransports();
+    }
+
+
+    @GetMapping("/{id}")
+    public Transport getTransportById(@PathVariable String id) {
+        return transportService.getTransportById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Transport updateTransport(
+            @PathVariable String id,
+            @RequestBody Transport transport) {
+
+        return transportService.updateTransport(id, transport);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTransport(@PathVariable String id) {
+        transportService.deleteTransport(id);
+    }
+
+
 }

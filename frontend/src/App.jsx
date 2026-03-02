@@ -19,6 +19,9 @@ import AddReservation from "./pages/Reservations/AddReservation.jsx";
 import AllReservations from "./pages/Reservations/AllReservations.jsx";
 
 import Payment from "./pages/Payment/Payment.jsx";
+import AllStaff from "./pages/Staff/allstaff.jsx";
+import AddStaff from "./pages/Staff/addStaff.jsx";
+import EditStaff from "./pages/Staff/editStaff.jsx";
 import CheckoutForm from "./pages/Payment/CheckoutForm.jsx";
 import PendingPayment from "./pages/Payment/PendingPayment.jsx";
 import PaymentSuccess from "./pages/Payment/PaymentSuccess.jsx";
@@ -44,31 +47,39 @@ function App() {
         }}
       />
 
-      
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard/>}/>
-            <Route path="/addroom" element={<AddRoom/>}/>
-            <Route path="/allrooms" element={<AllRooms/>}/>
-            <Route path="/editroom/:id" element={<EditRoom/>}/>
-            <Route path="/allCleaners" element={<AllCleaners/>}/>
-            <Route path="/addCleaner" element={<AddCleaners/>}/>
-            <Route path="/editCleaner/:id" element={<EditCleaners/>}/>
-            <Route path="/allReservation" element={<AllReservations/>}/>
-            <Route path="/addReservation" element={<AddReservation/>}/>
-            <Route path="/editReservation/:id" element={<EditReservation/>}/>
-            <Route path="/payment" element={<Payment/>}/>
+
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/addroom" element={<AddRoom />} />
+          <Route path="/allrooms" element={<AllRooms />} />
+          <Route path="/editroom/:id" element={<EditRoom />} />
+          <Route path="/allCleaners" element={<AllCleaners />} />
+          <Route path="/addCleaner" element={<AddCleaners />} />
+          <Route path="/editCleaner/:id" element={<EditCleaners />} />
+          <Route path="/allReservation" element={<AllReservations />} />
+          <Route path="/addReservation" element={<AddReservation />} />
+          <Route path="/editReservation/:id" element={<EditReservation />} />
+           <Route path="/payment" element={<Payment/>}/>
             <Route path="/checkoutform" element={<CheckoutForm/>}/>
             <Route path="/pendingpayment" element={<PendingPayment/>}/>
             <Route path="/payment-success" element={<PaymentSuccess/>}/>
 
-           
-          
-           
-          </Routes>
-        </BrowserRouter>
-     
+
+          <Route path="/allstaff" element={<AllStaff />} />
+          <Route path="/addstaff" element={<AddStaff />} />
+          <Route path="/editstaff/:id" element={<EditStaff />} />
+
+
+
+
+
+
+
+        </Routes>
+      </BrowserRouter>
+
     </>
   );
 }

@@ -11,10 +11,11 @@ export default function AdminLogin() {
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
- 
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         setError('');
         setLoading(true);
 
@@ -26,42 +27,56 @@ export default function AdminLogin() {
         }
 
         try {
-           
-            await new Promise(resolve => setTimeout(resolve, 800));
 
-            if (email === 'admin@gmail.com' && password === 'admin123') {
-                // Create mock admin data
-                const adminData = {
-                    email: 'admin@gmail.com',
-                    name: 'Admin',
-                    role: 'admin'
-                };
-
-                const mockToken = 'mock-jwt-token-' + Date.now();
-
-                localStorage.setItem('authToken', mockToken);
-                localStorage.setItem('adminData', JSON.stringify(adminData));
-
-                toast.success('Login successful!');
-                
-                setTimeout(() => {
-                    navigate('/dashboard');
-                }, 1000);
-            } else {
-                
-                if (email !== 'admin@gmail.com') {
-                    setError('User not found');
-                    toast.error('User not found');
-                } else {
-                    setError('Incorrect password');
-                    toast.error('Incorrect password');
+            const response = await fetch(
+                import.meta.env.VITE_BACKEND_URL_AUTH + '/login',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
                 }
+            );
+
+            let data = null;
+
+            try {
+                data = await response.json();
+            } catch {
+                data = null;
             }
+
+            if (!response.ok) {
+                throw new Error(
+                    data?.message || 'Invalid email or password'
+                );
+            }
+
+            // Save JWT token
+            localStorage.setItem('token', data.token);
+
+            // Save admin info
+            localStorage.setItem('admin', JSON.stringify({
+                email: data.email,
+                role: data.role
+            }));
+
+            toast.success('Login successful');
+
+            navigate('/dashboard');
+
         } catch (err) {
-            console.error('Login error:', err);
-            const errorMsg = 'An unexpected error occurred. Please try again.';
-            setError(errorMsg);
-            toast.error(errorMsg);
+
+            console.error(err);
+
+            setError(err.message);
+
+            toast.error(err.message);
+
         } finally {
             setLoading(false);
         }
@@ -93,8 +108,8 @@ export default function AdminLogin() {
                     <div className="space-y-5">
                         {/* Email Input */}
                         <div>
-                            <label 
-                                htmlFor="email" 
+                            <label
+                                htmlFor="email"
                                 className="block text-sm font-semibold text-slate-700 mb-2"
                             >
                                 Email address
@@ -114,8 +129,8 @@ export default function AdminLogin() {
                         {/* Password Input */}
                         <div>
                             <div className="flex items-center justify-between mb-2">
-                                <label 
-                                    htmlFor="password" 
+                                <label
+                                    htmlFor="password"
                                     className="block text-sm font-semibold text-slate-700"
                                 >
                                     Password
@@ -158,7 +173,7 @@ export default function AdminLogin() {
                         <button
                             onClick={handleSubmit}
                             disabled={loading}
-                            className="w-full bg-linear-to-r from-slate-400 to-slate-500 hover:from-slate-500 hover:to-slate-600 text-white py-3.5 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-linear-to-r from-slate-400 to-slate-500 hover:from-slate-500 hover:to-slate-600 text-white py-3.5 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                         >
                             {loading ? (
                                 <span className="flex items-center justify-center gap-2">
@@ -174,7 +189,7 @@ export default function AdminLogin() {
                         </button>
                     </div>
 
-                   
+
                 </div>
             </div>
         </div>
