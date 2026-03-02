@@ -25,6 +25,11 @@ import EditStaff from "./pages/Staff/editStaff.jsx";
 import CheckoutForm from "./pages/Payment/CheckoutForm.jsx";
 import PendingPayment from "./pages/Payment/PendingPayment.jsx";
 import PaymentSuccess from "./pages/Payment/PaymentSuccess.jsx";
+import AllTransport from "./pages/Transport/allTransport.jsx";
+import AddTransport from "./pages/Transport/addTransport.jsx";
+import EdiTransport from "./pages/Transport/editTransport.jsx";
+
+
 
 
 
@@ -70,6 +75,10 @@ function App() {
           <Route path="/allstaff" element={<AllStaff />} />
           <Route path="/addstaff" element={<AddStaff />} />
           <Route path="/editstaff/:id" element={<EditStaff />} />
+
+          <Route path="/allTransport" element={<AllTransport />} />
+          <Route path="/addTransport" element={<AddTransport/>} />
+          <Route path="/editTransport/:id" element={<EdiTransport />} />
 
 
 
