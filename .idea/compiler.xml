@@ -8,15 +8,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="group-04" />
       </profile>
-      <profile name="Annotation profile for EventManagement" enabled="true">
-        <sourceOutputDir name="../../EventManagement/target/generated-sources/annotations" />
-        <sourceTestOutputDir name="../../EventManagement/target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <module name="EventManagement" />
-      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="EvenetManagement" target="17" />
+      <module name="EventManagement" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

@@ -4,6 +4,7 @@ import com.nsbm.group_04.StaffService.entity.Staff;
 import com.nsbm.group_04.StaffService.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,8 @@ public class StaffService {
 
     @Autowired
     private StaffRepository staffRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // CREATE STAFF with auto-generated ID (stf001, stf002...)
     public Staff createStaff(Staff staff) {
@@ -46,6 +49,22 @@ public class StaffService {
             staff.setId(newId);
         }
 
+        // Encrypt password only if provided
+        if (staff.getPassword() != null && !staff.getPassword().isEmpty()) {
+
+            staff.setPassword(passwordEncoder.encode(staff.getPassword()));
+
+        } else {
+
+            // Password required for admin
+            if ("admin".equalsIgnoreCase(staff.getRole())) {
+                throw new RuntimeException("Password is required for admin");
+            }
+
+            // Staff can have no password
+            staff.setPassword(null);
+        }
+
         return staffRepository.save(staff);
     }
 
@@ -69,8 +88,12 @@ public class StaffService {
         staff.setRole(updatedStaff.getRole());
         staff.setPhone(updatedStaff.getPhone());
         staff.setEmail(updatedStaff.getEmail());
-        staff.setPassword(updatedStaff.getPassword());
         staff.setSalary(updatedStaff.getSalary());
+
+        // Encrypt only if password is changed
+        if (updatedStaff.getPassword() != null && !updatedStaff.getPassword().isEmpty()) {
+            staff.setPassword(passwordEncoder.encode(updatedStaff.getPassword()));
+        }
 
         return staffRepository.save(staff);
     }
@@ -78,5 +101,26 @@ public class StaffService {
     // DELETE STAFF
     public void deleteStaff(String id) {
         staffRepository.deleteById(id);
+    }
+
+    // LOGIN
+    public Staff login(String email, String password) {
+
+        Staff staff = staffRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (staff.getPassword() == null) {
+            throw new RuntimeException("This account cannot login");
+        }
+
+        if (!passwordEncoder.matches(password, staff.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        if (!staff.getRole().equalsIgnoreCase("admin")) {
+            throw new RuntimeException("Access denied. Only admin can login.");
+        }
+
+        return staff;
     }
 }

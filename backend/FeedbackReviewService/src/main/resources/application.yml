@@ -1,0 +1,9 @@
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: feedback-service
+  mongodb:
+    uri: mongodb+srv://vila2000:vila1227@feedback.k0bygzf.mongodb.net/feedback?retryWrites=true&w=majority
