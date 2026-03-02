@@ -4,4 +4,8 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/hotel_management
+      uri: mongodb+srv://rashmiprabhahiru_db_user:Hiruni2000@hotelsystemcluster.ehcsups.mongodb.net/hotelDB?retryWrites=true&w=majority
+      database: hotelDB
+
+server:
+  address: 0.0.0.0
