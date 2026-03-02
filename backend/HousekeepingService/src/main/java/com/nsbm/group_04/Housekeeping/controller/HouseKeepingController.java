@@ -1,7 +1,9 @@
 package com.nsbm.group_04.Housekeeping.controller;
 
+import com.nsbm.group_04.Housekeeping.DTO.RoomDTO;
 import com.nsbm.group_04.Housekeeping.entity.HouseKeeping;
 import com.nsbm.group_04.Housekeeping.services.HouseKeepingService;
+import com.nsbm.group_04.Housekeeping.services.impl.HouseKeepingImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,9 +16,16 @@ import java.util.List;
 public class HouseKeepingController {
 
     private final HouseKeepingService service;
+    private final HouseKeepingImpl houseKeepingImpl;
 
-    public HouseKeepingController(HouseKeepingService service) {
+    public HouseKeepingController(HouseKeepingService service, HouseKeepingImpl houseKeepingImpl) {
         this.service = service;
+        this.houseKeepingImpl = houseKeepingImpl;
+    }
+
+    @GetMapping("/roomNumbers")
+    public List<RoomDTO> getRoomNumbers() {
+        return houseKeepingImpl.getRoomNumbers();
     }
 
     @PostMapping

@@ -30,7 +30,7 @@ function AddHouseKeeping() {
 
   const API_URL = import.meta.env.VITE_BACKEND_URL_HOUSEKEPING;
   const STAFF_API_URL = import.meta.env.VITE_BACKEND_URL_STAFF;
-  const ROOMS_API_URL = import.meta.env.VITE_BACKEND_URL;
+  // const ROOMS_API_URL = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     fetchRooms();
@@ -39,7 +39,7 @@ function AddHouseKeeping() {
 
   const fetchRooms = async () => {
     try {
-      const response = await axios.get(`${ROOMS_API_URL}/rooms/all`);
+      const response = await axios.get(`${API_URL}/housekeeping/roomNumbers`);
       setRooms(response.data);
     } catch (error) {
       console.error("Fetch rooms error:", error);
@@ -206,7 +206,7 @@ function AddHouseKeeping() {
               >
                 <option value="">Select Room</option>
                 {rooms.map((room) => (
-                  <option key={room.id} value={room.roomNumber}>
+                  <option key={room.roomNumber} value={room.roomNumber}>
                     {room.roomNumber}
                   </option>
                 ))}

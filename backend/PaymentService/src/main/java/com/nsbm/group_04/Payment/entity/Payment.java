@@ -12,37 +12,55 @@ public class Payment {
 
     private String bookingId;
     private String customerId;
-    private String roomId;
+    private String customerName;
+    private String phoneNumber;
 
     private double amount;
     private double discountAmount;
     private double finalAmount;
 
-    private String paymentMethod; // CARD, CASH, ONLINE
-    private String paymentStatus; // PAID, PENDING, FAILED
-
+    private String paymentMethod; // CARD, CASH
+    private String paymentStatus; // PAID, PENDING
     private String currency;
+
+    private String stripePaymentIntentId; // ADDED (Stripe reference)
 
     private Date paymentDate;
 
     // Default constructor
-    public Payment() {}
+    public Payment() {
+    }
 
+    // Updated Constructor
+    public Payment(String paymentId, String bookingId, String customerId,
+                   String customerName, String phoneNumber,
+                   double amount, double discountAmount,
+                   String paymentMethod, String paymentStatus,
+                   String currency, String stripePaymentIntentId,
+                   Date paymentDate) {
 
         this.paymentId = paymentId;
         this.bookingId = bookingId;
         this.customerId = customerId;
-        this.roomId = roomId;
+        this.customerName = customerName;
+        this.phoneNumber = phoneNumber;
         this.amount = amount;
         this.discountAmount = discountAmount;
-        this.finalAmount = finalAmount;
+        this.finalAmount = amount - discountAmount; // Auto calculate
         this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
         this.currency = currency;
+        this.stripePaymentIntentId = stripePaymentIntentId;
         this.paymentDate = paymentDate;
     }
 
+    // Optional: Auto calculate method
+    public void calculateFinalAmount() {
+        this.finalAmount = this.amount - this.discountAmount;
+    }
+
     // Getters and Setters
+
     public String getPaymentId() {
         return paymentId;
     }
@@ -67,12 +85,20 @@ public class Payment {
         this.customerId = customerId;
     }
 
-    public String getRoomId() {
-        return roomId;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public double getAmount() {
@@ -115,20 +141,20 @@ public class Payment {
         this.paymentStatus = paymentStatus;
     }
 
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
     public String getCurrency() {
         return currency;
     }
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public String getStripePaymentIntentId() {
+        return stripePaymentIntentId;
+    }
+
+    public void setStripePaymentIntentId(String stripePaymentIntentId) {
+        this.stripePaymentIntentId = stripePaymentIntentId;
     }
 
     public Date getPaymentDate() {
@@ -145,16 +171,16 @@ public class Payment {
                 "paymentId='" + paymentId + '\'' +
                 ", bookingId='" + bookingId + '\'' +
                 ", customerId='" + customerId + '\'' +
-                ", roomId='" + roomId + '\'' +
+                ", customerName='" + customerName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", amount=" + amount +
                 ", discountAmount=" + discountAmount +
                 ", finalAmount=" + finalAmount +
                 ", paymentMethod='" + paymentMethod + '\'' +
                 ", paymentStatus='" + paymentStatus + '\'' +
-                ", transactionId='" + transactionId + '\'' +
                 ", currency='" + currency + '\'' +
+                ", stripePaymentIntentId='" + stripePaymentIntentId + '\'' +
                 ", paymentDate=" + paymentDate +
                 '}';
     }
-
 }

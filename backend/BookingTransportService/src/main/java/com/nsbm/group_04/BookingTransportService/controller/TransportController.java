@@ -29,4 +29,23 @@ public class TransportController {
     }
 
 
+    @GetMapping("/{id}")
+    public Transport getTransportById(@PathVariable String id) {
+        return transportService.getTransportById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Transport updateTransport(
+            @PathVariable String id,
+            @RequestBody Transport transport) {
+
+        return transportService.updateTransport(id, transport);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTransport(@PathVariable String id) {
+        transportService.deleteTransport(id);
+    }
+
+
 }
