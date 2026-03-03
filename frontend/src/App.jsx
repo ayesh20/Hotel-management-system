@@ -29,6 +29,9 @@ import AllTransport from "./pages/Transport/allTransport.jsx";
 import AddTransport from "./pages/Transport/addTransport.jsx";
 import EdiTransport from "./pages/Transport/editTransport.jsx";
 
+import AllCustomers from "./pages/Customers/AllCustomers";
+import AddCustomer from "./pages/Customers/AddCustomer";
+import EditCustomer from "./pages/Customers/EditCustomer";
 
 
 
@@ -79,6 +82,10 @@ function App() {
           <Route path="/allTransport" element={<AllTransport />} />
           <Route path="/addTransport" element={<AddTransport/>} />
           <Route path="/editTransport/:id" element={<EdiTransport />} />
+
+          <Route path="/customers" element={<AllCustomers />} />
+          <Route path="/customers/add" element={<AddCustomer />} />
+          <Route path="/customers/edit/:id" element={<EditCustomer />} />
 
 
 
