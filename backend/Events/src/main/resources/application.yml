@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: event-service
+
+  data:
+    mongodb:
+      uri: mongodb+srv://tharuka2002:tharuka1234@clusterforhandleevents.wxx12by.mongodb.net/events_db?retryWrites=true&w=majority
+
+server:
+  port: 8088
