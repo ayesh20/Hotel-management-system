@@ -22,4 +22,9 @@ public class TransportBookingController {
         return service.getCustomers();
     }
 
+    @GetMapping("/available-vehicles")
+    public List<Transport> getAvailableVehicles() {
+        return service.getAvailableVehicles();
+    }
+
 }

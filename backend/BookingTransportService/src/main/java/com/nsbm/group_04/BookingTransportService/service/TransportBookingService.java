@@ -40,5 +40,9 @@ public class TransportBookingService {
         return Arrays.asList(customers);
     }
 
+    public List<Transport> getAvailableVehicles() {
+        return transportRepository.findByStatus("AVAILABLE");
+    }
+
 
 }
