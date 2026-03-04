@@ -14,9 +14,9 @@ export default function AllReservations() {
     const API_URL = import.meta.env.VITE_BACKEND_URL2;
     
     const carouselImages = [
-        '/image10.jpg',
-        '/image11.jpg',
-        '/image12.jpg',
+        '/image10.png',
+        '/image11.png',
+        '/image12.png',
     ];
 
     useEffect(() => {
