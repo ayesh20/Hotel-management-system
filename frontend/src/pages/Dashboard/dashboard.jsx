@@ -232,7 +232,7 @@ export default function Dashboard() {
 
                     <button
                         className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
-                        onClick={() => navigate('/payment-management')}
+                        
                         onClick={() => navigate('/customers')}
                     >
 
@@ -290,13 +290,8 @@ export default function Dashboard() {
                     >
                         Special Event
                     </button>
-                    
-                    <button 
-                            className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105" 
-                            onClick={() => navigate('/payment')}
-                     >
-                          Payment
-                     </button>
+                
+                      
                 </div>
             </div>
         </div>

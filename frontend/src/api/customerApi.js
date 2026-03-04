@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/customers";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL_CUSTOMER;
 
 export const getCustomers = () => axios.get(BASE_URL);
 
