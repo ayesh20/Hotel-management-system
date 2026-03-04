@@ -1,24 +1,22 @@
 package com.nsbm.group_04.InventoryService.service;
-import com.nsbm.group_04.InventoryService.dto.InventoryItemRequestDTO;
-import com.nsbm.group_04.InventoryService.dto.InventoryItemResponseDTO;
-import com.nsbm.group_04.InventoryService.dto.InventoryReservationRequest;
+
+import com.nsbm.group_04.InventoryService.dto.EventReservationDTO;
+import com.nsbm.group_04.InventoryService.Model.InventoryItem;
 
 import java.util.List;
 
-
 public interface InventoryService {
 
-    InventoryItemResponseDTO addItem(InventoryItemRequestDTO dto);
-    List<InventoryItemResponseDTO> getAllItems();
-    InventoryItemResponseDTO getItemById(String id);
-    InventoryItemResponseDTO updateItem(String id, InventoryItemRequestDTO dto);
+    InventoryItem addItem(InventoryItem item);
+    List<InventoryItem> getAllItems();
+    InventoryItem getItemById(String id);
+    InventoryItem updateItem(String id, InventoryItem updatedItem);
     void deleteItem(String id);
-    List<InventoryItemResponseDTO> searchItemsByName(String name);
-    List<InventoryItemResponseDTO> getLowStockItems();
-    List<InventoryItemResponseDTO> getItemsByCategory(String category);
+    List<InventoryItem> searchItemsByName(String name);
+    List<InventoryItem> getLowStockItems();
+    List<InventoryItem> getItemsByCategory(String category);
     Double getTotalInventoryValue();
-    InventoryItemResponseDTO restockItem(String id, int amount);
-    InventoryItemResponseDTO consumeItem(String id, int amount);
-    void reserveItemsForEvent(InventoryReservationRequest request);
+    InventoryItem restockItem(String id, int amount);
+    InventoryItem consumeItem(String id, int amount);
+    void reserveItemsForEvent(EventReservationDTO request);
 }
-

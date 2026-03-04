@@ -1,162 +1,231 @@
 package com.nsbm.group_04.InventoryService.service.impl;
 
+import com.nsbm.group_04.InventoryService.dto.EventReservationDTO;
 import com.nsbm.group_04.InventoryService.Model.InventoryItem;
 import com.nsbm.group_04.InventoryService.Repository.InventoryRepository;
-import com.nsbm.group_04.InventoryService.dto.InventoryItemMapper;
-import com.nsbm.group_04.InventoryService.dto.InventoryItemRequestDTO;
-import com.nsbm.group_04.InventoryService.dto.InventoryItemResponseDTO;
-import com.nsbm.group_04.InventoryService.dto.InventoryReservationRequest;
-import com.nsbm.group_04.InventoryService.exception.ResourceNotFoundException;
 import com.nsbm.group_04.InventoryService.service.InventoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-public class InventoryServiceImpl implements InventoryService
-{
-    private final InventoryRepository repository;
+public class InventoryServiceImpl implements InventoryService {
 
-    public InventoryServiceImpl(InventoryRepository repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private InventoryRepository inventoryRepository;
+
+    // ─────────────────────────────────────────────
+    // EVENT SERVICE URL (change port/path as needed)
+    // ─────────────────────────────────────────────
+    private static final String EVENT_SERVICE_URL = "http://localhost:8083/api/events/";
+
+
+    // ═══════════════════════════════════════════════
+    //  CRUD OPERATIONS
+    // ═══════════════════════════════════════════════
 
     @Override
-    public InventoryItemResponseDTO addItem(InventoryItemRequestDTO dto) {
-        InventoryItem item = InventoryItemMapper.toEntity(dto);
+    public InventoryItem addItem(InventoryItem item) {
         item.setStatus(calculateStatus(item.getQuantity(), item.getReorderLevel()));
-        return InventoryItemMapper.toResponseDTO(repository.save(item));
+        item.setCreatedDate(LocalDate.now());
+        item.setLastUpdated(LocalDate.now());
+        return inventoryRepository.save(item);
     }
 
     @Override
-    public List<InventoryItemResponseDTO> getAllItems() {
-        return repository.findAll()
-                .stream()
-                .map(InventoryItemMapper::toResponseDTO)
-                .collect(Collectors.toList());
+    public List<InventoryItem> getAllItems() {
+        return inventoryRepository.findAll();
     }
 
     @Override
-    public InventoryItemResponseDTO getItemById(String id) {
-        InventoryItem item = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
-        return InventoryItemMapper.toResponseDTO(item);
+    public InventoryItem getItemById(String id) {
+        return inventoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Inventory item not found with id: " + id));
     }
 
     @Override
-    public InventoryItemResponseDTO updateItem(String id, InventoryItemRequestDTO dto) {
-        InventoryItem existingItem = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+    public InventoryItem updateItem(String id, InventoryItem updatedItem) {
+        InventoryItem existing = inventoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Inventory item not found with id: " + id));
 
-        InventoryItemMapper.updateEntityFromDTO(dto, existingItem);
-        existingItem.setStatus(calculateStatus(existingItem.getQuantity(), existingItem.getReorderLevel()));
+        existing.setItemName(updatedItem.getItemName());
+        existing.setCategory(updatedItem.getCategory());
+        existing.setQuantity(updatedItem.getQuantity());
+        existing.setUnitPrice(updatedItem.getUnitPrice());
+        existing.setReorderLevel(updatedItem.getReorderLevel());
+        existing.setStorageLocation(updatedItem.getStorageLocation());
+        existing.setSupplier(updatedItem.getSupplier());
+        existing.setStatus(calculateStatus(updatedItem.getQuantity(), updatedItem.getReorderLevel()));
+        existing.setLastUpdated(LocalDate.now());
 
-        return InventoryItemMapper.toResponseDTO(repository.save(existingItem));
+        return inventoryRepository.save(existing);
     }
 
     @Override
     public void deleteItem(String id) {
-        InventoryItem item = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Item does not exist with id: " + id));
-
-        if (item.getQuantity() > 0) {
-            throw new IllegalArgumentException(
-                    "Cannot delete item with existing stock. Current quantity: " + item.getQuantity()
-            );
+        if (!inventoryRepository.existsById(id)) {
+            throw new RuntimeException("Inventory item not found with id: " + id);
         }
+        inventoryRepository.deleteById(id);
+    }
 
-        repository.deleteById(id);
+
+    // ═══════════════════════════════════════════════
+    //  SEARCH & REPORTING
+    // ═══════════════════════════════════════════════
+
+    @Override
+    public List<InventoryItem> searchItemsByName(String name) {
+        return inventoryRepository.findByItemNameContainingIgnoreCase(name);
     }
 
     @Override
-    public List<InventoryItemResponseDTO> searchItemsByName(String name) {
-        return repository.findByItemNameIgnoreCase(name)
+    public List<InventoryItem> getLowStockItems() {
+        return inventoryRepository.findAll()
                 .stream()
-                .map(InventoryItemMapper::toResponseDTO)
-                .collect(Collectors.toList());
+                .filter(item -> "LOW_STOCK".equals(item.getStatus()) || "OUT_OF_STOCK".equals(item.getStatus()))
+                .toList();
     }
 
     @Override
-    public List<InventoryItemResponseDTO> getLowStockItems() {
-        return repository.findByStatusIn(List.of("LOW_STOCK", "OUT_OF_STOCK"))
-                .stream()
-                .map(InventoryItemMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<InventoryItemResponseDTO> getItemsByCategory(String category) {
-        return repository.findByCategoryIgnoreCase(category)
-                .stream()
-                .map(InventoryItemMapper::toResponseDTO)
-                .collect(Collectors.toList());
+    public List<InventoryItem> getItemsByCategory(String category) {
+        return inventoryRepository.findByCategoryIgnoreCase(category);
     }
 
     @Override
     public Double getTotalInventoryValue() {
-        return repository.findAll()
+        return inventoryRepository.findAll()
                 .stream()
                 .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
                 .sum();
     }
 
+
+    // ═══════════════════════════════════════════════
+    //  RESTOCK & CONSUME
+    // ═══════════════════════════════════════════════
+
     @Override
-    public InventoryItemResponseDTO restockItem(String id, int amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Restock amount must be positive. Provided: " + amount);
-        }
-        InventoryItem item = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+    public InventoryItem restockItem(String id, int amount) {
+        InventoryItem item = inventoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Inventory item not found with id: " + id));
 
         item.setQuantity(item.getQuantity() + amount);
         item.setStatus(calculateStatus(item.getQuantity(), item.getReorderLevel()));
+        item.setLastUpdated(LocalDate.now());
 
-        return InventoryItemMapper.toResponseDTO(repository.save(item));
+        return inventoryRepository.save(item);
     }
 
     @Override
-    public InventoryItemResponseDTO consumeItem(String id, int amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Consume amount must be positive. Provided: " + amount);
-        }
-        InventoryItem item = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+    public InventoryItem consumeItem(String id, int amount) {
+        InventoryItem item = inventoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Inventory item not found with id: " + id));
 
         if (item.getQuantity() < amount) {
-            throw new IllegalArgumentException(
-                    "Insufficient stock for '" + item.getItemName() + "'. Available: " + item.getQuantity() + ", Requested: " + amount
-            );
+            throw new RuntimeException("Insufficient stock for item: " + item.getItemName());
         }
 
         item.setQuantity(item.getQuantity() - amount);
         item.setStatus(calculateStatus(item.getQuantity(), item.getReorderLevel()));
+        item.setLastUpdated(LocalDate.now());
 
-        return InventoryItemMapper.toResponseDTO(repository.save(item));
+        return inventoryRepository.save(item);
     }
 
-    // Private helper
-    private String calculateStatus(int quantity, int reorderLevel) {
-        if (quantity == 0) return "OUT_OF_STOCK";
-        if (quantity <= reorderLevel) return "LOW_STOCK";
-        return "IN_STOCK";
-    }
 
-    public void reserveItemsForEvent(InventoryReservationRequest request) {
-        int requiredChairs = request.getAttendees();
+    // ═══════════════════════════════════════════════
+    //  EVENT SERVICE INTEGRATION
+    //  Fetches event data via RestTemplate, combines
+    //  it with inventory info, and saves to DB.
+    // ═══════════════════════════════════════════════
 
-        InventoryItem chairs = repository.findByItemNameIgnoreCase("Chair")
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Chair item not found"));
+    @Override
+    public void reserveItemsForEvent(EventReservationDTO request) {
+        RestTemplate restTemplate = new RestTemplate();
 
-        if (chairs.getQuantity() < requiredChairs) {
-            throw new IllegalArgumentException("Not enough chairs available");
+        // ── Step 1: Fetch event details from the Event microservice ──
+        EventReservationDTO eventData = null;
+        try {
+            String url = EVENT_SERVICE_URL + request.getEventId();
+            eventData = restTemplate.getForObject(url, EventReservationDTO.class);
+            System.out.println("[InventoryServiceImpl] Fetched event: " + eventData);
+        } catch (Exception e) {
+            System.out.println("[InventoryServiceImpl] Could not reach Event service: " + e.getMessage());
+            // Fall back to using the request data directly if Event service is down
+            eventData = request;
         }
 
-        chairs.setQuantity(chairs.getQuantity() - requiredChairs);
-        chairs.setStatus(calculateStatus(chairs.getQuantity(), chairs.getReorderLevel()));
+        // ── Step 2: Resolve hall name & attendees ──
+        // Prefer data fetched from Event service; fall back to request values
+        String hallName   = (eventData != null && eventData.getHallName()  != null) ? eventData.getHallName()  : request.getHallName();
+        Integer attendees = (eventData != null && eventData.getPeopleCount() != null) ? eventData.getPeopleCount() : request.getPeopleCount();
 
-        repository.save(chairs);
+        if (hallName == null || attendees == null || attendees <= 0) {
+            throw new RuntimeException("Invalid event data: hallName or attendees missing.");
+        }
+
+        // ── Step 3: Find inventory items tagged for event supply ──
+        // Change "EVENT_SUPPLY" to match your actual category name in MongoDB
+        List<InventoryItem> requiredItems = inventoryRepository.findByCategoryIgnoreCase("EVENT_SUPPLY");
+
+        if (requiredItems.isEmpty()) {
+            System.out.println("[InventoryServiceImpl] No event-supply items found in inventory.");
+            return;
+        }
+
+        // ── Step 4: Deduct quantity for each required item & save ──
+        for (InventoryItem item : requiredItems) {
+            int needed = calculateRequiredQty(item, attendees);
+
+            if (item.getQuantity() < needed) {
+                throw new RuntimeException(
+                        "Insufficient stock for item '" + item.getItemName() +
+                                "'. Required: " + needed + ", Available: " + item.getQuantity()
+                );
+            }
+
+            item.setQuantity(item.getQuantity() - needed);
+            item.setStatus(calculateStatus(item.getQuantity(), item.getReorderLevel()));
+            item.setLastUpdated(LocalDate.now());
+
+            // Tag the item with the event reference for traceability
+            item.setStorageLocation("RESERVED – Hall: " + hallName + " | Event: " + request.getEventId());
+
+            inventoryRepository.save(item);
+
+            System.out.println("[InventoryServiceImpl] Reserved " + needed + " x '" +
+                    item.getItemName() + "' for event " + request.getEventId());
+        }
+    }
+
+
+    // ═══════════════════════════════════════════════
+    //  PRIVATE HELPERS
+    // ═══════════════════════════════════════════════
+
+    /**
+     * Calculates how many units of an item are needed based on attendee count.
+     * Adjust the ratio logic to match your business rules.
+     */
+    private int calculateRequiredQty(InventoryItem item, int attendees) {
+        // Default: 1 unit per attendee — override per item/category if needed
+        return attendees;
+    }
+
+    /**
+     * Determines inventory status based on current quantity vs reorder level.
+     */
+    private String calculateStatus(int quantity, int reorderLevel) {
+        if (quantity == 0) {
+            return "OUT_OF_STOCK";
+        } else if (quantity <= reorderLevel) {
+            return "LOW_STOCK";
+        } else {
+            return "IN_STOCK";
+        }
     }
 }
