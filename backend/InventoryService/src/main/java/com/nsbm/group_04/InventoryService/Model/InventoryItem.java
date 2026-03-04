@@ -9,7 +9,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
+
+import java.time.LocalDate;
 
 
 @Document(collection = "inventoryItems")  // Maps this class to MongoDB collection
@@ -44,10 +45,10 @@ public class InventoryItem {
     private String status;
 
     @LastModifiedDate
-    private Instant lastUpdated;
+    private LocalDate lastUpdated;
 
     @CreatedDate
-    private Instant createdDate;
+    private LocalDate createdDate;
 
 
     //Default constructor required by Spring Data and MongoDB.
@@ -58,7 +59,7 @@ public class InventoryItem {
     //Parameterized constructor to initialize all fields.
     public InventoryItem(String id, String itemName, String category, Integer quantity,
                          Double unitPrice, Integer reorderLevel, String storageLocation,
-                         String supplier, String status, Instant lastUpdated, Instant createdDate) {
+                         String supplier, String status, LocalDate lastUpdated, LocalDate createdDate) {
         this.id = id;
         this.itemName = itemName;
         this.category = category;
@@ -146,19 +147,19 @@ public class InventoryItem {
         this.status = status;
     }
 
-    public Instant getLastUpdated() {
+    public LocalDate getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(Instant lastUpdated) {
+    public void setLastUpdated(LocalDate lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
-    public Instant getCreatedDate() {
+    public LocalDate getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Instant createdDate) {
+    public void setCreatedDate(LocalDate createdDate) {
         this.createdDate = createdDate;
     }
 
