@@ -1,6 +1,7 @@
 package com.nsbm.group_04.InventoryService.dto;
 
-import java.time.Instant;
+
+import java.time.LocalDate;
 
 public class InventoryItemResponseDTO
 {
@@ -13,8 +14,8 @@ public class InventoryItemResponseDTO
     private String storageLocation;
     private String supplier;
     private String status;
-    private Instant lastUpdated;
-    private Instant createdDate;
+    private LocalDate lastUpdated;
+    private LocalDate createdDate;
 
     // Derived field for convenience
     private Double totalValue;
@@ -26,7 +27,7 @@ public class InventoryItemResponseDTO
     public InventoryItemResponseDTO(String id, String itemName, String category,
                                     Integer quantity, Double unitPrice, Integer reorderLevel,
                                     String storageLocation, String supplier, String status,
-                                    Instant lastUpdated, Instant createdDate) {
+                                    LocalDate lastUpdated, LocalDate createdDate) {
         this.id = id;
         this.itemName = itemName;
         this.category = category;
@@ -115,19 +116,19 @@ public class InventoryItemResponseDTO
         this.status = status;
     }
 
-    public Instant getLastUpdated() {
+    public LocalDate getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(Instant lastUpdated) {
+    public void setLastUpdated(LocalDate lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
-    public Instant getCreatedDate() {
+    public LocalDate getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Instant createdDate) {
+    public void setCreatedDate(LocalDate createdDate) {
         this.createdDate = createdDate;
     }
 

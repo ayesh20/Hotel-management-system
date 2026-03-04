@@ -6,6 +6,7 @@ import axios from 'axios';
 
 export default function AllReservations() {
     const [reservations, setReservations] = useState([]);
+    const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentSlide, setCurrentSlide] = useState(0);
     const navigate = useNavigate();
@@ -13,16 +14,14 @@ export default function AllReservations() {
     const API_URL = import.meta.env.VITE_BACKEND_URL2;
     
     const carouselImages = [
-        '/image1.jpg',
-        '/image2.jpg',
-        '/image3.jpg',
+        '/image10.png',
+        '/image11.png',
+        '/image12.png',
     ];
 
     useEffect(() => {
-        fetchReservations();
-    }, []);
-
-    useEffect(() => {
+        fetchData();
+        
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
         }, 5000);
@@ -30,15 +29,21 @@ export default function AllReservations() {
         return () => clearInterval(timer);
     }, []);
 
-    const fetchReservations = async () => {
+    const fetchData = async () => {
         try {
             setLoading(true);
-            // Matches your Spring Boot @GetMapping endpoint
-            const response = await axios.get(`${API_URL}/reservations`);
-            setReservations(response.data);
+            
+            // 1. Fetch Reservations
+            const resResponse = await axios.get(`${API_URL}/reservations`);
+            setReservations(resResponse.data);
+            
+            // 2. Fetch Payments
+            const payResponse = await axios.get(`${API_URL}/reservations/check-payments`);
+            setPayments(payResponse.data);
+            
         } catch (error) {
-            console.error('Fetch reservations error:', error);
-            toast.error('Failed to fetch reservations');
+            console.error('Fetch error:', error);
+            toast.error('Failed to fetch data');
         } finally {
             setLoading(false);
         }
@@ -50,26 +55,13 @@ export default function AllReservations() {
         }
 
         try {
-            // Matches your Spring Boot @DeleteMapping("/{id}")
             await axios.delete(`${API_URL}/reservations/${reservationId}`);
             toast.success('Reservation deleted successfully');
-            fetchReservations();
+            fetchData();
         } catch (error) {
-            console.error('Delete reservation error:', error);
+            console.error('Delete error:', error);
             toast.error('Failed to delete reservation');
         }
-    };
-
-    const handleEdit = (reservationId) => {
-        navigate(`/editreservation/${reservationId}`);
-    };
-
-    const handleAddReservation = () => {
-        navigate('/addreservation');
-    };
-
-    const handleBack = () => {
-        navigate('/dashboard');
     };
 
     const nextSlide = () => {
@@ -89,7 +81,7 @@ export default function AllReservations() {
             {/* Header */}
             <div className="flex items-center gap-4 mb-6">
                 <button 
-                    onClick={handleBack}
+                    onClick={() => navigate('/dashboard')}
                     className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
                 >
                     <ArrowLeft className="w-6 h-6 text-slate-900" />
@@ -160,7 +152,7 @@ export default function AllReservations() {
                         </p>
                         <br></br>
                         <button
-                            onClick={handleAddReservation}
+                            onClick={() => navigate('/addreservation')}
                             className="bg-green-400 hover:bg-green-500 text-white py-4 px-8 rounded-2xl font-semibold text-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 w-full md:w-auto"
                         >
                             <Plus className="w-6 h-6" />
@@ -180,13 +172,14 @@ export default function AllReservations() {
                                     <th className="text-left py-4 px-4 text-slate-700 font-semibold">Check-in</th>
                                     <th className="text-left py-4 px-4 text-slate-700 font-semibold">Check-out</th>
                                     <th className="text-left py-4 px-4 text-slate-700 font-semibold">Total Price</th>
+                                    <th className="text-left py-4 px-4 text-slate-700 font-semibold">Status</th>
                                     <th className="text-right py-4 px-4 text-slate-700 font-semibold">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {loading ? (
                                     <tr>
-                                        <td colSpan="6" className="text-center py-12">
+                                        <td colSpan="7" className="text-center py-12">
                                             <div className="flex justify-center items-center">
                                                 <svg className="animate-spin h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24">
                                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -197,41 +190,71 @@ export default function AllReservations() {
                                     </tr>
                                 ) : reservations.length === 0 ? (
                                     <tr>
-                                        <td colSpan="6" className="text-center py-12 text-slate-500">
+                                        <td colSpan="7" className="text-center py-12 text-slate-500">
                                             No reservations found. Click "Add Reservation" to create one.
                                         </td>
                                     </tr>
                                 ) : (
-                                    reservations.map((reservation) => (
-                                        <tr 
-                                            key={reservation.id} 
-                                            className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
-                                        >
-                                            <td className="py-4 px-4 text-slate-800 font-medium">{reservation.customerName}</td>
-                                            <td className="py-4 px-4 text-slate-800">{reservation.roomType}</td>
-                                            <td className="py-4 px-4 text-slate-800">{reservation.checkInDate}</td>
-                                            <td className="py-4 px-4 text-slate-800">{reservation.checkOutDate}</td>
-                                            <td className="py-4 px-4 text-slate-800 font-semibold">LKR {parseFloat(reservation.totalPrice).toLocaleString()}</td>
-                                            <td className="py-4 px-4">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <button
-                                                        onClick={() => handleEdit(reservation.id)}
-                                                        className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-                                                        title="Edit Reservation"
-                                                    >
-                                                        <Edit2 className="w-5 h-5 text-slate-600" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(reservation.id)}
-                                                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                                                        title="Delete Reservation"
-                                                    >
-                                                        <Trash2 className="w-5 h-5 text-slate-600" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
+                                    reservations.map((reservation) => {
+                                        // 1. Find the payment linked to this reservation ID
+                                        const linkedPayment = payments.find(p => p.bookingId === reservation.id);
+                                        
+                                        // 2. Set default status
+                                        let statusText = 'UNPAID';
+                                        let badgeColor = 'bg-red-100 text-red-700'; 
+
+                                        // 3. Determine the status text and colors safely
+                                        if (linkedPayment && linkedPayment.paymentStatus) {
+                                            const status = linkedPayment.paymentStatus.toUpperCase(); // Safety check
+
+                                            if (status === 'PAID') {
+                                                statusText = 'PAID';
+                                                badgeColor = 'bg-green-100 text-green-700'; 
+                                            } else if (status === 'PENDING') {
+                                                statusText = 'PENDING';
+                                                badgeColor = 'bg-yellow-100 text-yellow-700'; 
+                                            }
+                                        }
+
+                                        return (
+                                            <tr 
+                                                key={reservation.id} 
+                                                className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+                                            >
+                                                <td className="py-4 px-4 text-slate-800 font-medium">{reservation.customerName}</td>
+                                                <td className="py-4 px-4 text-slate-800">{reservation.roomType}</td>
+                                                <td className="py-4 px-4 text-slate-800">{reservation.checkInDate}</td>
+                                                <td className="py-4 px-4 text-slate-800">{reservation.checkOutDate}</td>
+                                                <td className="py-4 px-4 text-slate-800 font-semibold">LKR {parseFloat(reservation.totalPrice).toLocaleString()}</td>
+                                                
+                                                {/* Dynamic Payment Status Badge */}
+                                                <td className="py-4 px-4">
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${badgeColor}`}>
+                                                        {statusText}
+                                                    </span>
+                                                </td>
+
+                                                <td className="py-4 px-4">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <button
+                                                            onClick={() => navigate(`/editreservation/${reservation.id}`)}
+                                                            className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                                                            title="Edit Reservation"
+                                                        >
+                                                            <Edit2 className="w-5 h-5 text-slate-600" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(reservation.id)}
+                                                            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                                            title="Delete Reservation"
+                                                        >
+                                                            <Trash2 className="w-5 h-5 text-slate-600" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                                 )}
                             </tbody>
                         </table>

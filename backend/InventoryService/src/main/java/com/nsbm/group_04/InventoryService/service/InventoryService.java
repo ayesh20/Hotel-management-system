@@ -1,6 +1,8 @@
 package com.nsbm.group_04.InventoryService.service;
 import com.nsbm.group_04.InventoryService.dto.InventoryItemRequestDTO;
 import com.nsbm.group_04.InventoryService.dto.InventoryItemResponseDTO;
+import com.nsbm.group_04.InventoryService.dto.InventoryReservationRequest;
+
 import java.util.List;
 
 
@@ -17,5 +19,6 @@ public interface InventoryService {
     Double getTotalInventoryValue();
     InventoryItemResponseDTO restockItem(String id, int amount);
     InventoryItemResponseDTO consumeItem(String id, int amount);
+    void reserveItemsForEvent(InventoryReservationRequest request);
 }
 
