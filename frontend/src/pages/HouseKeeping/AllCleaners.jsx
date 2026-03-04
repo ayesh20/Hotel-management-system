@@ -28,7 +28,7 @@ function AllCleaners() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
-    }, 5000);
+    }, 4000);
 
     return () => clearInterval(timer);
   }, []);
