@@ -81,7 +81,7 @@ function App() {
           <Route path="/customers/add" element={<AddCustomer />} />
           <Route path="/customers/edit/:id" element={<EditCustomer />} />
 
-          {/* ✅ Event Routes */}
+          {/*  Event Routes */}
           <Route path="/allevents" element={<AllEvents />} />
           <Route path="/addevent" element={<AddEvent />} />
           <Route path="/editevent/:id" element={<EditEvent />} />
