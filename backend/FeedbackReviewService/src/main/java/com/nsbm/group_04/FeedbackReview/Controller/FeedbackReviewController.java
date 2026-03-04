@@ -10,6 +10,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/feedbacks")
+@CrossOrigin(
+        origins = {"http://localhost:5173"},
+        allowCredentials = "true",
+        methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS}
+)
 public class FeedbackReviewController {
 
     private final FeedbackReviewService feedbackService;

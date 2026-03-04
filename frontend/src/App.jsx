@@ -28,12 +28,17 @@ import EdiTransport from "./pages/Transport/editTransport.jsx";
 import AllCustomers from "./pages/Customers/AllCustomers";
 import AddCustomer from "./pages/Customers/AddCustomer";
 import EditCustomer from "./pages/Customers/EditCustomer";
+import FeedbackPage from "./pages/Feedback&review/FeedbackPage.jsx";
 
 //  Event Pages
 import AllEvents from "./pages/Events/AllEvents.jsx";
 import AddEvent from "./pages/Events/AddEvent.jsx";
 import EditEvent from "./pages/Events/EditEvent.jsx";
 import EventDashboard from "./pages/Events/EventDashboard.jsx";
+
+import AddInventory from "./pages/Inventory/AddInventory.jsx";
+import EditInventory from "./pages/Inventory/EditInventory.jsx";
+import AllInventory from "./pages/Inventory/AllInventory.jsx";
 
 function App() {
   return (
@@ -80,12 +85,17 @@ function App() {
           <Route path="/customers" element={<AllCustomers />} />
           <Route path="/customers/add" element={<AddCustomer />} />
           <Route path="/customers/edit/:id" element={<EditCustomer />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
 
           {/*  Event Routes */}
           <Route path="/allevents" element={<AllEvents />} />
           <Route path="/addevent" element={<AddEvent />} />
           <Route path="/editevent/:id" element={<EditEvent />} />
           <Route path="/eventdashboard" element={<EventDashboard />} />
+
+          <Route path="/inventory" element={<AllInventory />} />
+          <Route path="/add-inventory" element={<AddInventory />} />
+          <Route path="/edit-inventory/:id" element={<EditInventory />} />
 
         </Routes>
       </BrowserRouter>

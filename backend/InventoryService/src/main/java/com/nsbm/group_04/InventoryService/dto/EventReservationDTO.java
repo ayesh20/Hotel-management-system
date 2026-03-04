@@ -3,11 +3,11 @@ package com.nsbm.group_04.InventoryService.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class InventoryReservationRequest
+public class EventReservationDTO
 {
     private String eventId;
     private String hallName;
-    private Integer attendees;
+    private Integer peopleCount;
     private LocalDate bookingDate;
     private LocalTime bookingTime;
 
@@ -28,12 +28,10 @@ public class InventoryReservationRequest
     {
         this.hallName = hallName;
     }
-    public Integer getAttendees() {
-        return attendees;
-    }
-    public void setAttendees(Integer attendees)
+    public Integer getPeopleCount() { return peopleCount; }
+    public void setPeopleCount(Integer attendees)
     {
-        this.attendees = attendees;
+        this.peopleCount = attendees;
     }
     public LocalDate getBookingDate()
     {
