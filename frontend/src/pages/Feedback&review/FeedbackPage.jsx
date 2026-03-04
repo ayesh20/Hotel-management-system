@@ -101,7 +101,7 @@ const FeedbackPage = () => {
                         <div key={item.id} className="bg-white p-6 rounded-xl shadow">
 
                             <div className="flex justify-between">
-                                <h3 className="font-bold">{item.username}</h3>
+                                <h3 className="font-bold">{item.fullName}</h3>
 
                                 <button onClick={() => handleDelete(item.id)}>
                                     <Trash2 size={18} className="text-red-500"/>
@@ -110,6 +110,10 @@ const FeedbackPage = () => {
 
                             <p className="my-3 text-gray-600">
                                 "{item.comment}"
+                            </p>
+                            
+                            <p className="my-3 text-gray-600">
+                                "{item.username}"
                             </p>
 
                             {/* ✅ Convert string to number for star display */}

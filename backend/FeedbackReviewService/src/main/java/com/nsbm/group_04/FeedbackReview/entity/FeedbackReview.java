@@ -3,8 +3,6 @@ package com.nsbm.group_04.FeedbackReview.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.validation.constraints.NotBlank;
-
 import java.time.LocalDateTime;
 
 @Document(collection = "feedbacks")
@@ -15,8 +13,6 @@ public class FeedbackReview {
 
     private String fullName;
 
-    // ✅ Rating as String
-    @NotBlank
     private String rating;
 
     private String comment;
