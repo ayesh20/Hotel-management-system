@@ -17,15 +17,11 @@ public class InventoryServiceImpl implements InventoryService {
     @Autowired
     private InventoryRepository inventoryRepository;
 
-    // ─────────────────────────────────────────────
-    // EVENT SERVICE URL (change port/path as needed)
-    // ─────────────────────────────────────────────
+
     private static final String EVENT_SERVICE_URL = "http://localhost:8083/api/events/";
 
 
-    // ═══════════════════════════════════════════════
-    //  CRUD OPERATIONS
-    // ═══════════════════════════════════════════════
+
 
     @Override
     public InventoryItem addItem(InventoryItem item) {
@@ -73,9 +69,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
 
-    // ═══════════════════════════════════════════════
-    //  SEARCH & REPORTING
-    // ═══════════════════════════════════════════════
+
 
     @Override
     public List<InventoryItem> searchItemsByName(String name) {
@@ -104,9 +98,6 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
 
-    // ═══════════════════════════════════════════════
-    //  RESTOCK & CONSUME
-    // ═══════════════════════════════════════════════
 
     @Override
     public InventoryItem restockItem(String id, int amount) {
@@ -137,17 +128,13 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
 
-    // ═══════════════════════════════════════════════
-    //  EVENT SERVICE INTEGRATION
-    //  Fetches event data via RestTemplate, combines
-    //  it with inventory info, and saves to DB.
-    // ═══════════════════════════════════════════════
+
 
     @Override
     public void reserveItemsForEvent(EventReservationDTO request) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // ── Step 1: Fetch event details from the Event microservice ──
+
         EventReservationDTO eventData = null;
         try {
             String url = EVENT_SERVICE_URL + request.getEventId();
@@ -159,8 +146,6 @@ public class InventoryServiceImpl implements InventoryService {
             eventData = request;
         }
 
-        // ── Step 2: Resolve hall name & attendees ──
-        // Prefer data fetched from Event service; fall back to request values
         String hallName   = (eventData != null && eventData.getHallName()  != null) ? eventData.getHallName()  : request.getHallName();
         Integer attendees = (eventData != null && eventData.getPeopleCount() != null) ? eventData.getPeopleCount() : request.getPeopleCount();
 
@@ -168,8 +153,8 @@ public class InventoryServiceImpl implements InventoryService {
             throw new RuntimeException("Invalid event data: hallName or attendees missing.");
         }
 
-        // ── Step 3: Find inventory items tagged for event supply ──
-        // Change "EVENT_SUPPLY" to match your actual category name in MongoDB
+
+
         List<InventoryItem> requiredItems = inventoryRepository.findByCategoryIgnoreCase("EVENT_SUPPLY");
 
         if (requiredItems.isEmpty()) {
@@ -177,7 +162,7 @@ public class InventoryServiceImpl implements InventoryService {
             return;
         }
 
-        // ── Step 4: Deduct quantity for each required item & save ──
+
         for (InventoryItem item : requiredItems) {
             int needed = calculateRequiredQty(item, attendees);
 
@@ -192,7 +177,7 @@ public class InventoryServiceImpl implements InventoryService {
             item.setStatus(calculateStatus(item.getQuantity(), item.getReorderLevel()));
             item.setLastUpdated(LocalDate.now());
 
-            // Tag the item with the event reference for traceability
+
             item.setStorageLocation("RESERVED – Hall: " + hallName + " | Event: " + request.getEventId());
 
             inventoryRepository.save(item);
@@ -203,22 +188,15 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
 
-    // ═══════════════════════════════════════════════
-    //  PRIVATE HELPERS
-    // ═══════════════════════════════════════════════
 
-    /**
-     * Calculates how many units of an item are needed based on attendee count.
-     * Adjust the ratio logic to match your business rules.
-     */
+
+
     private int calculateRequiredQty(InventoryItem item, int attendees) {
         // Default: 1 unit per attendee — override per item/category if needed
         return attendees;
     }
 
-    /**
-     * Determines inventory status based on current quantity vs reorder level.
-     */
+
     private String calculateStatus(int quantity, int reorderLevel) {
         if (quantity == 0) {
             return "OUT_OF_STOCK";

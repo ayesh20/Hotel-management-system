@@ -50,7 +50,7 @@ public class InventoryItem {
     @CreatedDate
     private LocalDate createdDate;
 
-    // ── Event Reservation Fields ──
+    //event variables
     private String eventId;
     private String hallName;
     private Integer peopleCount;
@@ -58,7 +58,7 @@ public class InventoryItem {
     private LocalTime bookingTime;
 
 
-    // Default constructor required by Spring Data and MongoDB.
+
     public InventoryItem() {
     }
 
@@ -88,9 +88,7 @@ public class InventoryItem {
     }
 
 
-    // ═══════════════════════════════════════════════
-    //  Getters and Setters
-    // ═══════════════════════════════════════════════
+
 
     public String getId() {
         return id;
