@@ -3,6 +3,7 @@ package com.nsbm.group_04.InventoryService.Controller;
 import com.nsbm.group_04.InventoryService.Model.InventoryItem;
 import com.nsbm.group_04.InventoryService.dto.InventoryItemRequestDTO;
 import com.nsbm.group_04.InventoryService.dto.InventoryItemResponseDTO;
+import com.nsbm.group_04.InventoryService.dto.InventoryReservationRequest;
 import com.nsbm.group_04.InventoryService.service.InventoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,5 +110,13 @@ public class InventoryController {
             @PathVariable String id,
             @RequestParam int amount) {
         return ResponseEntity.ok(service.consumeItem(id, amount));
+    }
+
+    @PostMapping("/reserve")
+    public ResponseEntity<String> reserveInventory(
+            @RequestBody InventoryReservationRequest request) {
+
+        service.reserveItemsForEvent(request);
+        return ResponseEntity.ok("Inventory reserved successfully");
     }
 }

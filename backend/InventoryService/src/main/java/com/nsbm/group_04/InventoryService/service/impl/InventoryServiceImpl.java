@@ -5,6 +5,7 @@ import com.nsbm.group_04.InventoryService.Repository.InventoryRepository;
 import com.nsbm.group_04.InventoryService.dto.InventoryItemMapper;
 import com.nsbm.group_04.InventoryService.dto.InventoryItemRequestDTO;
 import com.nsbm.group_04.InventoryService.dto.InventoryItemResponseDTO;
+import com.nsbm.group_04.InventoryService.dto.InventoryReservationRequest;
 import com.nsbm.group_04.InventoryService.exception.ResourceNotFoundException;
 import com.nsbm.group_04.InventoryService.service.InventoryService;
 import org.springframework.stereotype.Service;
@@ -139,5 +140,23 @@ public class InventoryServiceImpl implements InventoryService
         if (quantity == 0) return "OUT_OF_STOCK";
         if (quantity <= reorderLevel) return "LOW_STOCK";
         return "IN_STOCK";
+    }
+
+    public void reserveItemsForEvent(InventoryReservationRequest request) {
+        int requiredChairs = request.getAttendees();
+
+        InventoryItem chairs = repository.findByItemNameIgnoreCase("Chair")
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Chair item not found"));
+
+        if (chairs.getQuantity() < requiredChairs) {
+            throw new IllegalArgumentException("Not enough chairs available");
+        }
+
+        chairs.setQuantity(chairs.getQuantity() - requiredChairs);
+        chairs.setStatus(calculateStatus(chairs.getQuantity(), chairs.getReorderLevel()));
+
+        repository.save(chairs);
     }
 }
