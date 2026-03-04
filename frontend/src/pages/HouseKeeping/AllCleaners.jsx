@@ -19,7 +19,7 @@ function AllCleaners() {
 
   const API_URL = import.meta.env.VITE_BACKEND_URL_HOUSEKEPING;
 
-  const carouselImages = ["/image1.jpg", "/image2.jpg", "/image3.jpg"];
+  const carouselImages = ["/image6.jpg", "/image5.jpg", "/image4.jpg"];
 
   useEffect(() => {
     fetchCleaners();
@@ -168,7 +168,7 @@ function AllCleaners() {
             </h2>
             <br />
             <br />
-            <br />
+            
             <p className="text-slate-700 mb-6">
               View, edit, and manage all cleaners in your hotel. Keep track of
               cleaners status and details with ease.
