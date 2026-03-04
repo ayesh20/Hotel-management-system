@@ -235,6 +235,9 @@ export default function EditTransport() {
                                 <option value="AVAILABLE">AVAILABLE</option>
                                 <option value="UNAVAILABLE">UNAVAILABLE</option>
                                 <option value="MAINTENANCE">MAINTENANCE</option>
+                                <option value="REPAIR">REPAIR</option>
+                                <option value="RESERVED">RESERVED</option>
+                                <option value="OUT_OF_SERVICE">OUT OF SERVICE</option>
                             </select>
                         </div>
                         {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}
