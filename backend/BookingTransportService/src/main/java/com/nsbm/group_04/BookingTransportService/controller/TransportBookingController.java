@@ -33,5 +33,4 @@ public class TransportBookingController {
 
         return service.createBooking(request);
     }
-
 }

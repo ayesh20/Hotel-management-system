@@ -40,10 +40,12 @@ public class TransportBookingService {
         return Arrays.asList(customers);
     }
 
+    //  Get Available Vehicles
     public List<Transport> getAvailableVehicles() {
         return transportRepository.findByStatus("AVAILABLE");
     }
 
+    //  Create Booking
     public TransportBookingResponseDTO createBooking(
             TransportBookingRequestDTO request) {
 
@@ -101,6 +103,4 @@ public class TransportBookingService {
 
         return response;
     }
-
-
 }
