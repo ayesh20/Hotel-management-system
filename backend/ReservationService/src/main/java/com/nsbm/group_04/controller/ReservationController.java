@@ -2,6 +2,7 @@ package com.nsbm.group_04.controller;
 
 import com.nsbm.group_04.dto.RoomDTO;
 import com.nsbm.group_04.dto.CustomerDTO;
+import com.nsbm.group_04.dto.PaymentDTO;
 
 import com.nsbm.group_04.entity.Reservation;
 import com.nsbm.group_04.service.ReservationService;
@@ -67,5 +68,10 @@ public class ReservationController {
     @GetMapping("/check-customers")
     public List<CustomerDTO> checkExternalCustomers() {
         return reservationService.getAllCustomersFromAPI();
+    }
+
+    @GetMapping("/check-payments")
+    public List<PaymentDTO> checkExternalPayments() {
+        return reservationService.getAllPaymentsFromAPI();
     }
 }
