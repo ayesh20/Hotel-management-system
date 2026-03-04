@@ -1,5 +1,6 @@
 package com.nsbm.group_04.FeedbackReview.Controller;
 
+import com.nsbm.group_04.FeedbackReview.DTO.CustomerDTO;
 import com.nsbm.group_04.FeedbackReview.entity.FeedbackReview;
 import com.nsbm.group_04.FeedbackReview.services.FeedbackReviewService;
 import jakarta.validation.Valid;
@@ -72,4 +73,9 @@ public class FeedbackReviewController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/check-customers")
+    public List<CustomerDTO> checkExternalCustomers() {
+        return FeedbackReviewService.getAllCustomersFromAPI();
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.nsbm.group_04.FeedbackReview.services;
 
+import com.nsbm.group_04.FeedbackReview.DTO.CustomerDTO;
 import com.nsbm.group_04.FeedbackReview.entity.FeedbackReview;
 import com.nsbm.group_04.FeedbackReview.repository.FeedbackReviewRepository;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,10 @@ public class FeedbackReviewService {
     public FeedbackReview addFeedback(FeedbackReview feedback) {
         feedback.setCreatedAt(LocalDateTime.now());
         return repository.save(feedback);
+    }
+
+    public List<CustomerDTO> getAllCustomersFromAPI() {
+        return null;
     }
 
     // READ - all feedbacks
