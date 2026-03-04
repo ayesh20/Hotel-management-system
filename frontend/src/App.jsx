@@ -28,6 +28,7 @@ import EdiTransport from "./pages/Transport/editTransport.jsx";
 import AllCustomers from "./pages/Customers/AllCustomers";
 import AddCustomer from "./pages/Customers/AddCustomer";
 import EditCustomer from "./pages/Customers/EditCustomer";
+import FeedbackPage from "./pages/Feedback&review/FeedbackPage.jsx";
 
 //  Event Pages
 import AllEvents from "./pages/Events/AllEvents.jsx";
@@ -84,6 +85,7 @@ function App() {
           <Route path="/customers" element={<AllCustomers />} />
           <Route path="/customers/add" element={<AddCustomer />} />
           <Route path="/customers/edit/:id" element={<EditCustomer />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
 
           {/* ✅ Event Routes */}
           <Route path="/allevents" element={<AllEvents />} />
