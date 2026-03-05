@@ -24,7 +24,7 @@ export default function AddReservation() {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
-    const API_URL = import.meta.env.VITE_BACKEND_URL2;
+    const API_URL = import.meta.env.VITE_BACKEND_URL;
 
     // 2. Fetch Rooms on Load
     useEffect(() => {
