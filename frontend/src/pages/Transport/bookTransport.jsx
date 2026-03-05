@@ -95,7 +95,7 @@ export default function BookTransport() {
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <button
-          onClick={() => navigate("/transportBookings")}
+          onClick={() => navigate("/allTransport")}
           className="p-2 hover:bg-slate-200 rounded-lg"
         >
           <ArrowLeft className="w-6 h-6 text-slate-900" />
@@ -209,7 +209,7 @@ export default function BookTransport() {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold"
+            className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold cursor-pointer"
           >
             Confirm Booking
           </button>

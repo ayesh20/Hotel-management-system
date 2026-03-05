@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Pencil, Trash2, Plus, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const BOOKING_URL = import.meta.env.VITE_BACKEND_URL_TRANSPORT_BOOKING;
 
@@ -32,6 +33,7 @@ export default function ViewAllBookings() {
 
     try {
       await axios.delete(`${BOOKING_URL}/${id}`);
+      toast.success("Booking deleted successfully");
       fetchBookings();
     } catch (error) {
       console.error("Error deleting booking:", error);
@@ -39,7 +41,6 @@ export default function ViewAllBookings() {
   };
 
   const handleBack = () => navigate("/allTransport");
-  const handleAddBooking = () => navigate("/bookTransport");
 
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8">
@@ -59,14 +60,6 @@ export default function ViewAllBookings() {
             Transport Bookings
           </h1>
         </div>
-
-        <button
-          onClick={handleAddBooking}
-          className="bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-semibold transition flex items-center gap-2 shadow-md"
-        >
-          <Plus className="w-5 h-5" />
-          Add Booking
-        </button>
 
       </div>
 

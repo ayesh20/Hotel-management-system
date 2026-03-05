@@ -42,6 +42,7 @@ import AllInventory from "./pages/Inventory/AllInventory.jsx";
 
 import BookTransport from "./pages/Transport/bookTransport";
 import ViewAllBookings from "./pages/Transport/viewAllBookings";
+import EditBookingTransport from "./pages/Transport/editBookingTransport.jsx";
 
 function App() {
   return (
@@ -102,6 +103,7 @@ function App() {
 
           <Route path="/bookTransport" element={<BookTransport />} />
           <Route path="/transportBookings" element={<ViewAllBookings />} />
+          <Route path="/editBooking/:id" element={<EditBookingTransport />} />
 
         </Routes>
       </BrowserRouter>
