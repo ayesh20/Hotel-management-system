@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Save, ArrowLeft, Tag, MapPin, Truck, Hash, DollarSign, AlertCircle } from 'lucide-react';
+import { Package, Save, ArrowLeft, Tag, MapPin, Truck, Hash, DollarSign, AlertCircle, Calendar } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 export default function EditInventory() {
-    const { id } = useParams(); // Get ID from URL
+    const { id } = useParams(); 
     const navigate = useNavigate();
     const API_URL = import.meta.env.VITE_BACKEND_URL_Inventory;
 
@@ -16,7 +16,10 @@ export default function EditInventory() {
         unitPrice: '',
         reorderLevel: '',
         storageLocation: '',
-        supplier: ''
+        supplier: '',
+        bookingDate: '',
+        hallName: '',
+        peopleCount: ''
     });
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
@@ -26,14 +29,18 @@ export default function EditInventory() {
         const fetchItemData = async () => {
             try {
                 const response = await axios.get(`${API_URL}/${id}`);
+                const data = response.data;
                 setFormData({
-                    itemName: response.data.itemName,
-                    category: response.data.category,
-                    quantity: response.data.quantity.toString(),
-                    unitPrice: response.data.unitPrice.toString(),
-                    reorderLevel: response.data.reorderLevel.toString(),
-                    storageLocation: response.data.storageLocation || '',
-                    supplier: response.data.supplier || ''
+                    itemName: data.itemName,
+                    category: data.category,
+                    quantity: data.quantity.toString(),
+                    unitPrice: data.unitPrice.toString(),
+                    reorderLevel: data.reorderLevel.toString(),
+                    storageLocation: data.storageLocation || '',
+                    supplier: data.supplier || '',
+                    bookingDate: data.bookingDate || '',
+                    hallName: data.hallName || '',
+                    peopleCount: data.peopleCount || ''
                 });
             } catch (error) {
                 toast.error("Failed to load item data");
@@ -49,6 +56,33 @@ export default function EditInventory() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleDateChange = async (e) => {
+        const selectedDate = e.target.value;
+        setFormData({ ...formData, bookingDate: selectedDate });
+
+        if (selectedDate) {
+            try {
+                // Adjust this URL to match your Event Service endpoint
+                const response = await axios.get(`http://localhost:8083/api/events/date/${selectedDate}`);
+                
+                if (response.data && response.data.length > 0) {
+                    const event = response.data[0]; 
+                    setFormData(prev => ({
+                        ...prev,
+                        hallName: event.hallName,
+                        peopleCount: event.peopleCount
+                    }));
+                    toast.success(`Event linked: ${event.hallName}`);
+                } else {
+                    setFormData(prev => ({ ...prev, hallName: '', peopleCount: '' }));
+                    toast.error("No events found for this date");
+                }
+            } catch (error) {
+                console.error("Event Service error:", error);
+            }
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -58,7 +92,8 @@ export default function EditInventory() {
                 ...formData,
                 quantity: parseInt(formData.quantity),
                 unitPrice: parseFloat(formData.unitPrice),
-                reorderLevel: parseInt(formData.reorderLevel)
+                reorderLevel: parseInt(formData.reorderLevel),
+                peopleCount: formData.peopleCount ? parseInt(formData.peopleCount) : 0
             };
 
             await axios.put(`${API_URL}/${id}`, payload);
@@ -87,6 +122,33 @@ export default function EditInventory() {
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         
+                        {/* Event Linkage Section */}
+                        <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 mb-8">
+                            <h3 className="text-blue-900 font-bold mb-4 flex items-center gap-2 text-sm uppercase tracking-wider">
+                                <Calendar className="w-4 h-4" /> Linked Event Info
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-blue-700 mb-1">Event Date</label>
+                                    <input 
+                                        type="date" 
+                                        name="bookingDate" 
+                                        value={formData.bookingDate} 
+                                        onChange={handleDateChange} 
+                                        className="w-full p-2.5 bg-white border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" 
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-blue-700 mb-1">Hall Name</label>
+                                    <input type="text" value={formData.hallName} readOnly className="w-full p-2.5 bg-slate-100 border border-blue-100 rounded-lg text-slate-500 text-sm" placeholder="No event linked" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-blue-700 mb-1">Expected People</label>
+                                    <input type="number" value={formData.peopleCount} readOnly className="w-full p-2.5 bg-slate-100 border border-blue-100 rounded-lg text-slate-500 text-sm" placeholder="0" />
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="grid md:grid-cols-2 gap-6">
                             {/* Item Name */}
                             <div className="col-span-2 md:col-span-1">
@@ -118,7 +180,6 @@ export default function EditInventory() {
                                     <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                     <input required type="number" min="0" name="quantity" value={formData.quantity} onChange={handleChange} className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
                                 </div>
-                                <p className="text-xs text-slate-500 mt-1">Status (In Stock, Low Stock) updates automatically.</p>
                             </div>
 
                             {/* Unit Price */}
