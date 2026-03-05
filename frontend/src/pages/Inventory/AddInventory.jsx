@@ -33,7 +33,7 @@ export default function AddInventory() {
     if (selectedDate) {
         try {
             // Adjust the URL to Event Service date-search endpoint
-            const response = await axios.get(`http://3.109.5.157:8088/api/events/date/${selectedDate}`);
+            const response = await axios.get(`http://localhost:8088/api/events/date/${selectedDate}`);
             
             if (response.data && response.data.length > 0) {
                 const event = response.data[0]; 
