@@ -78,6 +78,7 @@ export default function AllTransport() {
 
     const handleEdit = (transportId) => navigate(`/edittransport/${transportId}`);
     const handleAddTransport = () => navigate('/addtransport');
+    const handleAddTransportBooking = () => navigate('/transportBookings');
     const handleBack = () => navigate('/dashboard');
 
     const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
@@ -162,6 +163,13 @@ export default function AllTransport() {
                         >
                             <Plus className="w-6 h-6" />
                             Add Transport
+                        </button>
+                         <button
+                            onClick={handleAddTransportBooking}
+                            className="bg-green-400 mt-4 hover:bg-green-500 text-white py-4 px-8 rounded-2xl font-semibold text-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 w-full md:w-auto cursor-pointer"
+                        >
+                            
+                            View Booking Transports
                         </button>
                     </div>
                 </div>

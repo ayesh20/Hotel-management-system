@@ -40,6 +40,9 @@ import AddInventory from "./pages/Inventory/AddInventory.jsx";
 import EditInventory from "./pages/Inventory/EditInventory.jsx";
 import AllInventory from "./pages/Inventory/AllInventory.jsx";
 
+import BookTransport from "./pages/Transport/bookTransport";
+import ViewAllBookings from "./pages/Transport/viewAllBookings";
+
 function App() {
   return (
     <>
@@ -96,6 +99,9 @@ function App() {
           <Route path="/inventory" element={<AllInventory />} />
           <Route path="/add-inventory" element={<AddInventory />} />
           <Route path="/edit-inventory/:id" element={<EditInventory />} />
+
+          <Route path="/bookTransport" element={<BookTransport />} />
+          <Route path="/transportBookings" element={<ViewAllBookings />} />
 
         </Routes>
       </BrowserRouter>
