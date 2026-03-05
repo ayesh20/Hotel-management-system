@@ -19,7 +19,7 @@ export default function EditRoom() {
     const [loading, setLoading] = useState(false);
     const [fetchingRoom, setFetchingRoom] = useState(true);
     
-    const API_URL = import.meta.env.VITE_BACKEND_URL;
+    const API_URL = import.meta.env.VITE_BACKEND_URL_ROOM;
 
     
     useEffect(() => {

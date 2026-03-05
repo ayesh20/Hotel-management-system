@@ -11,7 +11,7 @@ export default function AllRooms() {
     const navigate = useNavigate();
 
 
-    const API_URL = import.meta.env.VITE_BACKEND_URL;
+    const API_URL = import.meta.env.VITE_BACKEND_URL_ROOM;
 
     const carouselImages = [
         '/image1.jpg',

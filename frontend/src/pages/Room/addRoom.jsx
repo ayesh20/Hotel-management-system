@@ -17,7 +17,7 @@ export default function AddRoom() {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     
-    const API_URL = import.meta.env.VITE_BACKEND_URL ;
+    const API_URL = import.meta.env.VITE_BACKEND_URL_ROOM;
     
     const handleChange = (e) => {
         const { name, value } = e.target;
