@@ -27,10 +27,15 @@ public class TransportBookingController {
         return service.getAvailableVehicles();
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public TransportBookingResponseDTO createBooking(
             @RequestBody TransportBookingRequestDTO request) {
 
         return service.createBooking(request);
+    }
+
+    @GetMapping
+    public List<TransportBookingResponseDTO> getAllBookings() {
+        return service.getAllBookings();
     }
 }

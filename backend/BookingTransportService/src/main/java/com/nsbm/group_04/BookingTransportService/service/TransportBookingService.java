@@ -103,4 +103,27 @@ public class TransportBookingService {
 
         return response;
     }
+
+    // Get All Bookings
+    public List<TransportBookingResponseDTO> getAllBookings() {
+
+        List<TransportBooking> bookings = bookingRepository.findAll();
+
+        return bookings.stream().map(booking -> {
+
+            TransportBookingResponseDTO dto = new TransportBookingResponseDTO();
+
+            dto.setBookingId(booking.getId());
+            dto.setCustomerName(booking.getCustomerName());
+            dto.setVehicleType(booking.getVehicleType());
+            dto.setPricePerDay(booking.getPricePerDay());
+            dto.setFromLocation(booking.getFromLocation());
+            dto.setToLocation(booking.getToLocation());
+            dto.setStatus(booking.getStatus());
+            dto.setBookingDate(booking.getBookingDate());
+
+            return dto;
+
+        }).toList();
+    }
 }
