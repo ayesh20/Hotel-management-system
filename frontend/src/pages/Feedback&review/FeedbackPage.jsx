@@ -18,12 +18,10 @@ const FeedbackPage = () => {
     const [editingId, setEditingId] = useState(null);   // ID of the card currently being edited
     const [editData, setEditData] = useState({});        // Holds the in-place edit field values
 
-    const API_URL = "http://localhost:8080/api/feedbacks";
-    const CUSTOMERS_URL = "http://localhost:8080/api/feedbacks/check-customers"; // ✅ Via feedback service proxy
-
+    const API_URL = import.meta.env.VITE_BACKEND_URL_FEEDBACK; 
     useEffect(() => {
         fetchFeedbacks();
-        fetchCustomers(); // ✅ Load customers on mount
+        fetchCustomers(); 
     }, []);
 
     const fetchFeedbacks = async () => {
@@ -37,10 +35,10 @@ const FeedbackPage = () => {
         }
     };
 
-    // ✅ Fetch existing customers from the Customer microservice (via backend proxy)
+    //  Fetch existing customers from the Customer microservice (via backend proxy)
     const fetchCustomers = async () => {
         try {
-            const response = await axios.get(CUSTOMERS_URL, { withCredentials: true });
+            const response = await axios.get(`${API_URL}/check-customers`, { withCredentials: true });
             setCustomers(response.data);
         } catch (error) {
             console.error("Error fetching customers:", error);
@@ -56,7 +54,7 @@ const FeedbackPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // ✅ Validate that a customer was selected
+        //  Validate that a customer was selected
         if (!formData.fullName) {
             alert("Please select a customer from the dropdown.");
             return;
@@ -80,7 +78,7 @@ const FeedbackPage = () => {
     const handleDelete = async (id) => {
         if (window.confirm("Delete this review?")) {
             try {
-                await axios.delete(${API_URL}/${id}, { withCredentials: true });
+                await axios.delete(`${API_URL}/${id}`, { withCredentials: true });
                 setFeedbacks(feedbacks.filter(item => item.id !== id));
             } catch (error) {
                 console.error("Delete failed:", error);
@@ -108,7 +106,7 @@ const FeedbackPage = () => {
                 comment: editData.comment,
                 rating: Number(editData.rating)
             };
-            const response = await axios.put(${API_URL}/${item.id}, payload, { withCredentials: true });
+            const response = await axios.put(`${API_URL}/${item.id}`, payload, { withCredentials: true });
             setFeedbacks(feedbacks.map(f => f.id === item.id ? response.data : f));
             setEditingId(null);
             setEditData({});
