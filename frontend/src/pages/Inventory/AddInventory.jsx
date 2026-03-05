@@ -32,8 +32,8 @@ export default function AddInventory() {
 
     if (selectedDate) {
         try {
-            // Adjust the URL to your Event Service date-search endpoint
-            const response = await axios.get(`http://localhost:8083/api/events/date/${selectedDate}`);
+            // Adjust the URL to Event Service date-search endpoint
+            const response = await axios.get(`http://3.109.5.157:8088/api/events/date/${selectedDate}`);
             
             if (response.data && response.data.length > 0) {
                 const event = response.data[0]; 
@@ -92,7 +92,7 @@ export default function AddInventory() {
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
                     <form onSubmit={handleSubmit} className="space-y-6">
 
-{/* 1. Event Selection Section (Moved inside the card/form) */}
+                        {/* 1. Event Selection Section (Moved inside the card/form) */}
                         <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 mb-8">
                             
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
