@@ -127,7 +127,6 @@ export default function AddReservation() {
                 totalPrice: formData.totalPrice
             };
 
-            // 🔥 BULLETPROOF FIX: Save to Session Storage to survive page refreshes
             sessionStorage.setItem('pendingPaymentData', JSON.stringify(paymentData));
 
             navigate('/payment', { state: paymentData });
@@ -144,7 +143,7 @@ export default function AddReservation() {
     return (
         <div className="min-h-screen bg-slate-100 p-4 md:p-8">
             <div className="flex items-center gap-4 mb-6">
-                <button onClick={() => navigate('/allreservations')} className="p-2 hover:bg-slate-200 rounded-lg">
+                <button onClick={() => navigate('/allReservation')} className="p-2 hover:bg-slate-200 rounded-lg">
                     <ArrowLeft className="w-6 h-6 text-slate-700" />
                 </button>
                 <h1 className="text-2xl font-bold text-slate-800">New Reservation</h1>

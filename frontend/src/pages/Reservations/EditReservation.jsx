@@ -107,7 +107,7 @@ export default function EditReservation() {
     };
 
     const handleBack = () => {
-        navigate('/allreservations');
+        navigate('/allReservation');
     };
 
     if (fetchingData) {
