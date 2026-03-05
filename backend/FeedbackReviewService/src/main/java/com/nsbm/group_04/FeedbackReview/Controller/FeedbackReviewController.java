@@ -73,9 +73,12 @@ public class FeedbackReviewController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/check-customers")
-    public List<CustomerDTO> checkExternalCustomers() {
-        return FeedbackReviewService.getAllCustomersFromAPI();
-    }
 
+    // ✅ FIXED: Was calling FeedbackReviewService.getAllCustomersFromAPI() as a static method.
+    //           Now correctly calls it as an instance method via the injected feedbackService bean.
+    @GetMapping("/check-customers")
+    public ResponseEntity<List<CustomerDTO>> checkExternalCustomers() {
+        List<CustomerDTO> customers = feedbackService.getAllCustomersFromAPI();
+        return ResponseEntity.ok(customers);
+    }
 }
