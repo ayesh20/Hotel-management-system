@@ -52,6 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
         return null;
     }
 
+//delete customer
     @Override
     public void deleteCustomer(String id) {
         repository.deleteById(id);
