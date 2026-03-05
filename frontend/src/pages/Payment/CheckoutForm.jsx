@@ -3,7 +3,8 @@ import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { useNavigate } from "react-router-dom";
 import { createCardPayment } from "../../api/paymentApi.js";
 
-export default function CheckoutForm({ clientSecret, customerName, phoneNumber, amount, discount, totalAmount }) {
+
+export default function CheckoutForm({ clientSecret, bookingId, customerId, customerName, phoneNumber, amount, discount, totalAmount }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -40,8 +41,9 @@ export default function CheckoutForm({ clientSecret, customerName, phoneNumber, 
       // Save the payment record in the backend
       try {
         const response = await createCardPayment({
-          bookingId: "",
-          customerId: "",
+        
+          bookingId: bookingId,
+          customerId: customerId,
           customerName,
           phoneNumber,
           amount: Math.round(totalAmount * 100), // amount in cents for backend
@@ -58,9 +60,9 @@ export default function CheckoutForm({ clientSecret, customerName, phoneNumber, 
             amount,
             discount: discount || 0,
             totalAmount,
-            paymentId: response.data.paymentId,
+            paymentId: response?.data?.paymentId,
             stripePaymentIntentId: paymentIntent.id,
-            paymentDate: response.data.paymentDate || new Date().toISOString(),
+            paymentDate: response?.data?.paymentDate || new Date().toISOString(),
           },
         });
       } catch (saveError) {

@@ -207,7 +207,8 @@ export default function AllReservations() {
                                         if (linkedPayment && linkedPayment.paymentStatus) {
                                             const status = linkedPayment.paymentStatus.toUpperCase(); // Safety check
 
-                                            if (status === 'PAID') {
+                                            
+                                            if (status === 'PAID' || status === 'PAYMENT SUCCESS') {
                                                 statusText = 'PAID';
                                                 badgeColor = 'bg-green-100 text-green-700'; 
                                             } else if (status === 'PENDING') {
