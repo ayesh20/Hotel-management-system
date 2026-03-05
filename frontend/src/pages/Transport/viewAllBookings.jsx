@@ -144,7 +144,7 @@ export default function ViewAllBookings() {
                       <td className="py-4 px-4 text-slate-800">{b.vehicleType}</td>
 
                       <td className="py-4 px-4 text-slate-800">
-                        Rs. {b.pricePerDay}
+                        $ {b.pricePerDay}
                       </td>
 
                       <td className="py-4 px-4 text-slate-800">{b.fromLocation}</td>
