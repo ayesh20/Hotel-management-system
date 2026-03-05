@@ -7,10 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nsbm.group_04.dto.RoomDTO;
+import com.nsbm.group_04.dto.CustomerDTO;
 import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 
+import java.util.Collections;
 import java.util.List;
+
+import com.nsbm.group_04.dto.PaymentDTO;
+import org.springframework.web.client.RestTemplate;
+import java.util.Arrays;
+import java.util.Collections;
 
 @Service
 public class ReservationServiceImplementation implements ReservationService {
@@ -64,6 +71,34 @@ public class ReservationServiceImplementation implements ReservationService {
         } catch (Exception e) {
             e.printStackTrace();
             return List.of(); // Return empty list if connection fails
+        }
+    }
+    @Override
+    public List<CustomerDTO> getAllCustomersFromAPI() {
+        String url = "http://13.229.46.111:8080/customers";
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            CustomerDTO[] customers = restTemplate.getForObject(url, CustomerDTO[].class);
+            return Arrays.asList(customers);
+        } catch (Exception e) {
+            System.err.println("Error connecting to Customer Service: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<PaymentDTO> getAllPaymentsFromAPI() {
+        // Your friend's Payment Service URL
+        String url = "http://13.212.144.21:8082/api/payments";
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            PaymentDTO[] payments = restTemplate.getForObject(url, PaymentDTO[].class);
+            return Arrays.asList(payments);
+        } catch (Exception e) {
+            System.err.println("Error connecting to Payment Service: " + e.getMessage());
+            return Collections.emptyList();
         }
     }
 }

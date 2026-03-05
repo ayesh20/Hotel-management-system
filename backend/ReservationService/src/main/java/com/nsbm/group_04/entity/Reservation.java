@@ -18,6 +18,8 @@ public class Reservation {
     private String roomId;      // To link to the specific room ID
     private String roomNumber;  // To show "101" on the receipt
 
+    private String customerId;
+
     // Constructors
     public Reservation() {}
 
@@ -53,4 +55,7 @@ public class Reservation {
 
     public String getRoomNumber() { return roomNumber; }
     public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
+
+    public String getCustomerId() { return customerId; }
+    public void setCustomerId(String customerId) { this.customerId = customerId; }
 }

@@ -1,5 +1,6 @@
 package com.nsbm.group_04.FeedbackReview.Controller;
 
+import com.nsbm.group_04.FeedbackReview.DTO.CustomerDTO;
 import com.nsbm.group_04.FeedbackReview.entity.FeedbackReview;
 import com.nsbm.group_04.FeedbackReview.services.FeedbackReviewService;
 import jakarta.validation.Valid;
@@ -10,6 +11,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/feedbacks")
+@CrossOrigin(
+        origins = {"http://localhost:5173"},
+        allowCredentials = "true",
+        methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS}
+)
 public class FeedbackReviewController {
 
     private final FeedbackReviewService feedbackService;
@@ -67,4 +73,9 @@ public class FeedbackReviewController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/check-customers")
+    public List<CustomerDTO> checkExternalCustomers() {
+        return FeedbackReviewService.getAllCustomersFromAPI();
+    }
+
 }

@@ -9,7 +9,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 @Document(collection = "inventoryItems")  // Maps this class to MongoDB collection
@@ -44,21 +45,30 @@ public class InventoryItem {
     private String status;
 
     @LastModifiedDate
-    private Instant lastUpdated;
+    private LocalDate lastUpdated;
 
     @CreatedDate
-    private Instant createdDate;
+    private LocalDate createdDate;
+
+    //event variables
+    private String eventId;
+    private String hallName;
+    private Integer peopleCount;
+    private LocalDate bookingDate;
+    private LocalTime bookingTime;
 
 
-    //Default constructor required by Spring Data and MongoDB.
+
     public InventoryItem() {
     }
 
 
-    //Parameterized constructor to initialize all fields.
+    // Parameterized constructor to initialize all fields.
     public InventoryItem(String id, String itemName, String category, Integer quantity,
                          Double unitPrice, Integer reorderLevel, String storageLocation,
-                         String supplier, String status, Instant lastUpdated, Instant createdDate) {
+                         String supplier, String status, LocalDate lastUpdated, LocalDate createdDate,
+                         String eventId, String hallName, Integer peopleCount,
+                         LocalDate bookingDate, LocalTime bookingTime) {
         this.id = id;
         this.itemName = itemName;
         this.category = category;
@@ -70,9 +80,15 @@ public class InventoryItem {
         this.status = status;
         this.lastUpdated = lastUpdated;
         this.createdDate = createdDate;
+        this.eventId = eventId;
+        this.hallName = hallName;
+        this.peopleCount = peopleCount;
+        this.bookingDate = bookingDate;
+        this.bookingTime = bookingTime;
     }
 
-    // Getter and Setter Method
+
+
 
     public String getId() {
         return id;
@@ -146,23 +162,64 @@ public class InventoryItem {
         this.status = status;
     }
 
-    public Instant getLastUpdated() {
+    public LocalDate getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(Instant lastUpdated) {
+    public void setLastUpdated(LocalDate lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
-    public Instant getCreatedDate() {
+    public LocalDate getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Instant createdDate) {
+    public void setCreatedDate(LocalDate createdDate) {
         this.createdDate = createdDate;
     }
 
-    //Returns a string representation of the InventoryItem object.
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getHallName() {
+        return hallName;
+    }
+
+    public void setHallName(String hallName) {
+        this.hallName = hallName;
+    }
+
+    public Integer getPeopleCount() {
+        return peopleCount;
+    }
+
+    public void setPeopleCount(Integer peopleCount) {
+        this.peopleCount = peopleCount;
+    }
+
+    public LocalDate getBookingDate() {
+        return bookingDate;
+    }
+
+    public void setBookingDate(LocalDate bookingDate) {
+        this.bookingDate = bookingDate;
+    }
+
+    public LocalTime getBookingTime() {
+        return bookingTime;
+    }
+
+    public void setBookingTime(LocalTime bookingTime) {
+        this.bookingTime = bookingTime;
+    }
+
+
+    // Returns a string representation of the InventoryItem object.
     @Override
     public String toString() {
         return "InventoryItem{" +
@@ -177,6 +234,11 @@ public class InventoryItem {
                 ", status='" + status + '\'' +
                 ", lastUpdated=" + lastUpdated +
                 ", createdDate=" + createdDate +
+                ", eventId='" + eventId + '\'' +
+                ", hallName='" + hallName + '\'' +
+                ", peopleCount=" + peopleCount +
+                ", bookingDate=" + bookingDate +
+                ", bookingTime=" + bookingTime +
                 '}';
     }
 }

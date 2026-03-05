@@ -1,8 +1,7 @@
 package com.nsbm.group_04.Events.controller;
 
 import com.nsbm.group_04.Events.entity.Event;
-import com.nsbm.group_04.Events.services.EventServices;
-import com.nsbm.group_04.Events.services.impl.EventServiceImpl;
+import com.nsbm.group_04.Events.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -22,15 +21,12 @@ import java.util.Map;
 public class EventController {
 
     @Autowired
-    private EventServices eventServices;       // handles create, update, delete, getById
-
-    @Autowired
-    private EventServiceImpl eventServiceImpl; // handles dashboard/monitoring logic
+    private EventService eventService; // single injection via interface
 
     @PostMapping("/add")
     public ResponseEntity<?> createEvent(@RequestBody Event event) {
         try {
-            Event createdEvent = eventServices.createEvent(event);
+            Event createdEvent = eventService.createEvent(event);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdEvent);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -40,7 +36,7 @@ public class EventController {
     @GetMapping("/all")
     public ResponseEntity<List<Event>> getAllEvents() {
         try {
-            List<Event> events = eventServices.getAllEvents();
+            List<Event> events = eventService.getAllEvents();
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -50,63 +46,58 @@ public class EventController {
     @GetMapping("/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable String id) {
         try {
-            Event event = eventServices.getEventById(id);
+            Event event = eventService.getEventById(id);
             return new ResponseEntity<>(event, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Monitor: get events by date
     @GetMapping("/date/{date}")
     public ResponseEntity<List<Event>> getEventsByDate(
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         try {
-            List<Event> events = eventServices.getEventsByDate(date);
+            List<Event> events = eventService.getEventsByDate(date);
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Monitor: get events by hall
     @GetMapping("/hall/{hall}")
     public ResponseEntity<List<Event>> getEventsByHall(@PathVariable String hall) {
         try {
-            List<Event> events = eventServices.getEventsByHall(hall);
+            List<Event> events = eventService.getEventsByHall(hall);
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Monitor: get events by payment status
     @GetMapping("/payment/{status}")
     public ResponseEntity<List<Event>> getEventsByPaymentStatus(@PathVariable String status) {
         try {
-            List<Event> events = eventServices.getEventsByPaymentStatus(status);
+            List<Event> events = eventService.getEventsByPaymentStatus(status);
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Monitor: get events by customer ID
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<Event>> getEventsByCustomerId(@PathVariable String customerId) {
         try {
-            List<Event> events = eventServices.getEventsByCustomerId(customerId);
+            List<Event> events = eventService.getEventsByCustomerId(customerId);
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Dashboard / analytics overview
     @GetMapping("/dashboard")
     public ResponseEntity<Map<String, Object>> getEventsDashboard() {
         try {
-            Map<String, Object> dashboard = eventServiceImpl.getEventsDashboard();
+            Map<String, Object> dashboard = eventService.getEventsDashboard();
             return new ResponseEntity<>(dashboard, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -116,7 +107,7 @@ public class EventController {
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable String id, @RequestBody Event event) {
         try {
-            Event updatedEvent = eventServices.updateEvent(id, event);
+            Event updatedEvent = eventService.updateEvent(id, event);
             return new ResponseEntity<>(updatedEvent, HttpStatus.OK);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -126,7 +117,7 @@ public class EventController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable String id) {
         try {
-            eventServices.deleteEvent(id);
+            eventService.deleteEvent(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

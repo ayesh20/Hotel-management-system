@@ -14,9 +14,9 @@ export default function AllStaff() {
     const API_URL = import.meta.env.VITE_BACKEND_URL_STAFF;
 
     const carouselImages = [
-        '/image1.jpg',
-        '/image2.jpg',
-        '/image3.jpg',
+        '/staff_img1.webp',
+        '/staff_img2.webp',
+        '/staff_img3.webp',
     ];
 
     useEffect(() => {

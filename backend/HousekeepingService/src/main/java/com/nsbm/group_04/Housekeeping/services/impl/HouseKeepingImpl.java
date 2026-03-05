@@ -20,7 +20,7 @@ public class HouseKeepingImpl {
     private final RestTemplate restTemplate = new RestTemplate();
 
     private final String ROOM_SERVICE_URL = "http://13.61.186.105:8081/api/rooms/all";
-    private final String STAFF_SERVICE_URL = "http://localhost:8083/api/staff";
+    private final String STAFF_SERVICE_URL = "http://13.212.196.133:8083/api/staff";
 
     public List<RoomDTO> getRoomNumbers() {
         RoomDTO[] rooms = restTemplate.getForObject(ROOM_SERVICE_URL, RoomDTO[].class);
@@ -47,6 +47,6 @@ public class HouseKeepingImpl {
                         s.getRole().toLowerCase().contains("clean"))
                 .toList();
 
-      
+
     }
 }

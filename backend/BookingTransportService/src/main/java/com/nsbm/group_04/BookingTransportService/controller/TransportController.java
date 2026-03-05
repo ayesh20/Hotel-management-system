@@ -17,7 +17,7 @@ public class TransportController {
     private TransportService transportService;
 
     // Create vehicle
-    @PostMapping
+    @PostMapping("/add")
     public Transport addTransport(@RequestBody Transport transport) {
         return transportService.addTransport(transport);
     }

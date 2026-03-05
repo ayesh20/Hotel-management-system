@@ -1,8 +1,7 @@
 package com.nsbm.group_04.InventoryService.Controller;
 
+import com.nsbm.group_04.InventoryService.dto.EventReservationDTO;
 import com.nsbm.group_04.InventoryService.Model.InventoryItem;
-import com.nsbm.group_04.InventoryService.dto.InventoryItemRequestDTO;
-import com.nsbm.group_04.InventoryService.dto.InventoryItemResponseDTO;
 import com.nsbm.group_04.InventoryService.service.InventoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
-
-//Provides endpoints for CRUD operations and inventory reporting.
+// Provides endpoints for CRUD operations and inventory reporting.
 @RestController
 @RequestMapping("/api/inventory")
 public class InventoryController {
@@ -25,36 +22,33 @@ public class InventoryController {
 
     // Creates a new inventory item.
     @PostMapping
-    public ResponseEntity<InventoryItemResponseDTO> addItem(@Valid @RequestBody InventoryItemRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.addItem(dto));
+    public ResponseEntity<InventoryItem> addItem(@Valid @RequestBody InventoryItem item) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addItem(item));
     }
 
 
     // Retrieves all inventory items.
     @GetMapping
-    public ResponseEntity<List<InventoryItemResponseDTO>> getAllItems() {
+    public ResponseEntity<List<InventoryItem>> getAllItems() {
         return ResponseEntity.ok(service.getAllItems());
     }
 
 
     // Retrieves a single inventory item by ID.
     // Returns 404 if item not found.
-
     @GetMapping("/{id}")
-    public ResponseEntity<InventoryItemResponseDTO> getItemById(@PathVariable String id) {
+    public ResponseEntity<InventoryItem> getItemById(@PathVariable String id) {
         return ResponseEntity.ok(service.getItemById(id));
-
-
     }
 
 
     // Updates an existing inventory item.
     // Status is automatically recalculated based on updated values.
     @PutMapping("/{id}")
-    public ResponseEntity<InventoryItemResponseDTO> updateItem(
+    public ResponseEntity<InventoryItem> updateItem(
             @PathVariable String id,
-            @Valid @RequestBody InventoryItemRequestDTO dto) {
-        return ResponseEntity.ok(service.updateItem(id, dto));
+            @Valid @RequestBody InventoryItem updatedItem) {
+        return ResponseEntity.ok(service.updateItem(id, updatedItem));
     }
 
 
@@ -69,21 +63,21 @@ public class InventoryController {
 
     // Searches for items by name (case-insensitive).
     @GetMapping("/search")
-    public ResponseEntity<List<InventoryItemResponseDTO>> searchItems(@RequestParam String name) {
+    public ResponseEntity<List<InventoryItem>> searchItems(@RequestParam String name) {
         return ResponseEntity.ok(service.searchItemsByName(name));
     }
 
 
     // Retrieves items that need reordering (LOW_STOCK or OUT_OF_STOCK).
     @GetMapping("/low-stock")
-    public ResponseEntity<List<InventoryItemResponseDTO>> getLowStockItems() {
+    public ResponseEntity<List<InventoryItem>> getLowStockItems() {
         return ResponseEntity.ok(service.getLowStockItems());
     }
 
 
     // Retrieves items by category.
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<InventoryItemResponseDTO>> getByCategory(@PathVariable String category) {
+    public ResponseEntity<List<InventoryItem>> getByCategory(@PathVariable String category) {
         return ResponseEntity.ok(service.getItemsByCategory(category));
     }
 
@@ -95,19 +89,30 @@ public class InventoryController {
         return ResponseEntity.ok(service.getTotalInventoryValue());
     }
 
-    // Increases item quantity — restocking operation
+
+    // Increases item quantity — restocking operation.
     @PatchMapping("/{id}/restock")
-    public ResponseEntity<InventoryItemResponseDTO> restockItem(
+    public ResponseEntity<InventoryItem> restockItem(
             @PathVariable String id,
             @RequestParam int amount) {
         return ResponseEntity.ok(service.restockItem(id, amount));
     }
 
-    // Decreases item quantity — consumption operation
+
+    // Decreases item quantity — consumption operation.
     @PatchMapping("/{id}/consume")
-    public ResponseEntity<InventoryItemResponseDTO> consumeItem(
+    public ResponseEntity<InventoryItem> consumeItem(
             @PathVariable String id,
             @RequestParam int amount) {
         return ResponseEntity.ok(service.consumeItem(id, amount));
+    }
+
+
+    // Reserves inventory items for an event.
+    @PostMapping("/reserve")
+    public ResponseEntity<String> reserveInventory(
+            @RequestBody EventReservationDTO request) {
+        service.reserveItemsForEvent(request);
+        return ResponseEntity.ok("Inventory reserved successfully");
     }
 }
