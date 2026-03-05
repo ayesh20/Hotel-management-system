@@ -11,18 +11,18 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-
     const [dashboardData, setDashboardData] = useState({
         totalRooms: 0,
         totalBookings: 0,
-
+        totalGuests: 0,
+        totalPayments: 0,
     });
 
     const API_URL = import.meta.env.VITE_BACKEND_URL_ROOM;
     const API_URL2 = import.meta.env.VITE_BACKEND_URL2;
+    const API_URL_CUSTOMER = import.meta.env.VITE_BACKEND_URL_CUSTOMER;
 
     useEffect(() => {
-        // Set current date and time
         const updateDateTime = () => {
             const now = new Date();
             const options = {
@@ -39,7 +39,6 @@ export default function Dashboard() {
             });
             setCurrentDate(`${formattedDate} - ${time}`);
 
-            // Set greeting based on time
             const hour = now.getHours();
             if (hour < 12) setGreeting('Good Morning');
             else if (hour < 18) setGreeting('Good Afternoon');
@@ -60,24 +59,42 @@ export default function Dashboard() {
             setLoading(true);
 
             // Fetch all required data in parallel
-            const [Roomrs, Reservations] = await Promise.all([
+            const [roomsRes, reservationsRes, customersRes] = await Promise.all([
                 axios.get(`${API_URL}/rooms/all`),
                 axios.get(`${API_URL2}/reservations`),
+                axios.get(`${API_URL_CUSTOMER}`),
             ]);
 
             // Process rooms data
-            const rooms = Roomrs.data || [];
+            const rooms = roomsRes.data || [];
             const totalRooms = rooms.length;
 
             // Process reservations data
-            const reservations = Reservations.data || [];
+            const reservations = reservationsRes.data || [];
             const totalBookings = reservations.length;
 
-            setDashboardData(prev => ({
-                ...prev,
+            // Calculate total payments from reservations
+            // Adjust the field name (e.g., totalAmount, amount, price) to match your API response
+            const totalPayments = reservations.reduce((sum, reservation) => {
+                const amount =
+                    reservation.totalAmount ||
+                    reservation.amount ||
+                    reservation.totalPrice ||
+                    reservation.price ||
+                    0;
+                return sum + Number(amount);
+            }, 0);
+
+            // Process customers/guests data
+            const customers = customersRes.data || [];
+            const totalGuests = customers.length;
+
+            setDashboardData({
                 totalRooms,
-                totalBookings
-            }));
+                totalBookings,
+                totalGuests,
+                totalPayments,
+            });
 
         } catch (error) {
             console.error('Fetch dashboard data error:', error);
@@ -164,6 +181,7 @@ export default function Dashboard() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
+                    {/* Total Rooms Card */}
                     <div className="bg-linear-to-br from-green-400 to-green-600 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
                         <div className="flex items-center justify-between mb-3">
                             <Home className="w-12 h-12 text-white opacity-80" />
@@ -176,48 +194,51 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-
+                    {/* Total Payments Card */}
                     <div className="bg-linear-to-br from-yellow-400 to-yellow-600 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
                         <div className="flex items-center justify-between mb-3">
                             <DollarSign className="w-12 h-12 text-white opacity-80" />
+                            <TrendingUp className="w-6 h-6 text-white" />
                         </div>
                         <div className="text-white">
                             <h3 className="text-lg font-semibold mb-1 opacity-90">Payments</h3>
-                            <p className="text-4xl font-bold"></p>
-                            <p className="text-sm mt-2 opacity-80">Revenue</p>
+                            <p className="text-4xl font-bold">
+                                ${dashboardData.totalPayments.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </p>
+                            <p className="text-sm mt-2 opacity-80">Total Revenue</p>
                         </div>
                     </div>
 
-
+                    {/* Total Guests Card */}
                     <div className="bg-linear-to-br from-blue-400 to-blue-600 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
                         <div className="flex items-center justify-between mb-3">
-
                             <Users className="w-12 h-12 text-white opacity-80" />
+                            <TrendingUp className="w-6 h-6 text-white" />
                         </div>
                         <div className="text-white">
                             <h3 className="text-lg font-semibold mb-1 opacity-90">Total Guests</h3>
-                            <p className="text-4xl font-bold"></p>
+                            <p className="text-4xl font-bold">{dashboardData.totalGuests}</p>
                             <p className="text-sm mt-2 opacity-80">Registered users</p>
                         </div>
                     </div>
 
-
+                    {/* Total Bookings Card */}
                     <div className="bg-linear-to-br from-red-400 to-red-600 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
                         <div className="flex items-center justify-between mb-3">
                             <Calendar className="w-12 h-12 text-white opacity-80" />
+                            <TrendingUp className="w-6 h-6 text-white" />
                         </div>
                         <div className="text-white">
                             <h3 className="text-lg font-semibold mb-1 opacity-90">Total Bookings</h3>
                             <p className="text-4xl font-bold">{dashboardData.totalBookings}</p>
-
+                            <p className="text-sm mt-2 opacity-80">All reservations</p>
                         </div>
                     </div>
+
                 </div>
             </div>
 
-
-
-
+            {/* Hotel Management Section */}
             <div>
                 <h2 className="text-2xl font-bold text-slate-800 mb-4">Hotel Management</h2>
 
@@ -226,16 +247,13 @@ export default function Dashboard() {
                         className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 cursor-pointer"
                         onClick={() => navigate('/allstaff')}
                     >
-
                         Staff
                     </button>
 
                     <button
                         className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
-                        
                         onClick={() => navigate('/customers')}
                     >
-
                         Guests
                     </button>
 
@@ -243,7 +261,6 @@ export default function Dashboard() {
                         className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
                         onClick={() => navigate('/allrooms')}
                     >
-
                         Rooms
                     </button>
 
@@ -251,7 +268,6 @@ export default function Dashboard() {
                         className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
                         onClick={() => navigate('/allTransport')}
                     >
-
                         Transport
                     </button>
 
@@ -259,7 +275,6 @@ export default function Dashboard() {
                         className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
                         onClick={() => navigate('/allReservation')}
                     >
-
                         Booking
                     </button>
 
@@ -267,7 +282,6 @@ export default function Dashboard() {
                         className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
                         onClick={() => navigate('/feedback')}
                     >
-
                         Feedback & Reviews
                     </button>
 
@@ -282,27 +296,17 @@ export default function Dashboard() {
                         className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
                         onClick={() => navigate('/allrooms')}
                     >
-                        Inventry Management
+                        Inventory Management
                     </button>
+
                     <button
                         className="bg-slate-300 hover:bg-slate-400 text-slate-800 text-xl font-bold py-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
                         onClick={() => navigate('/allevents')}
                     >
                         Special Event
                     </button>
-                
-                      
                 </div>
             </div>
         </div>
-    ); return (<div className="min-h-screen bg-gray-100 p-6">
-        <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow">
-            <div className="flex items-center mb-6">
-                <Home className="w-8 h-8 text-blue-500 mr-2" />
-                <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
-            </div>
-            <p className="text-gray-600">Welcome to the admin dashboard. Use the navigation menu to manage rooms and bookings.</p>
-        </div>
-    </div>
     );
 }

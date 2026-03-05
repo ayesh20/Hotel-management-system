@@ -19,7 +19,7 @@ public class RoomServiceImpl {
 
 
     public List<Room> getAllRoomsWithReservationStatus() {
-        String reservationUrl = "http://3.80.120.199:8082/reservations";
+        String reservationUrl = "http://18.212.88.2:8082/reservations";
         RestTemplate restTemplate = new RestTemplate();
 
         // Step 1: Get reserved room numbers from Reservation microservice (8082)
