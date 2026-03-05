@@ -58,7 +58,7 @@ public class ReservationServiceImplementation implements ReservationService {
 
     @Override
     public List<RoomDTO> getAvailableRoomsFromAPI() {
-        String url = "http://13.61.186.105:8081/api/rooms/all";
+        String url = "http://18.142.250.35:8081/api/rooms/all";
         RestTemplate restTemplate = new RestTemplate();
 
         try {
