@@ -1,5 +1,6 @@
 package com.nsbm.group_04.InventoryService.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -54,8 +55,9 @@ public class InventoryItem {
     private String eventId;
     private String hallName;
     private Integer peopleCount;
-    private LocalDate bookingDate;
     private LocalTime bookingTime;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate bookingDate;
 
 
 

@@ -57,7 +57,7 @@ export default function EventDashboard() {
   };
 
   const handleEdit = (eventId) => navigate(`/editevent/${eventId}`);
-  const handleBack = () => navigate('/allevents');
+  const handleBack = () => navigate('/dashboard');
 
   const getPaymentBadge = (status) => {
     const styles = {

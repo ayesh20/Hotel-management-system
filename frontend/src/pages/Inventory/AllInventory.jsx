@@ -137,6 +137,9 @@ export default function AllInventory() {
                         <table className="w-full text-left">
                             <thead className="bg-slate-50 border-b border-slate-200">
                                 <tr>
+                                    <th className="p-4 font-semibold text-slate-600">Event Date</th>
+                                    <th className="p-4 font-semibold text-slate-600">Hall</th>
+                                    <th className="p-4 font-semibold text-slate-600">People</th>
                                     <th className="p-4 font-semibold text-slate-600">Item Name</th>
                                     <th className="p-4 font-semibold text-slate-600">Category</th>
                                     <th className="p-4 font-semibold text-slate-600">Qty</th>
@@ -148,12 +151,15 @@ export default function AllInventory() {
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {loading ? (
-                                    <tr><td colSpan="7" className="text-center py-8">Loading inventory...</td></tr>
+                                    <tr><td colSpan="10" className="text-center py-8">Loading inventory...</td></tr>
                                 ) : items.length === 0 ? (
-                                    <tr><td colSpan="7" className="text-center py-8 text-slate-500">No items found in inventory.</td></tr>
+                                    <tr><td colSpan="10" className="text-center py-8 text-slate-500">No items found in inventory.</td></tr>
                                 ) : (
                                     items.map((item) => (
                                         <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                                            <td className="px-6 py-4 text-slate-600">{item.bookingDate || 'N/A'}</td>
+                                            <td className="px-6 py-4 text-slate-600">{item.hallName || 'General'}</td>
+                                            <td className="px-6 py-4 text-slate-600">{item.peopleCount || 0}</td>
                                             <td className="p-4 font-medium text-slate-800">{item.itemName}</td>
                                             <td className="p-4 text-slate-600">
                                                 <span className="bg-slate-100 px-2 py-1 rounded text-xs">{item.category}</span>

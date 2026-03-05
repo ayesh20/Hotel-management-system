@@ -3,6 +3,7 @@ package com.nsbm.group_04.FeedbackReview.services;
 import com.nsbm.group_04.FeedbackReview.DTO.CustomerDTO;
 import com.nsbm.group_04.FeedbackReview.entity.FeedbackReview;
 import com.nsbm.group_04.FeedbackReview.repository.FeedbackReviewRepository;
+import com.nsbm.group_04.FeedbackReview.services.Impl.CustomerServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,9 +13,12 @@ import java.util.List;
 public class FeedbackReviewService {
 
     private final FeedbackReviewRepository repository;
+    private final CustomerServiceImpl customerService;  // ✅ Injected via constructor
 
-    public FeedbackReviewService(FeedbackReviewRepository repository) {
+    public FeedbackReviewService(FeedbackReviewRepository repository,
+                                 CustomerServiceImpl customerService) {
         this.repository = repository;
+        this.customerService = customerService;  // ✅ Assigned
     }
 
     // CREATE
@@ -23,8 +27,9 @@ public class FeedbackReviewService {
         return repository.save(feedback);
     }
 
+    // ✅ FIXED: Now delegates to the injected CustomerServiceImpl (was returning null)
     public List<CustomerDTO> getAllCustomersFromAPI() {
-        return null;
+        return customerService.getAllCustomersFromAPI();
     }
 
     // READ - all feedbacks

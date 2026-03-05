@@ -15,13 +15,42 @@ export default function AddInventory() {
         unitPrice: '',
         reorderLevel: '',
         storageLocation: '',
-        supplier: ''
+        supplier: '',
+        bookingDate: '',
+        hallName: '',
+        peopleCount: ''
     });
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+
+    const handleDateChange = async (e) => {
+    const selectedDate = e.target.value;
+    setFormData({ ...formData, bookingDate: selectedDate });
+
+    if (selectedDate) {
+        try {
+            // Adjust the URL to Event Service date-search endpoint
+            const response = await axios.get(`http://3.109.5.157:8088/api/events/date/${selectedDate}`);
+            
+            if (response.data && response.data.length > 0) {
+                const event = response.data[0]; 
+                setFormData(prev => ({
+                    ...prev,
+                    hallName: event.hallName,
+                    peopleCount: event.peopleCount
+                }));
+                toast.success(`Event found: ${event.hallName}`);
+            } else {
+                toast.error("No events found for this date");
+            }
+        } catch (error) {
+            console.error("Event Service error:", error);
+        }
+    }
+};
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -57,8 +86,32 @@ export default function AddInventory() {
                     <h1 className="text-3xl font-bold text-slate-800">Add New Item</h1>
                 </div>
 
+
+                
+
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
                     <form onSubmit={handleSubmit} className="space-y-6">
+
+                        {/* 1. Event Selection Section (Moved inside the card/form) */}
+                        <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 mb-8">
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-2">Select Date</label>
+                                    <input type="date" name="bookingDate" onChange={handleDateChange} className="w-full p-2.5 bg-white border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-2">Hall Name</label>
+                                    <input type="text" value={formData.hallName} readOnly className="w-full p-2.5 bg-slate-50 border border-blue-100 rounded-lg text-slate-500 text-sm" placeholder="Auto-filled" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-2">Expected People</label>
+                                    <input type="number" value={formData.peopleCount} readOnly className="w-full p-2.5 bg-slate-50 border border-blue-100 rounded-lg text-slate-500 text-sm" placeholder="0" />
+                                </div>
+                            </div>
+                        </div>
+
+                        
                         
                         <div className="grid md:grid-cols-2 gap-6">
                             {/* Item Name */}

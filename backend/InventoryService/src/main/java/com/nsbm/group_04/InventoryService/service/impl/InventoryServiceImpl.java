@@ -56,6 +56,11 @@ public class InventoryServiceImpl implements InventoryService {
         existing.setSupplier(updatedItem.getSupplier());
         existing.setStatus(calculateStatus(updatedItem.getQuantity(), updatedItem.getReorderLevel()));
         existing.setLastUpdated(LocalDate.now());
+        existing.setEventId(updatedItem.getEventId());
+        existing.setHallName(updatedItem.getHallName());
+        existing.setPeopleCount(updatedItem.getPeopleCount());
+        existing.setBookingDate(updatedItem.getBookingDate());
+        existing.setBookingTime(updatedItem.getBookingTime());
 
         return inventoryRepository.save(existing);
     }
