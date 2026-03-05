@@ -38,7 +38,7 @@ export default function ViewAllBookings() {
     }
   };
 
-  const handleBack = () => navigate("/dashboard");
+  const handleBack = () => navigate("/allTransport");
   const handleAddBooking = () => navigate("/bookTransport");
 
   return (
