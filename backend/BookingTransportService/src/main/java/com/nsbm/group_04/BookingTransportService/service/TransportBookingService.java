@@ -126,4 +126,50 @@ public class TransportBookingService {
 
         }).toList();
     }
+
+    // Update Booking
+    public TransportBookingResponseDTO updateBooking(
+            String id,
+            TransportBookingRequestDTO request) {
+
+        TransportBooking booking = bookingRepository
+                .findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        booking.setFromLocation(request.getFromLocation());
+        booking.setToLocation(request.getToLocation());
+
+        TransportBooking updated = bookingRepository.save(booking);
+
+        TransportBookingResponseDTO response = new TransportBookingResponseDTO();
+
+        response.setBookingId(updated.getId());
+        response.setCustomerName(updated.getCustomerName());
+        response.setVehicleType(updated.getVehicleType());
+        response.setPricePerDay(updated.getPricePerDay());
+        response.setFromLocation(updated.getFromLocation());
+        response.setToLocation(updated.getToLocation());
+        response.setStatus(updated.getStatus());
+        response.setBookingDate(updated.getBookingDate());
+
+        return response;
+    }
+
+    // Delete Booking
+    public void deleteBooking(String id) {
+
+        TransportBooking booking = bookingRepository
+                .findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        // Make vehicle available again
+        Transport vehicle = transportRepository
+                .findById(booking.getVehicleId())
+                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+
+        vehicle.setStatus("AVAILABLE");
+        transportRepository.save(vehicle);
+
+        bookingRepository.deleteById(id);
+    }
 }

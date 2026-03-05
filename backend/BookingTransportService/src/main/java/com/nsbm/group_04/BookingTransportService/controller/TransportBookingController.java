@@ -38,4 +38,18 @@ public class TransportBookingController {
     public List<TransportBookingResponseDTO> getAllBookings() {
         return service.getAllBookings();
     }
+
+    @PutMapping("/{id}")
+    public TransportBookingResponseDTO updateBooking(
+            @PathVariable String id,
+            @RequestBody TransportBookingRequestDTO request) {
+
+        return service.updateBooking(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteBooking(@PathVariable String id) {
+        service.deleteBooking(id);
+        return "Booking deleted successfully";
+    }
 }
