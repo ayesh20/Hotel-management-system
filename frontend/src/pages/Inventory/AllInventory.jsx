@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { Package, Plus, Edit2, Trash2, AlertTriangle, PlusCircle, Search, DollarSign } from 'lucide-react';
+import { Package, Plus, Edit2, Trash2, AlertTriangle, PlusCircle, Search,  Banknote } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -102,11 +102,11 @@ export default function AllInventory() {
                     <div className="flex items-center gap-4">
                         <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center gap-3">
                             <div className="p-2 bg-green-100 rounded-lg">
-                                <DollarSign className="w-6 h-6 text-green-600" />
+                                <Banknote className="w-6 h-6 text-green-600" />
                             </div>
                             <div>
                                 <p className="text-sm text-slate-500 font-semibold">Total Value</p>
-                                <p className="text-xl font-bold text-slate-800">${totalValue.toFixed(2)}</p>
+                                <p className="text-xl font-bold text-slate-800">LKR {totalValue.toFixed(2)}</p>
                             </div>
                         </div>
                         <button onClick={() => navigate('/add-inventory')}
@@ -182,7 +182,7 @@ export default function AllInventory() {
                                                 <span className="bg-slate-100 px-2 py-1 rounded text-xs">{item.category}</span>
                                             </td>
                                             <td className="p-4 text-slate-800 font-semibold">{item.quantity}</td>
-                                            <td className="p-4 text-slate-600">${item.unitPrice.toFixed(2)}</td>
+                                            <td className="p-4 text-slate-600">LKR {item.unitPrice.toFixed(2)}</td>
                                             <td className="p-4 text-slate-600 text-sm">{item.storageLocation || '—'}</td>
                                             <td className="p-4">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 w-max ${getStatusBadge(item.status)}`}>
