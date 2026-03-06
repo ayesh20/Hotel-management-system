@@ -57,7 +57,7 @@ export default function ViewAllBookings() {
           </button>
 
           <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
-            Transport Bookings
+            View Bookings
           </h1>
         </div>
 
