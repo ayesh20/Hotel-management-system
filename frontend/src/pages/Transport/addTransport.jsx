@@ -176,7 +176,7 @@ export default function AddTransport() {
                 </button>
 
                 <h1 className="text-2xl font-bold">
-                    Add New Transport
+                    Add New Vehicle
                 </h1>
 
             </div>
