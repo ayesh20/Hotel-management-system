@@ -126,7 +126,7 @@ export default function AllTransport() {
         {/* View Bookings Button (Top Right) */}
         <button
           onClick={handleViewBookings}
-          className="absolute top-6 right-6 flex text-sm items-center gap-2 bg-green-400 hover:bg-green-500 text-white py-2 px-5 rounded-xl font-semibold shadow-md transition cursor-pointer"
+          className="absolute top-4 right-6 flex text-sm items-center gap-2 bg-green-400 hover:bg-green-500 text-white py-2 px-5 rounded-xl font-semibold shadow-md transition cursor-pointer"
         >
           <Eye size={18} />
           View Bookings
